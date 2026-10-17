@@ -274,6 +274,14 @@
     header{margin-bottom:8px}
     .who-name{display:none}
   }
+  /* bacheca e proposte */
+  .boardhead{display:flex;justify-content:space-between;align-items:baseline;gap:2px 8px;margin:22px 0 6px;flex-wrap:wrap}
+  .boardhead h2{font-size:1rem;margin:0;white-space:nowrap}
+  .boardhead small{color:var(--muted)}
+  .task.board{border-left-style:dashed}
+  .propform{display:flex;gap:8px;margin-top:8px}
+  .propform input{flex:1}
+  .ptag{font-size:.75rem;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -304,6 +312,7 @@
         <label>Il tuo nome</label><input id="rName" autocomplete="given-name" placeholder="Es. Marco">
         <label>Email</label><input id="rEmail" type="email" autocomplete="username" placeholder="nome@esempio.it">
         <label>Password (almeno 6 caratteri)</label><input id="rPass" type="password" autocomplete="new-password">
+        <label>Conferma password</label><input id="rPass2" type="password" autocomplete="new-password">
       </section>
       <section class="wstep" data-step="family">
         <h2>🏠 La famiglia</h2>
@@ -343,6 +352,7 @@
       <div id="jCreds">
         <label>Email</label><input id="jEmail" type="email" autocomplete="username">
         <label>Password (almeno 6 caratteri)</label><input id="jPass" type="password" autocomplete="new-password">
+        <label>Conferma password</label><input id="jPass2" type="password" autocomplete="new-password">
       </div>
       <label class="opt"><input type="checkbox" id="jConsent"><span>Ho letto l'<a href="#" data-priv>informativa sulla privacy</a> e acconsento.</span></label>
       <div class="wnav"><button class="btn" type="button" data-back>‹ Indietro</button><button class="btn primary" type="submit">Entra</button></div>
@@ -408,6 +418,7 @@
         <div class="goal" id="goal"></div>
         <div class="legend" id="legendCats"></div>
         <div id="groups"></div>
+        <div id="board"></div>
       </div>
       <div id="svShop" hidden>
         <div class="panel"><h2>🎁 Premi</h2><div id="shopList"></div></div>
@@ -426,6 +437,7 @@
       <div class="panel"><h2>📊 Situazione</h2><div class="kidsum" id="pSummary"></div></div>
       <div class="panel"><h2>🔍 Da verificare</h2><p class="hint" id="pVerifyHint"></p><div id="pVerify"></div></div>
       <div class="panel"><h2>🎁 Richieste premi</h2><div id="pRedeem"></div></div>
+      <div class="panel"><h2>💡 Proposte dei ragazzi</h2><p class="hint">Cose utili fatte di loro iniziativa: le stelle arrivano solo se approvi, e decidi tu quante.</p><div id="pProps"></div></div>
       <div class="panel" id="pNew">
         <h2>Nuovo compito</h2>
         <form id="newForm">
@@ -444,11 +456,18 @@
               <div><label>Valore</label>
                 <select id="fPts"><option value="1">⭐ 1</option><option value="2">⭐ 2</option><option value="3">⭐ 3</option><option value="4">⭐ 4</option><option value="5">⭐ 5</option></select></div>
             </div>
-            <label class="inline"><input type="checkbox" id="fPun"> Compito punizione (usato solo col cartellino rosso)</label>
+            <label>Tipo di compito</label>
+            <select id="fKind">
+              <option value="normal">📅 Pianificato: conta per la giornata perfetta</option>
+              <option value="optional">✨ Facoltativo: dà stelle, non conta per la giornata perfetta</option>
+              <option value="board">🧹 Lavoretto extra in bacheca: quando serve, senza orario</option>
+              <option value="pun">🟥 Punizione: solo durante il cartellino rosso</option>
+            </select>
+            <div id="fMaxBox"><label>Quante volte al giorno al massimo (in tutto, tra i fratelli)</label><input id="fMax" type="number" min="1" max="10" value="1"></div>
           </div>
           <div class="grid2">
             <div id="ownerBox"><label>Assegna a</label><select id="fOwner"></select></div>
-            <div><label id="fTimeLbl">Orario</label><input id="fTime" type="time" value="17:00" required></div>
+            <div id="timeBox"><label id="fTimeLbl">Orario</label><input id="fTime" type="time" value="17:00"></div>
           </div>
           <div id="schedBox">
             <label>Giorni</label>
@@ -462,6 +481,7 @@
         </form>
       </div>
       <div class="panel"><h2>Compiti assegnati</h2><div id="schedList"></div></div>
+      <div class="panel"><h2>🧹 Bacheca lavoretti extra</h2><p class="hint">Lavoretti senza giorno fisso (es. pattumiera): il figlio li segna dopo averli fatti. Non contano per la giornata perfetta.</p><div id="boardList"></div></div>
       <div class="panel"><h2>🟥 Compiti punizione</h2><div id="punList"></div></div>
       <div class="panel" id="pShop">
         <h2>🛍️ Catalogo premi</h2>
@@ -572,6 +592,8 @@
         <div><label>Valore</label>
           <select id="ePts"><option value="1">⭐ 1</option><option value="2">⭐ 2</option><option value="3">⭐ 3</option><option value="4">⭐ 4</option><option value="5">⭐ 5</option></select></div>
       </div>
+      <label class="inline" id="eOptBox"><input type="checkbox" id="eOptional"> ✨ Facoltativo: dà stelle ma non conta per la giornata perfetta</label>
+      <div id="eMaxBox"><label>Quante volte al giorno al massimo (tra i fratelli)</label><input id="eMax" type="number" min="1" max="10"></div>
       <div id="ePunTime"><label>Orario</label><input id="ePTime" type="time"></div>
     </fieldset>
     <fieldset id="eSchedBox">
@@ -745,6 +767,20 @@ const amtCls = a => a > 0 ? 'p' : a < 0 ? 'm' : 'z';
 const sign = a => (a > 0 ? '+' : '') + a;
 const rid = () => Math.random().toString(36).slice(2, 8);
 const docs = s => s.docs.map(d => ({id:d.id, ...d.data()}));
+// Firebase limita le verifiche delle regole per ogni salvataggio di gruppo (circa 20):
+// i salvataggi grandi (esempi, eliminazione famiglia) si dividono in gruppi piccoli
+const CHUNK = 6;
+function chunkedBatch(){
+  const ops = [];
+  return {
+    set: (r, d, o) => ops.push(b => o ? b.set(r, d, o) : b.set(r, d)),
+    update: (r, d) => ops.push(b => b.update(r, d)),
+    delete: r => ops.push(b => b.delete(r)),
+    async commit(){
+      for (let i = 0; i < ops.length; i += CHUNK){ const b = writeBatch(db); ops.slice(i, i + CHUNK).forEach(f => f(b)); await b.commit(); }
+    },
+  };
+}
 function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast.t); toast.t=setTimeout(()=>t.classList.remove('show'),3200); }
 const AUTH_MSG = {
   'auth/invalid-credential':'Credenziali errate', 'auth/wrong-password':'Credenziali errate', 'auth/user-not-found':'Credenziali errate',
@@ -793,7 +829,7 @@ function saveDevice(d){ device = d; d ? store('set', DEV_KEY, JSON.stringify(d))
 let fid = null, fam = null, me = null, busy = false;
 let view = null, owner = null, subView = 'day', day = today(), swapPick = null;
 const blank = () => ({ tasks:{}, sched:[], swaps:[], comps:[], rewards:[], verify:[], parents:[], invites:[],
-                       kidState:{}, ledger:{}, cards:{}, redemptions:{}, pending:{}, balance:{} });
+                       kidState:{}, ledger:{}, cards:{}, redemptions:{}, pending:{}, balance:{}, proposals:{}, propPending:{} });
 let data = blank();
 const loaded = {};
 let currentItems = [];
@@ -861,24 +897,25 @@ function reserved(k){
 
 function itemsFor(kid, ds, swaps){
   const wd = isoWeekday(ds);
-  const todays = data.sched.filter(s => s.active && data.tasks[s.taskId] && !data.tasks[s.taskId].punishment &&
+  const todays = data.sched.filter(s => s.active && data.tasks[s.taskId] && !data.tasks[s.taskId].punishment && !data.tasks[s.taskId].board &&
     (s.weekdays||[]).includes(wd) && s.startDate <= ds && (!s.endDate || s.endDate >= ds));
   const live = swaps.filter(x => x.date === ds && (x.status === 'pending' || x.status === 'accepted'));
   const swapBy = Object.fromEntries(live.map(x => [x.scheduleId, x]));
   const items = [];
   for (const s of todays){
     const sw = swapBy[s.id], task = data.tasks[s.taskId];
-    if (s.owner === kid && !(sw && sw.status === 'accepted')) items.push({key:s.id, task, time:s.startTime, s, sw, received:false});
-    else if (s.owner !== kid && sw?.status === 'accepted' && sw.toOwner === kid) items.push({key:s.id, task, time:s.startTime, s, sw, received:true});
+    const optional = !!task.optional;
+    if (s.owner === kid && !(sw && sw.status === 'accepted')) items.push({key:s.id, task, time:s.startTime, s, sw, received:false, optional});
+    else if (s.owner !== kid && sw?.status === 'accepted' && sw.toOwner === kid) items.push({key:s.id, task, time:s.startTime, s, sw, received:true, optional});
   }
   if (redOn(kid, ds)?.effect === 'extra'){
     Object.values(data.tasks).filter(t => t.punishment).forEach(t =>
-      items.push({key:`extra-${t.id}-${kid}`, task:t, time:t.defaultTime || T().evening, extra:true}));
+      items.push({key:`extra-${t.id}-${kid}`, task:t, time:t.defaultTime || T().evening, pun:true}));
   }
   return items.sort((a,b) => a.time.localeCompare(b.time));
 }
 function pointsFor(item, kid, ds){
-  if (item.extra) return 0;
+  if (item.pun) return 0;
   if (redOn(kid, ds)?.effect === 'nostars') return 0;
   return (item.task.points || 1) + (item.received ? R().swapFavor : 0);
 }
@@ -917,7 +954,8 @@ async function closeKid(kid){
   const comps = new Map(cp.docs.map(d => [d.id, d.data()]));
   const writes = [];
   for (let ds = from; ds <= yesterday; ds = addDays(ds, 1)){
-    const items = itemsFor(kid, ds, swaps);
+    // i compiti facoltativi non contano per giornata perfetta, serie e penalità
+    const items = itemsFor(kid, ds, swaps).filter(i => !i.optional);
     if (!items.length) continue;
     const noStars = redOn(kid, ds)?.effect === 'nostars';
     let done = 0;
@@ -1206,6 +1244,7 @@ function validateStep(step){
     if (!$('rName').value.trim()) return 'Scrivi il tuo nome';
     if (!/^\S+@\S+\.\S+$/.test($('rEmail').value.trim())) return 'Email non valida';
     if ($('rPass').value.length < 6) return 'La password deve avere almeno 6 caratteri';
+    if ($('rPass').value !== $('rPass2').value) return 'Le due password non coincidono';
   }
   if (step === 'family'){
     if (!$('rFam').value.trim()) return 'Dai un nome alla famiglia';
@@ -1228,10 +1267,11 @@ function validateStep(step){
 }
 async function createFamily(){
   const btn = $('rNext'); btn.disabled = true; busy = true;
-  let user = auth.currentUser;
+  let user = auth.currentUser, stepName = 'creazione dell\'account';
   try {
     const name = (user ? $('rName2') : $('rName')).value.trim();
     if (!user) user = (await createUserWithEmailAndPassword(auth, $('rEmail').value.trim(), $('rPass').value)).user;
+    stepName = 'creazione della famiglia';
     const famRef = doc(collection(db, 'families'));
     fid = famRef.id;
     const times = {...DEFAULTS.times, wake:$('rWake').value, bed:$('rBed').value};
@@ -1243,17 +1283,26 @@ async function createFamily(){
     await b.commit();
     me = {uid:user.uid, familyId:fid, role:'parent', name};
     fam = mergeCfg({name:famName, times});
+    stepName = 'creazione dei figli';
     const kids = [];
     for (const k of regKids){
       kids.push(await createKid(k));
       await updateDoc(famRef, {kids});           // salvato subito: se qualcosa va storto i figli già creati restano
     }
     fam.kids = kids;
+    stepName = 'caricamento degli esempi';
     if ($('rSeed').checked) await seed();
     regKids = [];
     store('set', `cdc.view.${fid}`, 'parent');
     toast('Famiglia creata! 🎉 Segui i "Primi passi"');
-  } catch(err){ fail(err); }
+  } catch(err){
+    console.error(err);
+    const famMade = ['creazione dei figli', 'caricamento degli esempi'].includes(stepName);
+    alert(`Qualcosa non è andato durante: ${stepName}.\n(${AUTH_MSG[err?.code] || err?.code || err?.message})\n\n` +
+      (famMade
+        ? 'La famiglia è stata creata comunque. Controlla in ⚙️ Setup i figli e, se mancano i compiti, usa "Carica compiti e premi di esempio" nella scheda Genitori.'
+        : 'Il tuo account è già creato: ricarica la pagina, entra con email e password e scegli "Crea una nuova famiglia".'));
+  }
   finally { busy = false; btn.disabled = false; fam = null; }
   if (auth.currentUser) await loadMe(auth.currentUser);
 }
@@ -1274,6 +1323,7 @@ $('joinForm').onsubmit = async e => {
   if (!auth.currentUser){
     if (!/^\S+@\S+\.\S+$/.test($('jEmail').value.trim())) return toast('Email non valida');
     if ($('jPass').value.length < 6) return toast('La password deve avere almeno 6 caratteri');
+    if ($('jPass').value !== $('jPass2').value) return toast('Le due password non coincidono');
   }
   if (!$('jConsent').checked) return toast('Per continuare serve il consenso all\'informativa');
   try {
@@ -1329,6 +1379,9 @@ function watchKid(k){
   on(col('kids',k,'cards'), s => { data.cards[k] = docs(s); loaded['cards_' + k] = true; });
   if (isParent()) on(query(col('kids',k,'redemptions'), where('status','==','pending')), s => { data.pending[k] = docs(s); });
   else on(query(col('kids',k,'redemptions'), orderBy('createdAt','desc'), limit(20)), s => { data.redemptions[k] = docs(s); });
+  // C: proposte dei ragazzi
+  if (isParent()) on(query(col('kids',k,'proposals'), where('status','==','pending')), s => { data.propPending[k] = docs(s); });
+  else on(query(col('kids',k,'proposals'), orderBy('createdAt','desc'), limit(20)), s => { data.proposals[k] = docs(s); });
   kidUnsubs[k] = u;
 }
 function watchDay(){
@@ -1437,13 +1490,104 @@ function renderDay(){
       ${list.length ? list.map(i => taskCard(i, compBy[i.key], isToday)).join('') : '<div class="empty">Nessun compito 🎉</div>'}
     </section>`;
   }).join('');
+  renderBoard(isToday);
 }
 
+/* =====================================================================
+   B: BACHECA DEI LAVORETTI EXTRA  ·  C: PROPOSTE DEI RAGAZZI
+   ===================================================================== */
+const boardTasks = () => Object.values(data.tasks).filter(t => t.board).sort((a,b) => a.title.localeCompare(b.title));
+const isBoardComp = c => (c.scheduleId || '').startsWith('x-');
+const boardCompsOf = taskId => data.comps.filter(c => isBoardComp(c) && c.taskId === taskId);
+const boardPoints = (t, kid, ds) => redOn(kid, ds)?.effect === 'nostars' ? 0 : (t.points || 1);
+function boardEarned(kid){
+  return data.comps.filter(c => isBoardComp(c) && c.doneBy === kid && !c.contested).reduce((a,c) => a + (c.points || 0), 0);
+}
+function renderBoard(isToday){
+  const prevText = $('propText')?.value || '', hadFocus = document.activeElement?.id === 'propText';
+  const list = boardTasks();
+  const props = (data.proposals[owner] || []).filter(p => p.date === day);
+  const canPropose = isToday && !isParent();
+  if (!list.length && !props.length && !canPropose){ $('board').innerHTML = ''; return; }
+  const cards = list.map(t => {
+    const used = boardCompsOf(t.id), max = t.maxPerDay || 1;
+    const mine = used.find(c => c.doneBy === owner);
+    const others = used.filter(c => c.doneBy !== owner).map(c => kidName(c.doneBy));
+    const pts = mine ? mine.points : boardPoints(t, owner, day);
+    let action = '';
+    if (mine?.contested) action = `<span class="chip" style="--c:var(--minus)">⚠️ Non era vero</span>`;
+    else if (mine) action = `<span class="chip" style="--c:var(--plus)">✓ fatto da te</span>${isToday ? ` <button class="btn" data-bundo="${mine.id}">Annulla</button>` : ''}`;
+    else if (used.length >= max) action = `<span class="chip" style="--c:var(--line)">già fatto${others.length ? ' da ' + esc(others.join(', ')) : ''}</span>`;
+    else if (isToday && !isParent()) action = `<button class="btn ok" data-bdo="${t.id}">✅ L'ho fatto!</button>`;
+    return `<div class="task board ${mine && !mine.contested ? 'done' : ''}" style="--c:var(--star)">
+      <div class="ticon" aria-hidden="true">${taskIcon(t)}</div>
+      <div class="body"><div class="title">${esc(t.title)}</div>
+        ${t.description ? `<div class="desc">${esc(t.description)}</div>` : ''}
+        <div class="meta"><span class="stars">+${pts} ⭐</span><span>oggi ${used.length}/${max}</span></div></div>
+      ${action ? `<div class="acts">${action}</div>` : ''}</div>`;
+  }).join('');
+  const st = {pending:'⏳ da approvare', approved:'✅ approvata', rejected:'❌ non approvata', cancelled:'annullata'};
+  const propRows = props.map(p => `<div class="row"><div class="body">💡 ${esc(p.title)}<br><small>${st[p.status] || ''}${p.status === 'approved' ? ` · +${p.points} ⭐` : ''}</small></div>
+      ${p.status === 'pending' && !isParent() ? `<button class="btn" data-punreq="${p.id}">Annulla</button>` : ''}</div>`).join('');
+  $('board').innerHTML = `
+    ${list.length ? `<div class="boardhead"><h2>🧹 Lavoretti extra</h2><small>quando servono · non contano per la giornata perfetta</small></div>${cards}` : ''}
+    ${canPropose || props.length ? `<div class="boardhead"><h2>💡 Hai fatto qualcos'altro di utile?</h2></div>
+      <div class="panel" style="margin:0">${canPropose ? `<p class="hint" style="margin:0 0 4px">Scrivilo qui: se mamma o papà approvano, decidono loro quante stelle darti.</p>
+        <form class="propform" id="propForm"><input id="propText" maxlength="80" placeholder="Es. Ho aiutato la nonna a portare la spesa" autocomplete="off">
+        <button class="btn primary" type="submit">Proponi</button></form>` : ''}${propRows}</div>` : ''}`;
+  if ($('propText')){ $('propText').value = prevText; if (hadFocus) $('propText').focus(); }
+}
+$('board').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const ds = day, now = serverTimestamp();
+  try {
+    if (b.dataset.bdo){
+      if (ds !== today()) return toast('Si possono segnare solo i lavoretti di oggi');
+      const t = data.tasks[b.dataset.bdo], max = t.maxPerDay || 1;
+      const taken = new Set(boardCompsOf(t.id).map(c => c.slot));
+      let slot = 1; while (taken.has(slot) && slot <= max) slot++;
+      if (slot > max) return toast('Per oggi è già stato fatto');
+      const key = `x-${t.id}-${slot}`, cid = `${key}_${ds}`, pts = boardPoints(t, owner, ds);
+      const batch = writeBatch(db);
+      batch.set(dref('completions', cid), {scheduleId:key, slot, taskId:t.id, date:ds, doneBy:owner, points:pts, board:true, doneAt:now});
+      batch.set(dref('kids', owner, 'ledger', `done_${cid}`), {kid:owner, amount:pts, type:'task', completionId:cid, date:ds, createdAt:now,
+        reason:`${t.title} (lavoretto extra)`});
+      try { await batch.commit(); }
+      catch(err){ return toast(err?.code === 'permission-denied' ? 'Qualcuno l\'ha appena segnato: riprova' : (AUTH_MSG[err?.code] || 'Errore')); }
+      toast(pts ? `Grazie! +${pts} ⭐` : 'Fatto! 💪');
+    }
+    if (b.dataset.bundo){
+      const cid = b.dataset.bundo;
+      const batch = writeBatch(db);
+      batch.delete(dref('completions', cid));
+      batch.delete(dref('kids', owner, 'ledger', `done_${cid}`));
+      await batch.commit();
+    }
+    if (b.dataset.punreq) await updateDoc(dref('kids', owner, 'proposals', b.dataset.punreq), {status:'cancelled'});
+  } catch(err){ fail(err); }
+});
+$('board').addEventListener('submit', async e => {
+  if (e.target.id !== 'propForm') return;
+  e.preventDefault();
+  const title = $('propText').value.trim();
+  if (title.length < 3) return toast('Scrivi cosa hai fatto');
+  const todays = (data.proposals[owner] || []).filter(p => p.date === today() && p.status !== 'cancelled');
+  if (todays.length >= 3) return toast('Massimo 3 proposte al giorno');
+  try {
+    $('propText').value = '';
+    await addDoc(col('kids', owner, 'proposals'), {kid:owner, title, date:today(), status:'pending', createdAt:serverTimestamp()});
+    toast('Proposta inviata a mamma e papà 💡');
+  } catch(err){ fail(err); }
+});
+
 function renderGoal(compBy, isToday){
-  const items = currentItems, total = items.length, td = today(), g = $('goal');
+  const all = currentItems, items = all.filter(i => !i.optional), total = items.length, td = today(), g = $('goal');
   g.style.setProperty('--k', kidColor(owner));
-  if (!total){ g.className = 'goal'; g.innerHTML = '<b>🎉 Oggi nessun compito!</b>'; return; }
   const isDone = i => compBy[i.key] && !compBy[i.key].contested;
+  const optDone = all.filter(i => i.optional && isDone(i));
+  const bonusStars = optDone.reduce((a,i) => a + (compBy[i.key].points || 0), 0) + boardEarned(owner);
+  const extraLine = bonusStars ? `<span class="stars">✨ +${bonusStars} ⭐ da facoltativi e lavoretti extra</span>` : '';
+  if (!total){ g.className = 'goal'; g.innerHTML = `<b>🎉 Oggi nessun compito obbligatorio!</b>${extraLine ? `<div class="gsub" style="margin-top:6px">${extraLine}</div>` : ''}`; return; }
   const done = items.filter(isDone).length, left = total - done;
   const pct = Math.round(done / total * 100);
   const noStars = redOn(owner, day)?.effect === 'nostars';
@@ -1468,20 +1612,21 @@ function renderGoal(compBy, isToday){
     </div>
     <div class="gsub"><span>✅ ${done} di ${total} fatti</span>
       <span class="stars">⭐ ${earned} guadagnate${day >= td ? ` su ${possible} possibili` : ''}</span></div>
+    ${extraLine ? `<div class="gsub" style="margin-top:4px">${extraLine}</div>` : ''}
     ${note ? `<div class="gnext">${note}</div>` : ''}`;
 }
 
 function taskCard(item, comp, isToday){
-  const {task:t, sw, received, extra} = item;
-  const cat = catOf(t), c = extra ? 'var(--extra)' : cat.color;
+  const {task:t, sw, received, pun} = item;
+  const cat = catOf(t), c = pun ? 'var(--extra)' : cat.color;
   const done = comp && !comp.contested;
   const pts = comp ? comp.points : pointsFor(item, owner, day);
   const pendingOut = sw && sw.status === 'pending' && sw.fromOwner === owner;
   const siblings = kidsList().filter(k => k.id !== owner);
-  const canSwap = !extra && !received && !comp && day >= today() && siblings.length;
+  const canSwap = !pun && !received && !comp && day >= today() && siblings.length;
   let action = '';
   if (comp?.contested) action = `<span class="chip" style="--c:var(--minus)">⚠️ Non era vero</span>`;
-  else if (extra) action = `<span class="chip" style="--c:var(--minus)">🟥 punizione</span>`;
+  else if (pun) action = `<span class="chip" style="--c:var(--minus)">🟥 punizione</span>`;
   else if (received) action = `<span class="chip" style="--c:${c}">da ${esc(kidName(item.s.owner))} 🤝</span>`;
   else if (pendingOut) action = `<button class="btn" data-cancel="${sw.id}">⏳ ${esc(kidName(sw.toOwner))} · annulla</button>`;
   else if (canSwap && swapPick === item.key)
@@ -1495,7 +1640,7 @@ function taskCard(item, comp, isToday){
     <div class="ticon" aria-hidden="true">${taskIcon(t)}</div>
     <div class="body"><div class="title">${esc(t.title)}</div>
       ${t.description ? `<div class="desc">${esc(t.description)}</div>` : ''}
-      <div class="meta"><span class="tm">🕐 ${item.time}</span>${extra ? '' : `<span class="chip" style="--c:${c}">${esc(cat.name)}</span>`}
+      <div class="meta"><span class="tm">🕐 ${item.time}</span>${item.optional ? '<span class="chip" style="--c:var(--star)">facoltativo</span>' : ''}${pun ? '' : `<span class="chip" style="--c:${c}">${esc(cat.name)}</span>`}
         <span class="stars">${pts ? `+${pts} ⭐` : '0 ⭐'}</span></div></div>
     ${action ? `<div class="acts">${action}</div>` : ''}</div>`;
 }
@@ -1521,7 +1666,7 @@ $('svDay').addEventListener('click', async e => {
         const pts = pointsFor(item, owner, ds);
         batch.set(dref('completions', cid), {scheduleId:item.key, taskId:item.task.id, date:ds, doneBy:owner, points:pts, doneAt:now});
         batch.set(dref('kids', owner, 'ledger', `done_${cid}`), {kid:owner, amount:pts, type:'task', completionId:cid, date:ds, createdAt:now,
-          reason: item.task.title + (item.received ? ' (scambio)' : '') + (item.extra ? ' (punizione)' : '')});
+          reason: item.task.title + (item.received ? ' (scambio)' : '') + (item.pun ? ' (punizione)' : '')});
         await batch.commit();
         toast(pts ? `Bravo! +${pts} ⭐` : 'Fatto! 💪');
       }
@@ -1591,6 +1736,10 @@ function gameRules(){
     `Compito non fatto a fine giornata: ${r.missed} ⭐.`,
     `Segnare fatto un compito che non hai fatto: restituisci le stelle, ne perdi ${r.cheatMultiplier} volte il valore, perdi la serie e prendi un <b>cartellino giallo 🟨</b>. Dire la verità conviene sempre!`,
     `${r.yellowsForRed} gialli in ${r.yellowWindowDays} giorni = <b>cartellino rosso 🟥</b>. Il primo rosso del trimestre: per ${r.redDays} giorni i compiti non danno stelle. Dal secondo rosso nel trimestre: ${r.redDays} giorni di compiti extra.`,
+    `I compiti <b>facoltativi ✨</b> danno stelle se li fai, ma non contano per la giornata perfetta: se li salti non perdi nulla.`,
+    `I <b>lavoretti extra 🧹</b> (es. la pattumiera) si fanno quando servono: dopo averlo fatto tocca "L'ho fatto!". Chi arriva prima lo segna; non contano per la giornata perfetta.`,
+    `Hai fatto qualcos'altro di utile? <b>Proponilo 💡</b>: se mamma e papà approvano, decidono loro quante stelle darti.`,
+    `Anche facoltativi e lavoretti extra si possono controllare: se non è vero, vale la regola del cartellino giallo.`,
     `Con le stelle compri i premi del negozio: mamma e papà approvano la richiesta.`,
   ];
 }
@@ -1605,16 +1754,22 @@ $('fDays').innerHTML = dayBoxes();
 setDate('fStart', today());
 let fIconManual = false;
 const syncForm = () => {
-  const existing = !!$('fTaskSel').value, pun = !existing && $('fPun').checked;
+  const existing = !!$('fTaskSel').value, kind = existing ? 'normal' : $('fKind').value;
+  const noSched = kind === 'pun' || kind === 'board';
   $('newTaskFields').hidden = existing;
-  $('ownerBox').hidden = pun; $('schedBox').hidden = pun;
+  $('ownerBox').hidden = noSched; $('schedBox').hidden = noSched;
+  $('timeBox').hidden = kind === 'board';
+  $('fMaxBox').hidden = kind !== 'board';
+  $('fPts').disabled = kind === 'pun';
 };
-$('fTaskSel').onchange = syncForm; $('fPun').onchange = syncForm;
+$('fTaskSel').onchange = syncForm; $('fKind').onchange = syncForm; syncForm();
 $('fTitle').addEventListener('input', () => { if (!fIconManual) $('fIcon').textContent = suggestIcon($('fTitle').value) || '⭐'; });
 $('fIcon').onclick = () => pickIcon(TASK_ICONS, $('fIcon').textContent, ic => { $('fIcon').textContent = ic; fIconManual = true; });
 const kidOpts = () => kidsList().map(k => `<option value="${k.id}">${k.avatar || ''} ${esc(k.name)}</option>`).join('');
 function keepSel(id, html){ const s = $(id), cur = s.value; s.innerHTML = html; if ([...s.options].some(o => o.value === cur)) s.value = cur; }
 
+const propStars = {};
+$('pProps').addEventListener('change', e => { const v = e.target.dataset.pstars; if (v) propStars[v.split('|')[1]] = +e.target.value; });
 function renderParent(){
   const td = today(), r = R();
   renderTodo();
@@ -1638,8 +1793,9 @@ function renderParent(){
   const ver = data.verify.filter(c => ms(c.doneAt) >= lim && kidById(c.doneBy)).sort((a,b) => ms(b.doneAt) - ms(a.doneAt));
   $('pVerify').innerHTML = ver.length ? ver.map(c => {
     const t = data.tasks[c.taskId];
+    const tag = (c.scheduleId || '').startsWith('x-') ? ' · 🧹 bacheca' : t?.optional ? ' · ✨ facoltativo' : '';
     return `<div class="row"><div class="body">${taskIcon(t)} <b style="color:${kidColor(c.doneBy)}">${esc(kidName(c.doneBy))}</b> · ${esc(t?.title ?? '?')}
-      <br><small>${fmtDate(c.date)} · +${c.points} ⭐</small></div>
+      <br><small>${fmtDate(c.date)} · +${c.points} ⭐${tag}</small></div>
       ${c.contested ? '<span class="chip" style="--c:var(--minus)">🟨 contestato</span>'
                     : `<button class="btn no" data-contest="${c.id}">Non è vero!</button>`}</div>`;
   }).join('') : '<div class="empty">Nessun compito da verificare</div>';
@@ -1651,7 +1807,7 @@ function renderParent(){
       <span><button class="btn ok" data-approve="${x.kid}|${x.id}">Approva</button> <button class="btn no" data-deny="${x.kid}|${x.id}">Rifiuta</button></span></div>`).join('')
     : '<div class="empty">Nessuna richiesta</div>';
 
-  const tasks = Object.values(data.tasks).filter(t => !t.punishment).sort((a,b) => a.title.localeCompare(b.title));
+  const tasks = Object.values(data.tasks).filter(t => !t.punishment && !t.board).sort((a,b) => a.title.localeCompare(b.title));
   keepSel('fTaskSel', '<option value="">➕ Nuovo compito…</option>' +
     tasks.map(x => `<option value="${x.id}">${taskIcon(x)} ${esc(x.title)} · ${esc(catOf(x).name)} · ⭐${x.points||1}</option>`).join(''));
   keepSel('fCat', fam.categories.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join(''));
@@ -1667,6 +1823,23 @@ function renderParent(){
       : `<p class="empty">Prima aggiungi i figli dal ⚙️ Setup.</p>`) +
     kidsList().map(k => `<h3 style="color:${k.color}">${k.avatar || ''} ${esc(k.name)}</h3>${schedRows(sched.filter(x => x.owner === k.id))}`).join('') +
     (orphan.length ? `<h3>Assegnati a figli rimossi</h3>${schedRows(orphan)}` : '');
+
+  // B: bacheca
+  const bl = boardTasks();
+  $('boardList').innerHTML = bl.length ? bl.map(t => `
+    <div class="sched click" data-editpun="${t.id}"><span class="ticon" style="--c:var(--star);width:40px;height:40px;font-size:1.3rem">${taskIcon(t)}</span>
+      <div class="body">${esc(t.title)} <span class="stars">⭐${t.points || 1}</span>
+        <div class="sub2">al massimo ${t.maxPerDay || 1} ${(t.maxPerDay || 1) === 1 ? 'volta' : 'volte'} al giorno, tra tutti i figli</div></div>
+      <div class="acts inl"><button class="btn icon" data-editpun="${t.id}" aria-label="Modifica" title="Modifica">✏️</button></div></div>`).join('')
+    : '<div class="empty">Nessun lavoretto. Aggiungine con "Nuovo compito" › Tipo "Lavoretto extra in bacheca".</div>';
+  // C: proposte da approvare
+  const props = kidsList().flatMap(k => data.propPending[k.id] || []).sort((a,b) => ms(a.createdAt) - ms(b.createdAt));
+  $('pProps').innerHTML = props.length ? props.map(p => `
+    <div class="row"><div class="body">${kidAvatar(p.kid)} <b>${esc(kidName(p.kid))}</b>: ${esc(p.title)}<br><small>${fmtDate(p.date)}</small></div>
+      <span><select data-pstars="${p.kid}|${p.id}" style="width:auto;min-height:38px;padding:6px" aria-label="Stelle">
+        ${[1,2,3,4,5].map(n => `<option value="${n}" ${n === (propStars[p.id] || 1) ? 'selected' : ''}>⭐ ${n}</option>`).join('')}</select>
+      <button class="btn ok" data-papprove="${p.kid}|${p.id}">Approva</button> <button class="btn no" data-preject="${p.kid}|${p.id}">No</button></span></div>`).join('')
+    : '<div class="empty">Nessuna proposta da valutare</div>';
 
   const pun = Object.values(data.tasks).filter(t => t.punishment).sort((a,b) => (a.defaultTime||'').localeCompare(b.defaultTime||''));
   $('punList').innerHTML = pun.length ? pun.map(t => `
@@ -1709,7 +1882,7 @@ function schedRows(list){
     <div class="sched click ${x.active?'':'off'}" data-edit="${x.id}">
       <span class="ticon" style="--c:${cat.color};width:40px;height:40px;font-size:1.3rem">${taskIcon(t)}</span>
       <div class="body"><b>${x.startTime}</b> ${esc(t.title)} <span class="stars">⭐${t.points||1}</span>
-        <div class="sub2"><span class="chip" style="--c:${cat.color}">${esc(cat.name)}</span> ${daysText(x.weekdays)}${x.startDate > td ? ' · dal ' + fmtDate(x.startDate) : ''}${x.endDate ? ' · fino al ' + fmtDate(x.endDate) : ''}${x.active ? '' : ' · ⏸️ sospeso'}</div></div>
+        <div class="sub2"><span class="chip" style="--c:${cat.color}">${esc(cat.name)}</span>${t.optional ? ' <span class="chip" style="--c:var(--star)">facoltativo</span>' : ''} ${daysText(x.weekdays)}${x.startDate > td ? ' · dal ' + fmtDate(x.startDate) : ''}${x.endDate ? ' · fino al ' + fmtDate(x.endDate) : ''}${x.active ? '' : ' · ⏸️ sospeso'}</div></div>
       <div class="acts inl"><button class="btn icon" data-edit="${x.id}" aria-label="Modifica" title="Modifica">✏️</button></div>
     </div>`; }).join('') || '<div class="empty">Nessun compito</div>';
 }
@@ -1720,8 +1893,10 @@ function openEdit({schedId, taskId}){
   const s = schedId ? data.sched.find(x => x.id === schedId) : null;
   const t = data.tasks[s ? s.taskId : taskId]; if (!t) return;
   editing = {schedId: s?.id, taskId: t.id};
-  const pun = !!t.punishment;
-  $('eHead').textContent = pun ? '✏️ Compito punizione' : `✏️ ${t.title}`;
+  const pun = !!t.punishment, board = !!t.board;
+  $('eHead').textContent = pun ? '✏️ Compito punizione' : board ? '✏️ Lavoretto extra' : `✏️ ${t.title}`;
+  $('eOptBox').hidden = pun || board; $('eOptional').checked = !!t.optional;
+  $('eMaxBox').hidden = !board; $('eMax').value = t.maxPerDay || 1;
   $('eTitle').value = t.title; $('eDesc').value = t.description || '';
   $('eIcon').textContent = taskIcon(t);
   $('eCat').innerHTML = fam.categories.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
@@ -1754,15 +1929,17 @@ $('eToggle').onclick = async () => {
 };
 $('eDelete').onclick = async () => {
   const pun = !editing.schedId;
-  if (!confirm(pun ? 'Eliminare questo compito punizione?' : 'Eliminare questa assegnazione? Lo storico delle stelle resta.')) return;
+  if (!confirm(pun ? 'Eliminare questo compito? Lo storico delle stelle resta.' : 'Eliminare questa assegnazione? Lo storico delle stelle resta.')) return;
   try { await deleteDoc(pun ? dref('tasks', editing.taskId) : dref('schedule', editing.schedId)); $('editDlg').close(); toast('Eliminato'); }
   catch(err){ fail(err); }
 };
 $('eSave').onclick = async () => {
-  const t = data.tasks[editing.taskId], pun = !!t.punishment;
+  const t = data.tasks[editing.taskId], pun = !!t.punishment, board = !!t.board;
   const title = $('eTitle').value.trim();
   if (!title) return toast('Il titolo non può essere vuoto');
   const taskUpd = {title, description:$('eDesc').value.trim(), icon:$('eIcon').textContent};
+  if (board) taskUpd.maxPerDay = Math.min(10, Math.max(1, parseInt($('eMax').value, 10) || 1));
+  else if (!pun) taskUpd.optional = $('eOptional').checked;
   if (pun){
     const pt = $('ePTime').value;
     if (!pt || pt < T().wake || pt > T().bed) return toast(`Orario tra ${T().wake} e ${T().bed}`);
@@ -1793,7 +1970,9 @@ async function contest(compId){
   const t = data.tasks[c.taskId], base = t?.points || 1, kid = c.doneBy, td = today(), now = serverTimestamp(), r = R();
   const lost = (c.points || 0) + r.cheatMultiplier * base;
   if (!confirm(`${kidName(kid)} perde ${lost} ⭐, la serie e prende un cartellino giallo. Confermi?`)) return;
-  const perfect = await getDoc(dref('kids', kid, 'ledger', `perfect_${kid}_${c.date}`));
+  // un facoltativo o un lavoretto extra falso non toglie la giornata perfetta (non ne faceva parte)
+  const perfect = (t?.optional || t?.board || (c.scheduleId || '').startsWith('x-')) ? {exists: () => false}
+    : await getDoc(dref('kids', kid, 'ledger', `perfect_${kid}_${c.date}`));
   const batch = writeBatch(db);
   batch.update(dref('completions', compId), {contested:true, contestedAt:now});
   batch.set(dref('kids', kid, 'ledger', `cheat_${compId}`), {kid, amount:-lost, type:'cheat', date:td, createdAt:now,
@@ -1835,21 +2014,33 @@ $('parentView').addEventListener('click', async e => {
     }
     if (d.deny){ const [kid, id] = d.deny.split('|'); await updateDoc(dref('kids', kid, 'redemptions', id), {status:'rejected', respondedAt:serverTimestamp()}); }
     if (d.delrew && confirm('Eliminare questo premio?')) await deleteDoc(dref('rewards', d.delrew));
+    if (d.papprove){
+      const [kid, id] = d.papprove.split('|');
+      const p = (data.propPending[kid] || []).find(x => x.id === id); if (!p) return;
+      const pts = propStars[id] || 1;
+      const batch = writeBatch(db);
+      batch.update(dref('kids', kid, 'proposals', id), {status:'approved', points:pts, respondedAt:serverTimestamp()});
+      batch.set(dref('kids', kid, 'ledger', `prop_${id}`), {kid, amount:pts, type:'proposal', reason:`Proposta: ${p.title}`, date:p.date, createdAt:serverTimestamp()});
+      await batch.commit(); toast(`+${pts} ⭐ a ${kidName(kid)} 💡`);
+    }
+    if (d.preject){ const [kid, id] = d.preject.split('|'); await updateDoc(dref('kids', kid, 'proposals', id), {status:'rejected', respondedAt:serverTimestamp()}); }
   } catch(err){ fail(err); }
 });
 
 $('newForm').onsubmit = async e => {
   e.preventDefault();
+  const existing = $('fTaskSel').value, kind = existing ? 'normal' : $('fKind').value;
+  const pun = kind === 'pun', board = kind === 'board';
   const time = $('fTime').value;
-  if (!time || time < T().wake || time > T().bed) return toast(`Orario tra ${T().wake} e ${T().bed}`);
-  const existing = $('fTaskSel').value, pun = !existing && $('fPun').checked;
+  if (!board && (!time || time < T().wake || time > T().bed)) return toast(`Orario tra ${T().wake} e ${T().bed}`);
   const weekdays = checkedDays('fDays');
   const startDate = dateVal('fStart'), endDate = dateVal('fEnd');
-  if (!pun && !weekdays.length) return toast('Scegli almeno un giorno');
-  if (!pun && !kidsList().length) return toast('Prima aggiungi i figli dal Setup');
-  if (!pun && startDate === null) return toast('Data "Dal" non valida: usa gg/mm/aaaa');
-  if (!pun && endDate === null) return toast('Data "Al" non valida: usa gg/mm/aaaa');
-  if (!pun && endDate && endDate < (startDate || today())) return toast('La data "Al" è prima della data "Dal"');
+  const sched = !pun && !board;
+  if (sched && !weekdays.length) return toast('Scegli almeno un giorno');
+  if (sched && !kidsList().length) return toast('Prima aggiungi i figli dal Setup');
+  if (sched && startDate === null) return toast('Data "Dal" non valida: usa gg/mm/aaaa');
+  if (sched && endDate === null) return toast('Data "Al" non valida: usa gg/mm/aaaa');
+  if (sched && endDate && endDate < (startDate || today())) return toast('La data "Al" è prima della data "Dal"');
   try {
     let taskId = existing;
     if (!taskId){
@@ -1857,9 +2048,11 @@ $('newForm').onsubmit = async e => {
       if (!title) return toast('Scrivi il titolo');
       const t = {title, icon:$('fIcon').textContent, description:$('fDesc').value.trim(), categoryId:$('fCat').value, points:+$('fPts').value, createdAt:serverTimestamp()};
       if (pun) Object.assign(t, {punishment:true, defaultTime:time, points:0});
+      if (board) Object.assign(t, {board:true, maxPerDay:Math.min(10, Math.max(1, parseInt($('fMax').value, 10) || 1))});
+      if (kind === 'optional') t.optional = true;
       taskId = (await addDoc(col('tasks'), t)).id;
     }
-    if (!pun){
+    if (sched){
       const o = $('fOwner').value;
       const batch = writeBatch(db);
       for (const ow of (o === 'all' ? kidsList().map(k => k.id) : [o]))
@@ -1867,7 +2060,7 @@ $('newForm').onsubmit = async e => {
           startDate:startDate || today(), endDate:endDate || null, createdAt:serverTimestamp()});
       await batch.commit();
     }
-    toast(pun ? 'Compito punizione salvato' : 'Compito assegnato ✅');
+    toast(pun ? 'Compito punizione salvato' : board ? 'Lavoretto aggiunto alla bacheca 🧹' : 'Compito assegnato ✅');
     e.target.reset(); setDate('fStart', today());
     $('fDays').innerHTML = dayBoxes(); $('fIcon').textContent = '⭐'; fIconManual = false;
     syncForm();
@@ -1901,17 +2094,21 @@ async function seed(){
     ['Doccia e pigiama','Personali',1,'20:30',ALL,'🚿'], ['Lavare i denti','Personali',1,'20:50',ALL,'🪥'],
   ];
   const single = [['Apparecchiare la tavola','Casa',2,'19:15',ALL,'🍽️',ids[0]], ['Sparecchiare la cena','Casa',2,'20:00',ALL,'🍴',ids[1 % ids.length]]];
-  const punishment = [['Pulire il lavandino del bagno','17:30','🧽'], ['Svuotare la lavastoviglie','18:45','🍽️'], ['Leggere 20 minuti','19:30','📖']];
+  const punishment = [['Pulire il lavandino del bagno','17:30','🧽'], ['Svuotare la lavastoviglie','18:45','🍽️'], ['Riordinare l\'ingresso','19:30','🧹']];
+  const boardEx = [['Buttare la pattumiera','Casa',2,1,'🗑️'], ['Aiutare a stendere il bucato','Casa',1,1,'🧺'], ['Dare l\'acqua alle piante','Casa',1,1,'🪴']];
   const rewards = [['30 minuti di videogiochi',20], ['Scegliere il film della sera',30], ['Scegliere la cena',40], ['Gelato',50], ['5 €',150]];
-  const batch = writeBatch(db), start = today(), now = serverTimestamp();
-  const add = (title, category, points, time, weekdays, icon, owners) => {
+  const batch = chunkedBatch(), start = today(), now = serverTimestamp();
+  const add = (title, category, points, time, weekdays, icon, owners, optional) => {
     const t = doc(col('tasks'));
-    batch.set(t, {title, icon, categoryId:cat(category), points, createdAt:now});
+    batch.set(t, {title, icon, categoryId:cat(category), points, createdAt:now, ...(optional ? {optional:true} : {})});
     owners.forEach(ow => batch.set(doc(col('schedule')),
       {taskId:t.id, owner:ow, startTime:clamp(time), weekdays, active:true, startDate:start, endDate:null, createdAt:now}));
   };
   everyone.forEach(([a,b,c,d,e,f]) => add(a,b,c,d,e,f, ids));
   single.forEach(([a,b,c,d,e,f,o]) => add(a,b,c,d,e,f,[o]));
+  add('Leggere un libro','Scuola',1,'20:00',SCHOOL,'📖', ids, true);          // A: facoltativo
+  boardEx.forEach(([title, category, points, maxPerDay, icon]) => batch.set(doc(col('tasks')),   // B: bacheca
+    {title, icon, categoryId:cat(category), points, board:true, maxPerDay, createdAt:now}));
   punishment.forEach(([title, time, icon]) => batch.set(doc(col('tasks')),
     {title, icon, categoryId:cat('Casa'), points:0, punishment:true, defaultTime:clamp(time), createdAt:now}));
   if (!data.rewards.length) rewards.forEach(([title, cost]) => batch.set(doc(col('rewards')), {title, cost, active:true, createdAt:now}));
@@ -2126,13 +2323,13 @@ $('delFam').onclick = async () => {
     for (const c of ['tasks','schedule','swaps','completions','rewards']) (await getDocs(C(c))).docs.forEach(d => refs.push(d.ref));
     const kidIds = new Set([...kidsList().map(k => k.id), ...(await getDocs(C('kids'))).docs.map(d => d.id)]);
     for (const k of kidIds){
-      for (const c of ['ledger','cards','redemptions']) (await getDocs(C('kids', k, c))).docs.forEach(d => refs.push(d.ref));
+      for (const c of ['ledger','cards','redemptions','proposals']) (await getDocs(C('kids', k, c))).docs.forEach(d => refs.push(d.ref));
       refs.push(doc(db, 'families', myFid, 'kids', k));
     }
     (await getDocs(query(collection(db,'invites'), where('familyId','==',myFid)))).docs.forEach(d => refs.push(d.ref));
     (await getDocs(query(collection(db,'members'), where('familyId','==',myFid)))).docs.forEach(d => { if (d.id !== myUid) refs.push(d.ref); });
     refs.push(doc(db, 'families', myFid));
-    for (let i = 0; i < refs.length; i += 400){ const b = writeBatch(db); refs.slice(i, i + 400).forEach(r => b.delete(r)); await b.commit(); }
+    const del = chunkedBatch(); refs.forEach(r => del.delete(r)); await del.commit();
     await deleteDoc(doc(db, 'members', myUid));
     if (device?.fid === myFid) saveDevice(null);
     Object.keys(localStorage).filter(k => k.startsWith('cdc.') && k.includes(myFid)).forEach(k => store('del', k));
@@ -2162,6 +2359,8 @@ function openHelp(){
       <li>Fai i compiti e tocca il <b>cerchio</b> accanto a ognuno: ricevi subito le ⭐.</li>
       <li>Fatti tutti? È una <b>giornata perfetta</b>: stelle bonus! Più giorni di fila = serie 🔥.</li>
       <li>Non hai voglia di un compito? <b>🔄 Chiedi</b> a un fratello: se accetta, lo fa lui e guadagna le stelle.</li>
+      <li>Sotto i compiti trovi i <b>🧹 lavoretti extra</b>: fai la pattumiera o un altro lavoretto e tocca "L'ho fatto!" per avere stelle in più.</li>
+      <li>Hai aiutato in un altro modo? Scrivilo in <b>💡 Hai fatto qualcos'altro?</b>: se mamma e papà sono d'accordo, ti danno delle stelle.</li>
       <li>Con le stelle compri i premi nel <b>🎁 Negozio</b>.</li>
       <li>Attenzione: segnare un compito che non hai fatto costa caro (cartellino giallo 🟨). Dire la verità conviene sempre!</li></ol>
       ${fam ? `<p><b>Le regole complete:</b></p><ul>${gameRules().map(x => `<li>${x}</li>`).join('')}</ul>` : ''}
@@ -2192,6 +2391,19 @@ function openHelp(){
     <details><summary>⭐ Il gioco: stelle, serie e cartellini</summary>
       <ul>${fam ? gameRules().map(x => `<li>${x}</li>`).join('') : ''}</ul>
       <p>Tutti i numeri si possono cambiare in ⚙️ Setup › Regole del gioco.</p></details>
+    <details><summary>🧩 Tre modi per i compiti "fuori programma"</summary>
+      <p>Non tutto ha un giorno fisso. Per non rovinare la giornata perfetta ci sono tre strumenti, da usare insieme:</p>
+      <p><b>A · Compito facoltativo ✨</b> — un compito pianificato (con giorni e orario) che dà stelle se fatto, ma <b>non conta</b> per giornata perfetta, serie e penalità.
+        Usalo per cose che di solito capitano in certi giorni ma non sempre (es. "aiutare con la spesa del sabato").
+        Come: Nuovo compito › Tipo <b>Facoltativo</b>; oppure ✏️ su un compito esistente › spunta "Facoltativo".</p>
+      <p><b>B · Bacheca dei lavoretti extra 🧹</b> — lavoretti <b>senza giorno né orario</b> (es. buttare la pattumiera). Compaiono sotto i compiti di ogni figlio;
+        chi lo fa tocca "L'ho fatto!" e riceve subito le stelle. Decidi quante volte al giorno si può fare <b>in tutto</b> (es. 1): chi arriva prima lo segna e per gli altri risulta "già fatto".
+        Non contano per la giornata perfetta e si contestano come gli altri compiti.
+        Come: Nuovo compito › Tipo <b>Lavoretto extra in bacheca</b>; li trovi e modifichi nel pannello "Bacheca lavoretti extra".</p>
+      <p><b>C · Proposte dei ragazzi 💡</b> — per le iniziative spontanee che non sono in nessuna lista. Il figlio scrive cosa ha fatto (max 3 proposte al giorno);
+        <b>nessuna stella finché un genitore non approva</b>. Nel pannello "Proposte dei ragazzi" scegli quante stelle dare (1–5) e premi Approva, oppure No.
+        Se una proposta torna spesso, conviene aggiungerla alla bacheca.</p>
+      <p>Durante il primo cartellino rosso del trimestre anche facoltativi e lavoretti extra non danno stelle; le proposte le valuti tu.</p></details>
     <details><summary>🔍 Controlli: "Non è vero!"</summary>
       <p>Nella scheda Genitori, "Da verificare" mostra i compiti spuntati nelle ultime ${fam?.rules?.contestHours ?? 48} ore.
       Se scopri che uno non è stato fatto, premi <b>Non è vero!</b>: il figlio restituisce le stelle, ne perde altre, perde la serie e prende un cartellino giallo.
