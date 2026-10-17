@@ -6,6 +6,13 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio aggiornare insieme: `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `index.html`, `VERSION` in `sw.js`,
 l'intestazione di `firestore.rules` (se le regole cambiano) e questo file.
 
+## 0.8.0 · 17/10/2026
+- Pagina Genitori divisa in schede: Situazione (con bonus a mano), Da verificare, Richieste premi (con catalogo), Proposte ragazzi, Gestione compiti, Compiti assegnati, Bacheca extra, Compiti recupero.
+- Numero rosso sulle schede con cose da decidere (verifiche, premi, proposte).
+- "Primi passi" richiudibile; resta aperto finché manca qualcosa, poi ricorda la scelta.
+- In "Da verificare" ogni voce mostra il tempo rimasto per contestarla (in rosso sotto le 6 ore), ordinate dalla più vicina alla scadenza.
+- Regole Firestore invariate (0.7.0).
+
 ## 0.7.2 · 17/10/2026
 - I "compiti punizione" si chiamano ora **compiti di recupero 🔄**: stesso meccanismo (solo durante il cartellino rosso, senza stelle), tono più educativo.
 - Lo scambio tra fratelli usa l'icona 🤝 ("Chiedi a…") per non confondersi con il recupero.

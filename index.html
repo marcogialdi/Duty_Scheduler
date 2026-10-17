@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Compiti di casa · versione 0.7.2 · 17/10/2026 (vedi APP_VERSION nello script) -->
+<!-- Compiti di casa · versione 0.8.0 · 17/10/2026 (vedi APP_VERSION nello script) -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
@@ -286,6 +286,19 @@
   .appver{text-align:center;padding:8px 16px calc(24px + env(safe-area-inset-bottom))}
   .appver .link{font-size:.75rem;margin:0}
   .kdesc{display:block;color:var(--muted);font-size:.8rem;margin-top:4px}
+  /* schede della pagina Genitori */
+  .ptabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 12px;padding:2px 0 4px;position:sticky;top:0;z-index:5;background:var(--bg)}
+  .ptabs::-webkit-scrollbar{display:none}
+  .ptabs button{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:9px 12px;min-height:40px;border:1px solid var(--line);border-radius:999px;
+                background:var(--card);color:var(--ink);font-size:.88rem;cursor:pointer;white-space:nowrap}
+  .ptabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .badge{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--minus);color:#fff;font-size:.72rem;font-weight:700;display:inline-grid;place-items:center}
+  @media (min-width:700px){ .ptabs{flex-wrap:wrap;overflow:visible} }
+  .todobox summary{cursor:pointer;display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:1.02rem}
+  .todobox[open] summary{margin-bottom:8px}
+  .todocount{font-size:.8rem;color:var(--muted);font-weight:400}
+  .due{font-size:.78rem;color:var(--muted)}
+  .due.soon{color:var(--minus);font-weight:600}
 </style>
 </head>
 <body>
@@ -437,13 +450,52 @@
     <!-- vista genitori -->
     <div id="parentView" hidden>
       <div id="pDevBanner"></div>
-      <div class="panel" id="pTodo" hidden></div>
+      <details class="panel todobox" id="pTodo" hidden></details>
+      <nav class="ptabs" id="ptabs" aria-label="Sezioni genitori">
+        <button data-pt="sit">📊 Situazione</button>
+        <button data-pt="ver">🔍 Da verificare<span class="badge" id="bVer"></span></button>
+        <button data-pt="prem">🎁 Richieste premi<span class="badge" id="bPrem"></span></button>
+        <button data-pt="prop">💡 Proposte ragazzi<span class="badge" id="bProp"></span></button>
+        <button data-pt="new">➕ Gestione compiti</button>
+        <button data-pt="ass">📅 Compiti assegnati</button>
+        <button data-pt="board">🧹 Bacheca extra</button>
+        <button data-pt="rec">🔄 Compiti recupero</button>
+      </nav>
+      <section class="psec" data-ps="sit" hidden>
       <div class="panel"><h2>📊 Situazione</h2><div class="kidsum" id="pSummary"></div></div>
+      <div class="panel">
+        <h2>✍️ Bonus o penalità a mano</h2>
+        <form id="manualForm">
+          <div class="grid2">
+            <div><label>A chi</label><select id="mKid"></select></div>
+            <div><label>Stelle (negativo = togli)</label><input id="mAmt" type="number" value="5" required></div>
+          </div>
+          <label>Motivo</label><input id="mReason" placeholder="Es. Ha aiutato la nonna con la spesa" required>
+          <div style="margin-top:10px"><button class="btn primary" type="submit">Registra</button></div>
+        </form>
+      </div>
+      </section>
+      <section class="psec" data-ps="ver" hidden>
       <div class="panel"><h2>🔍 Da verificare</h2><p class="hint" id="pVerifyHint"></p><div id="pVerify"></div></div>
+      </section>
+      <section class="psec" data-ps="prem" hidden>
       <div class="panel"><h2>🎁 Richieste premi</h2><div id="pRedeem"></div></div>
+      <div class="panel" id="pShop">
+        <h2>🛍️ Catalogo premi</h2>
+        <div id="pRewards"></div>
+        <form id="rewardForm" class="grid3" style="margin-top:10px">
+          <div><label>Premio</label><input id="rTitle" placeholder="Es. 30 minuti di videogiochi" required></div>
+          <div><label>Costo ⭐</label><input id="rCost" type="number" min="1" value="20" required></div>
+          <button class="btn primary" type="submit">Aggiungi</button>
+        </form>
+      </div>
+      </section>
+      <section class="psec" data-ps="prop" hidden>
       <div class="panel"><h2>💡 Proposte dei ragazzi</h2><p class="hint">Cose utili fatte di loro iniziativa: le stelle arrivano solo se approvi, e decidi tu quante.</p><div id="pProps"></div></div>
+      </section>
+      <section class="psec" data-ps="new" hidden>
       <div class="panel" id="pNew">
-        <h2>Nuovo compito</h2>
+        <h2>➕ Nuovo compito</h2>
         <form id="newForm">
           <label>Compito</label>
           <select id="fTaskSel"><option value="">➕ Nuovo compito…</option></select>
@@ -485,29 +537,16 @@
           <div style="margin-top:14px"><button class="btn primary" type="submit">Salva</button></div>
         </form>
       </div>
-      <div class="panel"><h2>Compiti assegnati</h2><div id="schedList"></div></div>
+      </section>
+      <section class="psec" data-ps="ass" hidden>
+      <div class="panel"><h2>📅 Compiti assegnati</h2><p class="hint">Tocca un compito per modificarlo, sospenderlo, cambiarne il tipo o eliminarlo.</p><div id="schedList"></div></div>
+      </section>
+      <section class="psec" data-ps="board" hidden>
       <div class="panel"><h2>🧹 Bacheca lavoretti extra</h2><p class="hint">Lavoretti senza giorno fisso (es. pattumiera): il figlio li segna dopo averli fatti. Non contano per la giornata perfetta.</p><div id="boardList"></div></div>
+      </section>
+      <section class="psec" data-ps="rec" hidden>
       <div class="panel"><h2>🔄 Compiti di recupero</h2><div id="punList"></div></div>
-      <div class="panel" id="pShop">
-        <h2>🛍️ Catalogo premi</h2>
-        <div id="pRewards"></div>
-        <form id="rewardForm" class="grid3" style="margin-top:10px">
-          <div><label>Premio</label><input id="rTitle" placeholder="Es. 30 minuti di videogiochi" required></div>
-          <div><label>Costo ⭐</label><input id="rCost" type="number" min="1" value="20" required></div>
-          <button class="btn primary" type="submit">Aggiungi</button>
-        </form>
-      </div>
-      <div class="panel">
-        <h2>✍️ Bonus o penalità a mano</h2>
-        <form id="manualForm">
-          <div class="grid2">
-            <div><label>A chi</label><select id="mKid"></select></div>
-            <div><label>Stelle (negativo = togli)</label><input id="mAmt" type="number" value="5" required></div>
-          </div>
-          <label>Motivo</label><input id="mReason" placeholder="Es. Ha aiutato la nonna con la spesa" required>
-          <div style="margin-top:10px"><button class="btn primary" type="submit">Registra</button></div>
-        </form>
-      </div>
+      </section>
     </div>
 
     <!-- setup -->
@@ -692,9 +731,10 @@ const APP_NAME = 'Compiti di casa';
    Nuove funzioni → si aumenta il secondo numero; solo correzioni → il terzo.
    A ogni rilascio: aggiorna APP_VERSION, APP_DATE e CHANGELOG qui, VERSION in sw.js,
    l'intestazione di firestore.rules (se cambiate) e il file CHANGELOG.md. */
-const APP_VERSION = '0.7.2';
+const APP_VERSION = '0.8.0';
 const APP_DATE = '2026-10-17';
 const CHANGELOG = [
+  ['0.8.0', '2026-10-17', 'Pagina Genitori divisa in schede con contatori; "Primi passi" richiudibile; scadenza visibile per ogni compito da verificare.'],
   ['0.7.2', '2026-10-17', 'I "compiti punizione" si chiamano ora "compiti di recupero" 🔄; lo scambio tra fratelli usa 🤝.'],
   ['0.7.1', '2026-10-17', 'Nella modifica di un compito si può cambiare il tipo (pianificato, facoltativo, lavoretto extra, recupero).'],
   ['0.7.0', '2026-10-17', 'Compiti facoltativi, bacheca dei lavoretti extra e proposte dei ragazzi; numero di versione nell\'app.'],
@@ -1808,6 +1848,21 @@ $('fIcon').onclick = () => pickIcon(TASK_ICONS, $('fIcon').textContent, ic => { 
 const kidOpts = () => kidsList().map(k => `<option value="${k.id}">${k.avatar || ''} ${esc(k.name)}</option>`).join('');
 function keepSel(id, html){ const s = $(id), cur = s.value; s.innerHTML = html; if ([...s.options].some(o => o.value === cur)) s.value = cur; }
 
+/* schede della pagina Genitori */
+let ptab = store('get', 'cdc.ptab') || 'sit';
+function showPtab(k, quiet){
+  if (!document.querySelector(`.psec[data-ps="${k}"]`)) k = 'sit';
+  const changed = k !== ptab;
+  ptab = k; store('set', 'cdc.ptab', k);
+  document.querySelectorAll('#ptabs [data-pt]').forEach(b => { b.classList.toggle('on', b.dataset.pt === k); b.setAttribute('aria-selected', b.dataset.pt === k); });
+  document.querySelectorAll('.psec').forEach(x => x.hidden = x.dataset.ps !== k);
+  const on = document.querySelector(`#ptabs [data-pt="${k}"]`);
+  if (on && (!quiet || changed)) on.scrollIntoView({block:'nearest', inline:'center'});
+  if (!quiet && changed) $('ptabs').scrollIntoView({block:'nearest'});
+}
+$('ptabs').onclick = e => { const b = e.target.closest('[data-pt]'); if (b) showPtab(b.dataset.pt); };
+// le scadenze delle verifiche si aggiornano da sole
+setInterval(() => { if (view === 'parent' && ptab === 'ver' && !document.hidden) render(); }, 60000);
 const propStars = {};
 $('pProps').addEventListener('change', e => { const v = e.target.dataset.pstars; if (v) propStars[v.split('|')[1]] = +e.target.value; });
 function renderParent(){
@@ -1830,12 +1885,20 @@ function renderParent(){
 
   $('pVerifyHint').textContent = `Compiti segnati come fatti nelle ultime ${r.contestHours} ore: se uno non è vero, premi "Non è vero!".`;
   const lim = Date.now() - r.contestHours * 3600 * 1000;
-  const ver = data.verify.filter(c => ms(c.doneAt) >= lim && kidById(c.doneBy)).sort((a,b) => ms(b.doneAt) - ms(a.doneAt));
+  // ogni compito spuntato si può contestare per contestHours ore: prima quelli che scadono prima
+  const deadline = c => ms(c.doneAt) + r.contestHours * 3600 * 1000;
+  const ver = data.verify.filter(c => ms(c.doneAt) >= lim && kidById(c.doneBy))
+    .sort((a,b) => (a.contested - b.contested) || (deadline(a) - deadline(b)));
+  const openVer = ver.filter(c => !c.contested).length;
   $('pVerify').innerHTML = ver.length ? ver.map(c => {
     const t = data.tasks[c.taskId];
     const tag = (c.scheduleId || '').startsWith('x-') ? ' · 🧹 bacheca' : t?.optional ? ' · ✨ facoltativo' : '';
+    const left = deadline(c) - Date.now(), h = Math.floor(left / 3600e3), m = Math.floor(left % 3600e3 / 60e3);
+    const end = new Date(deadline(c));
+    const when = `${end.toLocaleDateString('it-IT',{weekday:'short'})} ${fmtMs(deadline(c)).slice(0,5)} alle ${String(end.getHours()).padStart(2,'0')}:${String(end.getMinutes()).padStart(2,'0')}`;
+    const due = c.contested ? '' : `<span class="due ${left < 6 * 3600e3 ? 'soon' : ''}">⏳ ${h ? `${h} h ` : ''}${m} min per verificare · fino a ${when}</span>`;
     return `<div class="row"><div class="body">${taskIcon(t)} <b style="color:${kidColor(c.doneBy)}">${esc(kidName(c.doneBy))}</b> · ${esc(t?.title ?? '?')}
-      <br><small>${fmtDate(c.date)} · +${c.points} ⭐${tag}</small></div>
+      <br><small>${fmtDate(c.date)} · +${c.points} ⭐${tag}</small>${due ? `<br>${due}` : ''}</div>
       ${c.contested ? '<span class="chip" style="--c:var(--minus)">🟨 contestato</span>'
                     : `<button class="btn no" data-contest="${c.id}">Non è vero!</button>`}</div>`;
   }).join('') : '<div class="empty">Nessun compito da verificare</div>';
@@ -1893,6 +1956,12 @@ function renderParent(){
     <div class="sched"><div class="body">${esc(x.title)} <span class="stars">${x.cost} ⭐</span></div>
       <div class="acts inl"><button class="btn no" data-delrew="${x.id}">Elimina</button></div></div>`).join('')
     : '<div class="empty">Nessun premio</div>';
+  // contatori sulle schede che richiedono un'azione
+  const badge = (id, n) => { $(id).textContent = n || ''; $(id).hidden = !n; };
+  badge('bVer', openVer);
+  badge('bPrem', kidsList().reduce((a,k) => a + (data.pending[k.id] || []).length, 0));
+  badge('bProp', kidsList().reduce((a,k) => a + (data.propPending[k.id] || []).length, 0));
+  showPtab(ptab, true);
 }
 
 /* primi passi */
@@ -1908,7 +1977,13 @@ function renderTodo(){
   ];
   const left = items.slice(0, 4).filter(i => !i[1]).length;
   box.hidden = false;
-  box.innerHTML = `<h2>🚀 Primi passi</h2>
+  if (!box.dataset.init){                       // aperta finché manca qualcosa; poi ricorda la scelta
+    box.dataset.init = '1';
+    const saved = store('get', `cdc.todoOpen.${fid}`);
+    box.open = saved === null ? left > 0 : saved === '1';
+    box.addEventListener('toggle', () => store('set', `cdc.todoOpen.${fid}`, box.open ? '1' : '0'));
+  }
+  box.innerHTML = `<summary><b>🚀 Primi passi</b> <span class="todocount">${4 - left} di 4 fatti${left ? '' : ' 🎉'}</span></summary>
     <ul class="todo">${items.map(([t, ok, a]) => `<li class="${ok ? 'ok' : ''}"><span class="mark">${ok ? '✓' : ''}</span><span class="t">${t}</span>
       ${ok ? '' : `<button class="btn" data-goto="${a}">Vai</button>`}</li>`).join('')}</ul>
     <div class="acts" style="margin-top:8px"><button class="btn" data-help="1">❓ Leggi la guida</button>
@@ -2073,7 +2148,11 @@ $('parentView').addEventListener('click', async e => {
   const b = e.target.closest('button'); if (!b) return;
   const d = b.dataset;
   try {
-    if (d.goto) return ['sDevice','sKids','sParents'].includes(d.goto) ? goView('setup', d.goto) : $(d.goto).scrollIntoView({behavior:'smooth'});
+    if (d.goto){
+      if (['sDevice','sKids','sParents'].includes(d.goto)) return goView('setup', d.goto);
+      showPtab({pNew:'new', pShop:'prem'}[d.goto] || 'sit');
+      return $(d.goto)?.scrollIntoView({behavior:'smooth', block:'start'});
+    }
     if (d.help) return openHelp();
     if (d.todooff){ store('set', `cdc.todoOff.${fid}`, '1'); return render(); }
     if (d.devoff){ store('set', `cdc.devBannerOff.${fid}`, '1'); return render(); }
@@ -2447,6 +2526,10 @@ function openHelp(section){
       ${fam ? `<p><b>Le regole complete:</b></p><ul>${gameRules().map(x => `<li>${x}</li>`).join('')}</ul>` : ''}
     </details>`;
   $('helpBody').innerHTML = kid ? forKids + newsHtml(section === 'news') : newsHtml(section === 'news') + `
+    <details><summary>🧭 Come è organizzata la pagina Genitori</summary>
+      <p>In alto trovi <b>Primi passi</b> (si chiude con un tocco) e sotto le <b>schede</b>: Situazione (punteggi e bonus a mano), Da verificare, Richieste premi (con il catalogo),
+      Proposte ragazzi, Gestione compiti (nuovo compito), Compiti assegnati, Bacheca extra, Compiti recupero.
+      Il <b>numero rosso</b> su una scheda indica quante cose aspettano una tua decisione. In "Da verificare" ogni voce mostra quanto tempo resta per contestarla.</p></details>
     <details open><summary>🚀 Primi passi</summary>
       <ol><li><b>Figli</b>: in ⚙️ Setup aggiungi ogni figlio con nome, icona, colore e un PIN di 6 cifre (diverso per ciascuno).</li>
       <li><b>Compiti</b>: in 👪 Genitori controlla i compiti di esempio o creane di nuovi. Tocca ✏️ per modificarli.</li>
