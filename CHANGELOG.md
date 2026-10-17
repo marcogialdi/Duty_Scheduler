@@ -3,8 +3,16 @@
 Numerazione `MAGGIORE.MINORE.CORREZIONE`: si resta su `0.x` durante la prova; `1.0.0` sarà la prima versione da prodotto.
 Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 
-A ogni rilascio aggiornare insieme: `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `index.html`, `VERSION` in `sw.js`,
-l'intestazione di `firestore.rules` (se le regole cambiano) e questo file.
+A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
+se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
+
+## 0.9.0 · 17/10/2026
+- **Compiti di squadra 🤝**: un compito facoltativo con "Collaborazione" vale per una squadra di figli (almeno 2). Uno lo segna, gli altri confermano "l'abbiamo fatto"; le stelle arrivano a tutti, uguali, solo quando hanno confermato tutti. Chi ha segnato può togliere la spunta finché nessuno ha confermato.
+- In "Da verificare" i compiti di squadra in attesa mostrano chi deve ancora confermare, con "Confermo io" per il genitore; "Non è vero!" dà il cartellino giallo a tutta la squadra.
+- Nella modifica si attiva o toglie la collaborazione: le assegnazioni separate diventano una sola di squadra, e viceversa.
+- Esempio nuovo: "Riordinare il salotto insieme".
+- L'app è divisa in file per funzione (`js/`, `css/`); i file hanno la versione nel nome, così i telefoni scaricano solo le versioni nuove.
+- **Regole Firestore 0.9.0: vanno ripubblicate.**
 
 ## 0.8.0 · 17/10/2026
 - Pagina Genitori divisa in schede: Situazione (con bonus a mano), Da verificare, Richieste premi (con catalogo), Proposte ragazzi, Gestione compiti, Compiti assegnati, Bacheca extra, Compiti recupero.

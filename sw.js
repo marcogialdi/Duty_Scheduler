@@ -1,9 +1,32 @@
-/* Service worker di "Compiti di casa" · versione 0.8.0
-   A ogni rilascio porta VERSION allo stesso numero di APP_VERSION in index.html:
-   il cambio svuota le copie vecchie e i telefoni prendono subito i file nuovi. */
-const VERSION = 'compiti-0.8.0';
-const SHELL = ['./', './index.html', './manifest.webmanifest',
-  './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
+/* Service worker di "Compiti di casa" · versione 0.9.0
+   File generato da build.py: non modificare a mano (VERSION viene da APP_VERSION in js/config.js).
+   I file dell'app hanno ?v=<versione> nel nome: a ogni versione nuova i telefoni li riscaricano. */
+const VERSION = 'compiti-0.9.0';
+const SHELL = [
+    "./",
+    "./index.html",
+    "./manifest.webmanifest",
+    "./icons/icon-192.png",
+    "./icons/icon-512.png",
+    "./icons/apple-touch-icon.png",
+    "./css/base.css?v=0.9.0",
+    "./css/app.css?v=0.9.0",
+    "./js/firebase.js?v=0.9.0",
+    "./js/config.js?v=0.9.0",
+    "./js/util.js?v=0.9.0",
+    "./js/state.js?v=0.9.0",
+    "./js/game.js?v=0.9.0",
+    "./js/auth.js?v=0.9.0",
+    "./js/register.js?v=0.9.0",
+    "./js/data.js?v=0.9.0",
+    "./js/kid.js?v=0.9.0",
+    "./js/parent.js?v=0.9.0",
+    "./js/edit.js?v=0.9.0",
+    "./js/collab.js?v=0.9.0",
+    "./js/setup.js?v=0.9.0",
+    "./js/help.js?v=0.9.0",
+    "./js/main.js?v=0.9.0"
+  ];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(VERSION).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -24,7 +47,7 @@ self.addEventListener('fetch', e => {
       .catch(() => caches.match('./index.html')));
     return;
   }
-  // librerie Firebase (versione fissa) e file dell'app: prima la copia salvata
+  // librerie Firebase (versione fissa) e file dell'app (con la versione nel nome): prima la copia salvata
   const firebaseLib = url.hostname === 'www.gstatic.com' && url.pathname.startsWith('/firebasejs/');
   if (firebaseLib || url.origin === self.location.origin){
     e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(r => {

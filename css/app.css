@@ -1,0 +1,96 @@
+/* ---------- famiglie, icone, guida ---------- */
+.screen{max-width:480px;margin:16px auto}
+.hero{text-align:center;padding:8px 0 4px}
+.hero .logo{font-size:3.4rem;line-height:1}
+.hero h2{margin:8px 0 6px;font-size:1.5rem}
+.hero p{color:var(--muted);margin:0 0 18px}
+.bigbtns{display:grid;gap:10px}
+.bigbtns .btn{min-height:54px;font-size:1rem}
+.note{font-size:.88rem;color:var(--muted);text-align:center;margin-top:16px;line-height:1.45}
+.form .hint,.wstep .hint{font-size:.85rem;color:var(--muted);margin:2px 0 6px}
+.stepper{display:flex;gap:6px;margin:0 0 14px}
+.stepper span{flex:1;height:6px;border-radius:6px;background:var(--line)}
+.stepper span.on{background:var(--ink)}
+.wstep h2{margin:0 0 4px;font-size:1.2rem}
+.wnav{display:flex;gap:8px;margin-top:16px}
+.wnav .btn{flex:1;min-height:48px;font-size:.95rem}
+.kidrow{display:grid;grid-template-columns:56px 1fr 56px 120px 48px;gap:6px;align-items:end;margin-bottom:10px}
+.kidrow label{margin-top:4px}
+.avbtn{width:100%;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:1.5rem;cursor:pointer}
+.av.big{display:block;width:88px;height:88px;line-height:88px;border-radius:50%;margin:6px auto 0;background:var(--k);font-size:2.8rem;text-align:center}
+.tile .av{font-size:1.9rem}
+.ticon{width:48px;height:48px;flex:0 0 auto;border-radius:14px;display:grid;place-items:center;font-size:1.7rem;
+       background:color-mix(in srgb,var(--c) 16%,var(--card))}
+.task.done .ticon{filter:grayscale(.5);opacity:.75}
+.tm{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:700}
+.iconpick{display:flex;align-items:center;gap:10px}
+.iconpick .cur{font-size:2rem;width:58px;height:58px;flex:0 0 auto;border-radius:14px;border:1px solid var(--line);background:var(--card);cursor:pointer}
+.iconpick small{color:var(--muted);font-size:.8rem}
+.igroup{font-size:.8rem;color:var(--muted);font-weight:600;margin-top:10px}
+.igrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:6px;margin:6px 0}
+.igrid button{font-size:1.65rem;height:54px;border-radius:12px;border:1px solid var(--line);background:var(--card);cursor:pointer}
+.igrid button.on{border:2px solid var(--ink);background:color-mix(in srgb,var(--ink) 8%,var(--card))}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:12px;margin:8px 0;cursor:pointer;color:var(--ink);font-size:.92rem;line-height:1.4}
+.opt > input{width:auto;min-height:0;margin-top:3px;flex:0 0 auto;width:18px;height:18px}
+.opt small{color:var(--muted)}
+.opt:has(> input:checked){border-color:var(--ink);background:color-mix(in srgb,var(--ink) 5%,var(--card))}
+.opt select{margin-top:6px}
+.opt a{color:var(--ink)}
+.todo{list-style:none;padding:0;margin:0}
+.todo li{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:.93rem;flex-wrap:wrap}
+.todo li:first-child{border-top:none}
+.todo li.ok{color:var(--muted)}
+.todo li.ok span.t{text-decoration:line-through}
+.todo .mark{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;flex:0 0 auto;border:2px solid var(--line);font-size:.85rem}
+.todo li.ok .mark{background:var(--plus);border-color:var(--plus);color:#fff}
+.todo li .t{flex:1;min-width:150px}
+.banner.info{background:color-mix(in srgb,#3b82f6 12%,var(--card));border-color:#3b82f6}
+.banner .acts{margin-top:8px}
+.codebox{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:1.5rem;letter-spacing:.18em;font-weight:700;text-align:center;
+         padding:10px;border:2px dashed var(--line);border-radius:12px;margin:6px 0;user-select:all}
+.help{line-height:1.5}
+.help details{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0}
+.help summary{font-weight:600;cursor:pointer}
+.help p,.help li{font-size:.93rem}
+.help ol,.help ul{padding-left:20px;margin:6px 0}
+.danger{border-color:var(--minus)}
+.iconbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.hbtn{background:var(--card);border:1px solid var(--line);border-radius:999px;min-height:36px;padding:4px 12px;color:var(--ink);cursor:pointer;font-size:.88rem}
+.who-name{font-size:.88rem;color:var(--muted);margin-right:2px}
+.tab .tav{margin-right:4px}
+@media (max-width:560px){
+  .kidrow{grid-template-columns:56px 1fr 56px}
+  .kidrow .pin{grid-column:1 / 3} .kidrow .rm{grid-column:3}
+  header{margin-bottom:8px}
+  .who-name{display:none}
+}
+/* bacheca e proposte */
+.boardhead{display:flex;justify-content:space-between;align-items:baseline;gap:2px 8px;margin:22px 0 6px;flex-wrap:wrap}
+.boardhead h2{font-size:1rem;margin:0;white-space:nowrap}
+.boardhead small{color:var(--muted)}
+.task.board{border-left-style:dashed}
+.propform{display:flex;gap:8px;margin-top:8px}
+.propform input{flex:1}
+.ptag{font-size:.75rem;color:var(--muted)}
+.appver{text-align:center;padding:8px 16px calc(24px + env(safe-area-inset-bottom))}
+.appver .link{font-size:.75rem;margin:0}
+.kdesc{display:block;color:var(--muted);font-size:.8rem;margin-top:4px}
+/* schede della pagina Genitori */
+.ptabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 12px;padding:2px 0 4px;position:sticky;top:0;z-index:5;background:var(--bg)}
+.ptabs::-webkit-scrollbar{display:none}
+.ptabs button{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:9px 12px;min-height:40px;border:1px solid var(--line);border-radius:999px;
+              background:var(--card);color:var(--ink);font-size:.88rem;cursor:pointer;white-space:nowrap}
+.ptabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.badge{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--minus);color:#fff;font-size:.72rem;font-weight:700;display:inline-grid;place-items:center}
+@media (min-width:700px){ .ptabs{flex-wrap:wrap;overflow:visible} }
+.todobox summary{cursor:pointer;display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:1.02rem}
+.todobox[open] summary{margin-bottom:8px}
+.todocount{font-size:.8rem;color:var(--muted);font-weight:400}
+.due{font-size:.78rem;color:var(--muted)}
+.due.soon{color:var(--minus);font-weight:600}
+/* compiti di squadra */
+.days.team{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}
+.days.team label{font-size:.9rem;padding:0 8px}
+.task.collab{border-left-style:double;border-left-width:6px}
+.check.wait{background:color-mix(in srgb,var(--star) 25%,var(--card));border-color:var(--star)}
+.cwait{font-size:.82rem;color:var(--muted)}
