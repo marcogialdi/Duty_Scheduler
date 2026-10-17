@@ -1,4 +1,5 @@
 <!doctype html>
+<!-- Compiti di casa · versione 0.7.0 · 17/10/2026 (vedi APP_VERSION nello script) -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
@@ -282,6 +283,8 @@
   .propform{display:flex;gap:8px;margin-top:8px}
   .propform input{flex:1}
   .ptag{font-size:.75rem;color:var(--muted)}
+  .appver{text-align:center;padding:8px 16px calc(24px + env(safe-area-inset-bottom))}
+  .appver .link{font-size:.75rem;margin:0}
 </style>
 </head>
 <body>
@@ -646,6 +649,7 @@
   </form>
 </dialog>
 
+<footer class="appver" id="appVer"></footer>
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -673,6 +677,23 @@ const firebaseConfig = {
 // chi organizza il test: compare nell'informativa privacy
 const CONTACT = { name: '', email: '' };
 const APP_NAME = 'Compiti di casa';
+/* ---------- VERSIONE ----------
+   Numerazione MAGGIORE.MINORE.CORREZIONE: 0.x durante la prova, 1.0.0 = prima versione da prodotto.
+   Nuove funzioni → si aumenta il secondo numero; solo correzioni → il terzo.
+   A ogni rilascio: aggiorna APP_VERSION, APP_DATE e CHANGELOG qui, VERSION in sw.js,
+   l'intestazione di firestore.rules (se cambiate) e il file CHANGELOG.md. */
+const APP_VERSION = '0.7.0';
+const APP_DATE = '2026-10-17';
+const CHANGELOG = [
+  ['0.7.0', '2026-10-17', 'Compiti facoltativi, bacheca dei lavoretti extra e proposte dei ragazzi; numero di versione nell\'app.'],
+  ['0.6.0', '2026-10-17', 'Conferma password; salvataggi divisi in piccoli gruppi; messaggi d\'errore più chiari.'],
+  ['0.5.0', '2026-10-17', 'Più famiglie, registrazione guidata, inviti, attivazione dei dispositivi, icone, guida, app installabile.'],
+  ['0.4.0', '2026-10-17', 'Modifica dei compiti, date gg/mm/aaaa, obiettivo del giorno, versione per telefono e tablet.'],
+  ['0.3.0', '2026-10-16', 'Accesso con password e PIN, pagina Setup.'],
+  ['0.2.0', '2026-10-16', 'Il gioco: stelle, serie, cartellini, negozio premi.'],
+  ['0.1.1', '2026-10-16', 'Passaggio a Firebase.'],
+  ['0.1.0', '2026-10-16', 'Prima pagina dei compiti per Riccardo e Tommaso.'],
+];
 
 const fbApp = initializeApp(firebaseConfig);
 const auth = getAuth(fbApp);
@@ -2351,7 +2372,13 @@ function pickIcon(groups, cur, cb){
 }
 $('iconGrid').onclick = e => { const b = e.target.closest('[data-ic]'); if (!b) return; $('iconDlg').close(); iconCb?.(b.dataset.ic); };
 
-function openHelp(){
+$('appVer').innerHTML = `<button class="link" id="verBtn">${APP_NAME} · versione ${APP_VERSION} · ${fmtDate(APP_DATE)}</button>`;
+$('verBtn').onclick = () => openHelp('news');
+const newsHtml = open => `
+    <details ${open ? 'open' : ''}><summary>🆕 Novità · versione ${APP_VERSION}</summary>
+      <ul>${CHANGELOG.slice(0, 4).map(([v, d, t]) => `<li><b>${v}</b> (${fmtDate(d)}): ${esc(t)}</li>`).join('')}</ul>
+      <p style="color:var(--muted);font-size:.85rem">Se un altro dispositivo mostra un numero diverso, chiudi e riapri l'app con la connessione attiva: si aggiorna da sola.</p></details>`;
+function openHelp(section){
   const kid = me?.role === 'kid';
   const forKids = `
     <details ${kid ? 'open' : ''}><summary>🧒 Per i ragazzi: come funziona</summary>
@@ -2365,7 +2392,7 @@ function openHelp(){
       <li>Attenzione: segnare un compito che non hai fatto costa caro (cartellino giallo 🟨). Dire la verità conviene sempre!</li></ol>
       ${fam ? `<p><b>Le regole complete:</b></p><ul>${gameRules().map(x => `<li>${x}</li>`).join('')}</ul>` : ''}
     </details>`;
-  $('helpBody').innerHTML = kid ? forKids : `
+  $('helpBody').innerHTML = kid ? forKids + newsHtml(section === 'news') : newsHtml(section === 'news') + `
     <details open><summary>🚀 Primi passi</summary>
       <ol><li><b>Figli</b>: in ⚙️ Setup aggiungi ogni figlio con nome, icona, colore e un PIN di 6 cifre (diverso per ciascuno).</li>
       <li><b>Compiti</b>: in 👪 Genitori controlla i compiti di esempio o creane di nuovi. Tocca ✏️ per modificarli.</li>
@@ -2417,6 +2444,8 @@ function openHelp(){
       <li><b>Senza connessione?</b> L'app si apre e mostra i dati salvati; le spunte vengono inviate appena torna la rete.</li>
       <li><b>Come cancello tutto?</b> Setup › Elimina famiglia: cancella definitivamente tutti i dati.</li></ul></details>
     ${forKids}`;
+  $('helpDlg').querySelector('h2').textContent = `❓ Guida · versione ${APP_VERSION}`;
+  if (section === 'news') $('helpBody').querySelectorAll('details').forEach((d, i) => d.open = i === (kid ? 1 : 0));
   $('helpDlg').showModal();
 }
 function openPrivacy(){

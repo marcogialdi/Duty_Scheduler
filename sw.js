@@ -1,7 +1,7 @@
-/* Service worker di "Compiti di casa".
-   Quando cambi index.html non serve toccare questo file: la pagina viene sempre
-   scaricata fresca quando c'è rete. Aumenta VERSION solo se cambi icone o manifest. */
-const VERSION = 'compiti-v1';
+/* Service worker di "Compiti di casa" · versione 0.7.0
+   A ogni rilascio porta VERSION allo stesso numero di APP_VERSION in index.html:
+   il cambio svuota le copie vecchie e i telefoni prendono subito i file nuovi. */
+const VERSION = 'compiti-0.7.0';
 const SHELL = ['./', './index.html', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 
