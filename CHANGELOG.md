@@ -6,6 +6,15 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio aggiornare insieme: `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `index.html`, `VERSION` in `sw.js`,
 l'intestazione di `firestore.rules` (se le regole cambiano) e questo file.
 
+## 0.7.2 · 17/10/2026
+- I "compiti punizione" si chiamano ora **compiti di recupero 🔄**: stesso meccanismo (solo durante il cartellino rosso, senza stelle), tono più educativo.
+- Lo scambio tra fratelli usa l'icona 🤝 ("Chiedi a…") per non confondersi con il recupero.
+- Nessun cambio ai dati: i compiti già creati restano validi. Regole Firestore invariate (0.7.0).
+
+## 0.7.1 · 17/10/2026
+- Nella finestra di modifica si può cambiare il tipo di compito (pianificato, facoltativo, lavoretto extra, punizione), con l'avviso di cosa succede: passando a lavoretto extra o punizione le assegnazioni vengono tolte; passando a pianificato o facoltativo si crea l'assegnazione.
+- Regole Firestore invariate (restano 0.7.0).
+
 ## 0.7.0 · 17/10/2026
 - A: compiti facoltativi (danno stelle, non contano per giornata perfetta, serie e penalità).
 - B: bacheca dei lavoretti extra, senza orario, con limite giornaliero condiviso tra fratelli.

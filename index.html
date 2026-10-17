@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Compiti di casa · versione 0.7.0 · 17/10/2026 (vedi APP_VERSION nello script) -->
+<!-- Compiti di casa · versione 0.7.2 · 17/10/2026 (vedi APP_VERSION nello script) -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
@@ -285,6 +285,7 @@
   .ptag{font-size:.75rem;color:var(--muted)}
   .appver{text-align:center;padding:8px 16px calc(24px + env(safe-area-inset-bottom))}
   .appver .link{font-size:.75rem;margin:0}
+  .kdesc{display:block;color:var(--muted);font-size:.8rem;margin-top:4px}
 </style>
 </head>
 <body>
@@ -461,11 +462,12 @@
             </div>
             <label>Tipo di compito</label>
             <select id="fKind">
-              <option value="normal">📅 Pianificato: conta per la giornata perfetta</option>
-              <option value="optional">✨ Facoltativo: dà stelle, non conta per la giornata perfetta</option>
-              <option value="board">🧹 Lavoretto extra in bacheca: quando serve, senza orario</option>
-              <option value="pun">🟥 Punizione: solo durante il cartellino rosso</option>
+              <option value="normal">📅 Pianificato</option>
+              <option value="optional">✨ Facoltativo</option>
+              <option value="board">🧹 Lavoretto extra (bacheca)</option>
+              <option value="pun">🔄 Recupero</option>
             </select>
+            <small class="kdesc" id="fKindDesc"></small>
             <div id="fMaxBox"><label>Quante volte al giorno al massimo (in tutto, tra i fratelli)</label><input id="fMax" type="number" min="1" max="10" value="1"></div>
           </div>
           <div class="grid2">
@@ -485,7 +487,7 @@
       </div>
       <div class="panel"><h2>Compiti assegnati</h2><div id="schedList"></div></div>
       <div class="panel"><h2>🧹 Bacheca lavoretti extra</h2><p class="hint">Lavoretti senza giorno fisso (es. pattumiera): il figlio li segna dopo averli fatti. Non contano per la giornata perfetta.</p><div id="boardList"></div></div>
-      <div class="panel"><h2>🟥 Compiti punizione</h2><div id="punList"></div></div>
+      <div class="panel"><h2>🔄 Compiti di recupero</h2><div id="punList"></div></div>
       <div class="panel" id="pShop">
         <h2>🛍️ Catalogo premi</h2>
         <div id="pRewards"></div>
@@ -587,6 +589,15 @@
       <legend>📝 Compito</legend>
       <p class="hint" id="eShared" style="font-size:.8rem;color:var(--muted);margin:4px 0 0"></p>
       <label>Titolo</label><input id="eTitle">
+      <label>Tipo di compito</label>
+      <select id="eKind">
+        <option value="normal">📅 Pianificato</option>
+        <option value="optional">✨ Facoltativo</option>
+        <option value="board">🧹 Lavoretto extra (bacheca)</option>
+        <option value="pun">🔄 Recupero</option>
+      </select>
+      <small class="kdesc" id="eKindDesc"></small>
+      <p class="banner info" id="eKindHint" hidden style="margin:8px 0 0"></p>
       <label>Icona</label>
       <div class="iconpick"><button type="button" class="cur" id="eIcon" aria-label="Scegli icona">⭐</button><small>Tocca per cambiarla</small></div>
       <label>Descrizione</label><textarea id="eDesc" placeholder="Facoltativa"></textarea>
@@ -595,12 +606,11 @@
         <div><label>Valore</label>
           <select id="ePts"><option value="1">⭐ 1</option><option value="2">⭐ 2</option><option value="3">⭐ 3</option><option value="4">⭐ 4</option><option value="5">⭐ 5</option></select></div>
       </div>
-      <label class="inline" id="eOptBox"><input type="checkbox" id="eOptional"> ✨ Facoltativo: dà stelle ma non conta per la giornata perfetta</label>
       <div id="eMaxBox"><label>Quante volte al giorno al massimo (tra i fratelli)</label><input id="eMax" type="number" min="1" max="10"></div>
       <div id="ePunTime"><label>Orario</label><input id="ePTime" type="time"></div>
     </fieldset>
     <fieldset id="eSchedBox">
-      <legend>📅 Assegnazione</legend>
+      <legend id="eSchedLegend">📅 Assegnazione</legend>
       <div class="grid2">
         <div><label>Assegnato a</label><select id="eOwner"></select></div>
         <div><label id="eTimeLbl">Orario</label><input id="eTime" type="time"></div>
@@ -682,9 +692,11 @@ const APP_NAME = 'Compiti di casa';
    Nuove funzioni → si aumenta il secondo numero; solo correzioni → il terzo.
    A ogni rilascio: aggiorna APP_VERSION, APP_DATE e CHANGELOG qui, VERSION in sw.js,
    l'intestazione di firestore.rules (se cambiate) e il file CHANGELOG.md. */
-const APP_VERSION = '0.7.0';
+const APP_VERSION = '0.7.2';
 const APP_DATE = '2026-10-17';
 const CHANGELOG = [
+  ['0.7.2', '2026-10-17', 'I "compiti punizione" si chiamano ora "compiti di recupero" 🔄; lo scambio tra fratelli usa 🤝.'],
+  ['0.7.1', '2026-10-17', 'Nella modifica di un compito si può cambiare il tipo (pianificato, facoltativo, lavoretto extra, recupero).'],
   ['0.7.0', '2026-10-17', 'Compiti facoltativi, bacheca dei lavoretti extra e proposte dei ragazzi; numero di versione nell\'app.'],
   ['0.6.0', '2026-10-17', 'Conferma password; salvataggi divisi in piccoli gruppi; messaggi d\'errore più chiari.'],
   ['0.5.0', '2026-10-17', 'Più famiglie, registrazione guidata, inviti, attivazione dei dispositivi, icone, guida, app installabile.'],
@@ -728,6 +740,12 @@ const RULE_FIELDS = [
   ['streakEveryBonus','⭐ Ogni 7 giorni dopo i 14'], ['cheatMultiplier','Imbroglio: perde il valore ×'], ['contestHours','Ore per contestare'],
   ['yellowWindowDays','Giorni di validità di un giallo'], ['yellowsForRed','Gialli per un rosso'], ['redDays','Giorni di effetto del rosso'],
 ];
+const KIND_DESC = {
+  normal: 'Ha giorni e orario; conta per la giornata perfetta: se non fatto toglie stelle e interrompe la serie.',
+  optional: 'Ha giorni e orario; dà stelle se fatto ma non conta per la giornata perfetta.',
+  board: 'Senza giorni né orario: il figlio lo segna quando lo fa; limite di volte al giorno tra i fratelli.',
+  pun: 'Compito di recupero: compare solo durante il cartellino rosso, senza stelle, per rimediare.',
+};
 const KID_COLORS = ['#2563eb','#e11d48','#16a34a','#9333ea'];
 const MAX_KIDS = 4;
 const DAY_NAMES = ['','Lun','Mar','Mer','Gio','Ven','Sab','Dom'];
@@ -1479,7 +1497,7 @@ function renderScore(){
   const td = today();
   const red = cardsOf(owner).filter(c => c.type === 'red' && c.until >= td).sort((a,b) => a.from.localeCompare(b.from))[0];
   $('redBanner').innerHTML = !red ? '' : `<div class="banner">🟥 <b>Cartellino rosso</b> dal ${fmtDate(red.from)} al ${fmtDate(red.until)}:
-    ${red.effect === 'nostars' ? 'i compiti vanno fatti lo stesso, ma non danno stelle né bonus.' : 'ci sono compiti extra da fare ogni giorno, senza stelle.'}</div>`;
+    ${red.effect === 'nostars' ? 'i compiti vanno fatti lo stesso, ma non danno stelle né bonus.' : 'ci sono compiti di recupero 🔄 da fare ogni giorno, senza stelle.'}</div>`;
 }
 
 function renderDay(){
@@ -1647,15 +1665,15 @@ function taskCard(item, comp, isToday){
   const canSwap = !pun && !received && !comp && day >= today() && siblings.length;
   let action = '';
   if (comp?.contested) action = `<span class="chip" style="--c:var(--minus)">⚠️ Non era vero</span>`;
-  else if (pun) action = `<span class="chip" style="--c:var(--minus)">🟥 punizione</span>`;
+  else if (pun) action = `<span class="chip" style="--c:var(--minus)">🔄 recupero</span>`;
   else if (received) action = `<span class="chip" style="--c:${c}">da ${esc(kidName(item.s.owner))} 🤝</span>`;
   else if (pendingOut) action = `<button class="btn" data-cancel="${sw.id}">⏳ ${esc(kidName(sw.toOwner))} · annulla</button>`;
   else if (canSwap && swapPick === item.key)
     action = siblings.map(k => `<button class="btn" data-swapto="${k.id}" data-key="${item.key}">→ ${k.avatar || ''} ${esc(k.name)}</button>`).join(' ') +
              ` <button class="btn" data-swapx="1">✕</button>`;
   else if (canSwap) action = siblings.length === 1
-    ? `<button class="btn" data-swapto="${siblings[0].id}" data-key="${item.key}">🔄 Chiedi a ${esc(siblings[0].name)}</button>`
-    : `<button class="btn" data-pick="${item.key}">🔄 Chiedi a…</button>`;
+    ? `<button class="btn" data-swapto="${siblings[0].id}" data-key="${item.key}">🤝 Chiedi a ${esc(siblings[0].name)}</button>`
+    : `<button class="btn" data-pick="${item.key}">🤝 Chiedi a…</button>`;
   return `<div class="task ${done?'done':''} ${comp?.contested?'contested':''}" style="--c:${c}">
     <button class="check" data-done="${item.key}" aria-label="Fatto" ${isToday && !comp?.contested ? '' : 'disabled'}>${done?'✓':''}</button>
     <div class="ticon" aria-hidden="true">${taskIcon(t)}</div>
@@ -1687,7 +1705,7 @@ $('svDay').addEventListener('click', async e => {
         const pts = pointsFor(item, owner, ds);
         batch.set(dref('completions', cid), {scheduleId:item.key, taskId:item.task.id, date:ds, doneBy:owner, points:pts, doneAt:now});
         batch.set(dref('kids', owner, 'ledger', `done_${cid}`), {kid:owner, amount:pts, type:'task', completionId:cid, date:ds, createdAt:now,
-          reason: item.task.title + (item.received ? ' (scambio)' : '') + (item.pun ? ' (punizione)' : '')});
+          reason: item.task.title + (item.received ? ' (scambio)' : '') + (item.pun ? ' (recupero)' : '')});
         await batch.commit();
         toast(pts ? `Bravo! +${pts} ⭐` : 'Fatto! 💪');
       }
@@ -1756,7 +1774,7 @@ function gameRules(){
     `Se accetti un compito di un fratello prendi le sue stelle +${r.swapFavor} di favore.`,
     `Compito non fatto a fine giornata: ${r.missed} ⭐.`,
     `Segnare fatto un compito che non hai fatto: restituisci le stelle, ne perdi ${r.cheatMultiplier} volte il valore, perdi la serie e prendi un <b>cartellino giallo 🟨</b>. Dire la verità conviene sempre!`,
-    `${r.yellowsForRed} gialli in ${r.yellowWindowDays} giorni = <b>cartellino rosso 🟥</b>. Il primo rosso del trimestre: per ${r.redDays} giorni i compiti non danno stelle. Dal secondo rosso nel trimestre: ${r.redDays} giorni di compiti extra.`,
+    `${r.yellowsForRed} gialli in ${r.yellowWindowDays} giorni = <b>cartellino rosso 🟥</b>. Il primo rosso del trimestre: per ${r.redDays} giorni i compiti non danno stelle. Dal secondo rosso nel trimestre: ${r.redDays} giorni di compiti di recupero 🔄.`,
     `I compiti <b>facoltativi ✨</b> danno stelle se li fai, ma non contano per la giornata perfetta: se li salti non perdi nulla.`,
     `I <b>lavoretti extra 🧹</b> (es. la pattumiera) si fanno quando servono: dopo averlo fatto tocca "L'ho fatto!". Chi arriva prima lo segna; non contano per la giornata perfetta.`,
     `Hai fatto qualcos'altro di utile? <b>Proponilo 💡</b>: se mamma e papà approvano, decidono loro quante stelle darti.`,
@@ -1782,6 +1800,7 @@ const syncForm = () => {
   $('timeBox').hidden = kind === 'board';
   $('fMaxBox').hidden = kind !== 'board';
   $('fPts').disabled = kind === 'pun';
+  $('fKindDesc').textContent = existing ? '' : KIND_DESC[kind];
 };
 $('fTaskSel').onchange = syncForm; $('fKind').onchange = syncForm; syncForm();
 $('fTitle').addEventListener('input', () => { if (!fIconManual) $('fIcon').textContent = suggestIcon($('fTitle').value) || '⭐'; });
@@ -1806,7 +1825,7 @@ function renderParent(){
       <p>🔥 serie: ${data.kidState[k.id]?.streak || 0} giorni</p>
       <p>🟨 gialli attivi: ${activeYellows(k.id).length}/${r.yellowsForRed}</p>
       <p>🟥 rossi nel trimestre: ${redsInQuarter(k.id).length}</p>
-      ${red ? `<p style="color:var(--minus)">Rosso ${red.effect==='nostars'?'(niente stelle)':'(compiti extra)'} dal ${fmtDate(red.from)} al ${fmtDate(red.until)}</p>` : ''}</div>`;
+      ${red ? `<p style="color:var(--minus)">Rosso ${red.effect==='nostars'?'(niente stelle)':'(compiti di recupero)'} dal ${fmtDate(red.from)} al ${fmtDate(red.until)}</p>` : ''}</div>`;
   }).join('');
 
   $('pVerifyHint').textContent = `Compiti segnati come fatti nelle ultime ${r.contestHours} ore: se uno non è vero, premi "Non è vero!".`;
@@ -1868,7 +1887,7 @@ function renderParent(){
       <div class="body"><b>${t.defaultTime || T().evening}</b> ${esc(t.title)}
       ${t.description ? `<div class="sub2">${esc(t.description)}</div>` : ''}</div>
       <div class="acts inl"><button class="btn icon" data-editpun="${t.id}" aria-label="Modifica" title="Modifica">✏️</button></div></div>`).join('')
-    : '<div class="empty">Nessun compito punizione: dal secondo cartellino rosso del trimestre non ci sarebbero compiti extra. Aggiungine con "Nuovo compito" › "Compito punizione".</div>';
+    : '<div class="empty">Nessun compito di recupero: dal secondo cartellino rosso del trimestre non ci sarebbe nulla da recuperare. Aggiungine con "Nuovo compito" › Tipo "Recupero".</div>';
 
   $('pRewards').innerHTML = data.rewards.length ? data.rewards.slice().sort((a,b) => a.cost - b.cost).map(x => `
     <div class="sched"><div class="body">${esc(x.title)} <span class="stars">${x.cost} ⭐</span></div>
@@ -1910,37 +1929,59 @@ function schedRows(list){
 
 /* ---------- finestra di modifica ---------- */
 let editing = null;
+const kindOf = t => t.punishment ? 'pun' : t.board ? 'board' : t.optional ? 'optional' : 'normal';
+const KIND_NAME = {normal:'Pianificato', optional:'Facoltativo', board:'Lavoretto extra', pun:'Compito di recupero'};
 function openEdit({schedId, taskId}){
   const s = schedId ? data.sched.find(x => x.id === schedId) : null;
   const t = data.tasks[s ? s.taskId : taskId]; if (!t) return;
-  editing = {schedId: s?.id, taskId: t.id};
-  const pun = !!t.punishment, board = !!t.board;
-  $('eHead').textContent = pun ? '✏️ Compito punizione' : board ? '✏️ Lavoretto extra' : `✏️ ${t.title}`;
-  $('eOptBox').hidden = pun || board; $('eOptional').checked = !!t.optional;
-  $('eMaxBox').hidden = !board; $('eMax').value = t.maxPerDay || 1;
+  editing = {schedId: s?.id, taskId: t.id, origKind: kindOf(t)};
   $('eTitle').value = t.title; $('eDesc').value = t.description || '';
   $('eIcon').textContent = taskIcon(t);
+  $('eKind').value = kindOf(t);
+  $('eMax').value = t.maxPerDay || 1;
   $('eCat').innerHTML = fam.categories.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
   $('eCat').value = fam.categories.some(c => c.id === t.categoryId) ? t.categoryId : fam.categories[0].id;
   $('ePts').value = String(Math.min(5, Math.max(1, t.points || 1)));
-  $('eCatPts').hidden = pun; $('ePunTime').hidden = !pun;
   $('ePTime').value = t.defaultTime || T().evening;
-  const others = data.sched.filter(x => x.taskId === t.id);
-  $('eShared').textContent = !pun && others.length > 1
-    ? `Titolo, icona, descrizione, categoria e stelle valgono per tutte le ${others.length} assegnazioni di questo compito (${[...new Set(others.map(x => kidName(x.owner)))].join(', ')}).` : '';
-  $('eSchedBox').hidden = !s;
-  if (s){
-    $('eOwner').innerHTML = kidOpts() + (kidById(s.owner) ? '' : `<option value="${s.owner}">(figlio rimosso)</option>`);
-    $('eOwner').value = s.owner;
-    $('eTime').value = s.startTime; $('eTime').min = T().wake; $('eTime').max = T().bed;
-    $('eTimeLbl').textContent = `Orario (${T().wake} – ${T().bed})`;
-    $('eDays').innerHTML = dayBoxes(s.weekdays || []);
-    setDate('eStart', s.startDate); setDate('eEnd', s.endDate || '');
-    $('eToggle').hidden = false;
-    $('eToggle').textContent = s.active ? '⏸️ Sospendi' : '▶️ Riattiva';
-  } else $('eToggle').hidden = true;
+  // assegnazione: quella esistente, oppure valori proposti se il compito diventa pianificato
+  $('eOwner').innerHTML = kidOpts() + (s ? (kidById(s.owner) ? '' : `<option value="${s.owner}">(figlio rimosso)</option>`)
+                                          : (kidsList().length > 1 ? '<option value="all">Tutti</option>' : ''));
+  $('eOwner').value = s ? s.owner : (kidsList().length > 1 ? 'all' : kidsList()[0]?.id || '');
+  $('eTime').value = s ? s.startTime : (t.defaultTime || '17:00'); $('eTime').min = T().wake; $('eTime').max = T().bed;
+  $('eTimeLbl').textContent = `Orario (${T().wake} – ${T().bed})`;
+  $('eDays').innerHTML = dayBoxes(s ? (s.weekdays || []) : [1,2,3,4,5,6,7]);
+  setDate('eStart', s ? s.startDate : today()); setDate('eEnd', s?.endDate || '');
+  $('eToggle').textContent = s?.active === false ? '▶️ Riattiva' : '⏸️ Sospendi';
+  syncEdit();
   $('editDlg').showModal();
 }
+// mostra i campi giusti per il tipo scelto e spiega cosa succede cambiandolo
+function syncEdit(){
+  const t = data.tasks[editing.taskId], kind = $('eKind').value, from = editing.origKind;
+  const sched = kind === 'normal' || kind === 'optional';
+  const others = data.sched.filter(x => x.taskId === t.id);
+  $('eHead').textContent = `✏️ ${kind === 'pun' ? 'Compito di recupero' : kind === 'board' ? 'Lavoretto extra' : t.title}`;
+  $('eCatPts').hidden = kind === 'pun';
+  $('eMaxBox').hidden = kind !== 'board';
+  $('ePunTime').hidden = kind !== 'pun';
+  $('eSchedBox').hidden = !sched;
+  $('eToggle').hidden = !(sched && editing.schedId);
+  $('eSchedLegend').textContent = sched && !editing.schedId ? '📅 Nuova assegnazione' : '📅 Assegnazione';
+  $('eShared').textContent = sched && others.length > 1
+    ? `Titolo, tipo, icona, descrizione, categoria e stelle valgono per tutte le ${others.length} assegnazioni di questo compito (${[...new Set(others.map(x => kidName(x.owner)))].join(', ')}).` : '';
+  let hint = '';
+  if (kind !== from){
+    if (!sched && others.length) hint = `⚠️ Diventando "${KIND_NAME[kind]}" il compito non ha più giorni e orari: ${others.length === 1 ? 'la sua assegnazione verrà eliminata' : `le sue ${others.length} assegnazioni verranno eliminate`}. Lo storico delle stelle resta.`;
+    else if (sched && !editing.schedId) hint = `Scegli a chi assegnarlo, in quali giorni e a che ora.`;
+    else if (kind === 'optional') hint = 'Da ora dà stelle se fatto, ma non conta più per la giornata perfetta, la serie e le penalità.';
+    else if (kind === 'normal') hint = 'Da ora conta per la giornata perfetta: se non viene fatto toglie stelle e interrompe la serie.';
+    else if (kind === 'board') hint = 'Comparirà nella bacheca dei lavoretti extra di tutti i figli.';
+    else if (kind === 'pun') hint = 'Comparirà solo durante un cartellino rosso, senza stelle.';
+  }
+  $('eKindHint').textContent = hint; $('eKindHint').hidden = !hint;
+  $('eKindDesc').textContent = KIND_DESC[kind];
+}
+$('eKind').onchange = syncEdit;
 $('eIcon').onclick = () => pickIcon(TASK_ICONS, $('eIcon').textContent, ic => { $('eIcon').textContent = ic; });
 $('eCancel').onclick = () => $('editDlg').close();
 $('eToggle').onclick = async () => {
@@ -1949,25 +1990,28 @@ $('eToggle').onclick = async () => {
   catch(err){ fail(err); }
 };
 $('eDelete').onclick = async () => {
-  const pun = !editing.schedId;
-  if (!confirm(pun ? 'Eliminare questo compito? Lo storico delle stelle resta.' : 'Eliminare questa assegnazione? Lo storico delle stelle resta.')) return;
-  try { await deleteDoc(pun ? dref('tasks', editing.taskId) : dref('schedule', editing.schedId)); $('editDlg').close(); toast('Eliminato'); }
+  const whole = !editing.schedId;
+  if (!confirm(whole ? 'Eliminare questo compito? Lo storico delle stelle resta.' : 'Eliminare questa assegnazione? Lo storico delle stelle resta.')) return;
+  try { await deleteDoc(whole ? dref('tasks', editing.taskId) : dref('schedule', editing.schedId)); $('editDlg').close(); toast('Eliminato'); }
   catch(err){ fail(err); }
 };
 $('eSave').onclick = async () => {
-  const t = data.tasks[editing.taskId], pun = !!t.punishment, board = !!t.board;
+  const t = data.tasks[editing.taskId], kind = $('eKind').value;
+  const sched = kind === 'normal' || kind === 'optional';
   const title = $('eTitle').value.trim();
   if (!title) return toast('Il titolo non può essere vuoto');
-  const taskUpd = {title, description:$('eDesc').value.trim(), icon:$('eIcon').textContent};
-  if (board) taskUpd.maxPerDay = Math.min(10, Math.max(1, parseInt($('eMax').value, 10) || 1));
-  else if (!pun) taskUpd.optional = $('eOptional').checked;
-  if (pun){
+  const taskUpd = {title, description:$('eDesc').value.trim(), icon:$('eIcon').textContent,
+                   optional: kind === 'optional', board: kind === 'board', punishment: kind === 'pun'};
+  if (kind === 'pun'){
     const pt = $('ePTime').value;
     if (!pt || pt < T().wake || pt > T().bed) return toast(`Orario tra ${T().wake} e ${T().bed}`);
-    taskUpd.defaultTime = pt;
-  } else { taskUpd.categoryId = $('eCat').value; taskUpd.points = +$('ePts').value; }
-  let schedUpd = null;
-  if (editing.schedId){
+    Object.assign(taskUpd, {defaultTime:pt, points:0});
+  } else {
+    Object.assign(taskUpd, {categoryId:$('eCat').value, points:+$('ePts').value});
+    if (kind === 'board') taskUpd.maxPerDay = Math.min(10, Math.max(1, parseInt($('eMax').value, 10) || 1));
+  }
+  let schedData = null;
+  if (sched){
     const time = $('eTime').value, weekdays = checkedDays('eDays');
     const startDate = dateVal('eStart'), endDate = dateVal('eEnd');
     if (!time || time < T().wake || time > T().bed) return toast(`Orario tra ${T().wake} e ${T().bed}`);
@@ -1975,14 +2019,24 @@ $('eSave').onclick = async () => {
     if (!startDate) return toast('Data "Dal" non valida: usa gg/mm/aaaa');
     if (endDate === null) return toast('Data "Al" non valida: usa gg/mm/aaaa');
     if (endDate && endDate < startDate) return toast('La data "Al" è prima della data "Dal"');
-    schedUpd = {owner:$('eOwner').value, startTime:time, weekdays, startDate, endDate: endDate || null};
+    if (!$('eOwner').value) return toast('Prima aggiungi i figli dal Setup');
+    schedData = {startTime:time, weekdays, startDate, endDate: endDate || null};
   }
+  const others = data.sched.filter(x => x.taskId === t.id);
+  if (!sched && others.length && !confirm(`Il compito diventa "${KIND_NAME[kind]}": ${others.length === 1 ? 'la sua assegnazione verrà eliminata' : `le sue ${others.length} assegnazioni verranno eliminate`}. Continuare?`)) return;
   try {
-    const batch = writeBatch(db);
+    const batch = chunkedBatch();
     batch.update(dref('tasks', t.id), taskUpd);
-    if (schedUpd) batch.update(dref('schedule', editing.schedId), schedUpd);
+    if (sched && editing.schedId) batch.update(dref('schedule', editing.schedId), {...schedData, owner:$('eOwner').value});
+    if (sched && !editing.schedId){
+      const o = $('eOwner').value;
+      for (const ow of (o === 'all' ? kidsList().map(k => k.id) : [o]))
+        batch.set(doc(col('schedule')), {taskId:t.id, owner:ow, ...schedData, active:true, createdAt:serverTimestamp()});
+    }
+    if (!sched) others.forEach(x => batch.delete(dref('schedule', x.id)));
     await batch.commit();
-    $('editDlg').close(); toast('Modifiche salvate ✅');
+    $('editDlg').close();
+    toast(kind !== editing.origKind ? `Ora è: ${KIND_NAME[kind]} ✅` : 'Modifiche salvate ✅');
   } catch(err){ fail(err); }
 };
 
@@ -2081,7 +2135,7 @@ $('newForm').onsubmit = async e => {
           startDate:startDate || today(), endDate:endDate || null, createdAt:serverTimestamp()});
       await batch.commit();
     }
-    toast(pun ? 'Compito punizione salvato' : board ? 'Lavoretto aggiunto alla bacheca 🧹' : 'Compito assegnato ✅');
+    toast(pun ? 'Compito di recupero salvato 🔄' : board ? 'Lavoretto aggiunto alla bacheca 🧹' : 'Compito assegnato ✅');
     e.target.reset(); setDate('fStart', today());
     $('fDays').innerHTML = dayBoxes(); $('fIcon').textContent = '⭐'; fIconManual = false;
     syncForm();
@@ -2385,7 +2439,7 @@ function openHelp(section){
       <ol><li>Tocca il tuo nome e inserisci il tuo <b>PIN</b> segreto.</li>
       <li>Fai i compiti e tocca il <b>cerchio</b> accanto a ognuno: ricevi subito le ⭐.</li>
       <li>Fatti tutti? È una <b>giornata perfetta</b>: stelle bonus! Più giorni di fila = serie 🔥.</li>
-      <li>Non hai voglia di un compito? <b>🔄 Chiedi</b> a un fratello: se accetta, lo fa lui e guadagna le stelle.</li>
+      <li>Non hai voglia di un compito? <b>🤝 Chiedi</b> a un fratello: se accetta, lo fa lui e guadagna le stelle.</li>
       <li>Sotto i compiti trovi i <b>🧹 lavoretti extra</b>: fai la pattumiera o un altro lavoretto e tocca "L'ho fatto!" per avere stelle in più.</li>
       <li>Hai aiutato in un altro modo? Scrivilo in <b>💡 Hai fatto qualcos'altro?</b>: se mamma e papà sono d'accordo, ti danno delle stelle.</li>
       <li>Con le stelle compri i premi nel <b>🎁 Negozio</b>.</li>
@@ -2414,7 +2468,7 @@ function openHelp(section){
       <li>L'<b>icona</b> si sceglie da sola dal titolo; toccala per cambiarla. Le stelle vanno da 1 a 5.</li>
       <li>"Dal / Al" servono per compiti temporanei (es. durante le vacanze). Le date si scrivono gg/mm/aaaa.</li>
       <li>Con ✏️ modifichi tutto, sospendi un compito per un po' o lo elimini.</li>
-      <li>I <b>compiti punizione</b> compaiono solo durante un cartellino rosso.</li></ul></details>
+      <li>I <b>compiti di recupero 🔄</b> compaiono solo durante un cartellino rosso: servono a rimediare e tornare in pari.</li></ul></details>
     <details><summary>⭐ Il gioco: stelle, serie e cartellini</summary>
       <ul>${fam ? gameRules().map(x => `<li>${x}</li>`).join('') : ''}</ul>
       <p>Tutti i numeri si possono cambiare in ⚙️ Setup › Regole del gioco.</p></details>
@@ -2422,11 +2476,12 @@ function openHelp(section){
       <p>Non tutto ha un giorno fisso. Per non rovinare la giornata perfetta ci sono tre strumenti, da usare insieme:</p>
       <p><b>A · Compito facoltativo ✨</b> — un compito pianificato (con giorni e orario) che dà stelle se fatto, ma <b>non conta</b> per giornata perfetta, serie e penalità.
         Usalo per cose che di solito capitano in certi giorni ma non sempre (es. "aiutare con la spesa del sabato").
-        Come: Nuovo compito › Tipo <b>Facoltativo</b>; oppure ✏️ su un compito esistente › spunta "Facoltativo".</p>
+        Come: Nuovo compito › Tipo <b>Facoltativo</b>; oppure ✏️ su un compito esistente › Tipo <b>Facoltativo</b>.</p>
       <p><b>B · Bacheca dei lavoretti extra 🧹</b> — lavoretti <b>senza giorno né orario</b> (es. buttare la pattumiera). Compaiono sotto i compiti di ogni figlio;
         chi lo fa tocca "L'ho fatto!" e riceve subito le stelle. Decidi quante volte al giorno si può fare <b>in tutto</b> (es. 1): chi arriva prima lo segna e per gli altri risulta "già fatto".
         Non contano per la giornata perfetta e si contestano come gli altri compiti.
         Come: Nuovo compito › Tipo <b>Lavoretto extra in bacheca</b>; li trovi e modifichi nel pannello "Bacheca lavoretti extra".</p>
+      <p><b>Hai sbagliato tipo?</b> Tocca ✏️ sul compito e cambia <b>Tipo di compito</b>: l'app ti dice cosa succede (es. passando a lavoretto extra giorni e orari vengono tolti; passando a pianificato scegli a chi assegnarlo e quando).</p>
       <p><b>C · Proposte dei ragazzi 💡</b> — per le iniziative spontanee che non sono in nessuna lista. Il figlio scrive cosa ha fatto (max 3 proposte al giorno);
         <b>nessuna stella finché un genitore non approva</b>. Nel pannello "Proposte dei ragazzi" scegli quante stelle dare (1–5) e premi Approva, oppure No.
         Se una proposta torna spesso, conviene aggiungerla alla bacheca.</p>
@@ -2434,7 +2489,7 @@ function openHelp(section){
     <details><summary>🔍 Controlli: "Non è vero!"</summary>
       <p>Nella scheda Genitori, "Da verificare" mostra i compiti spuntati nelle ultime ${fam?.rules?.contestHours ?? 48} ore.
       Se scopri che uno non è stato fatto, premi <b>Non è vero!</b>: il figlio restituisce le stelle, ne perde altre, perde la serie e prende un cartellino giallo.
-      Il primo cartellino rosso del trimestre toglie le stelle per alcuni giorni; dal secondo arrivano i compiti punizione.</p></details>
+      Il primo cartellino rosso del trimestre toglie le stelle per alcuni giorni; dal secondo arrivano i compiti di recupero 🔄.</p></details>
     <details><summary>🎁 Premi</summary>
       <p>I figli chiedono un premio dal Negozio; le stelle restano "prenotate" finché non approvate o rifiutate dalla scheda Genitori.
       Come trasformare i premi virtuali in reali lo decidete voi: il catalogo è vostro.</p></details>
