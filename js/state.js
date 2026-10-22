@@ -33,6 +33,11 @@ const SLOTS = () => [
   {name:'Pomeriggio', icon:'☀️', range:`${T().afternoon} – ${T().evening}`},
   {name:'Sera',       icon:'🌙', range:`${T().evening} – ${T().bed}`},
 ];
+// raggruppa un elenco per fascia (solo le fasce che hanno qualcosa), nell'ordine Mattina, Pomeriggio, Sera
+const bySlot = (list, timeOf) => SLOTS().map(s => ({...s, items: list.filter(x => slotOf(timeOf(x)) === s.name)})).filter(g => g.items.length);
+// intestazione di fascia per gli elenchi dei genitori
+const slotHead = (s, right) => `<div class="slothead"><span>${s.icon} ${s.name} <small>${s.range}</small></span><small>${right}</small></div>`;
+
 const isParent = () => me?.role === 'parent';
 const col = (...p) => collection(db, 'families', fid, ...p);
 const dref = (...p) => doc(db, 'families', fid, ...p);

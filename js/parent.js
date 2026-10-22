@@ -73,23 +73,36 @@ function renderParent(){
   const ver = data.verify.filter(c => ms(c.doneAt) >= lim && kidById(c.doneBy))
     .sort((a,b) => (a.contested - b.contested) || (deadline(a) - deadline(b)));
   const openVer = ver.filter(c => !c.contested).length;
-  $('pVerify').innerHTML = ver.length ? ver.map(c => {
+  // una riga da verificare; dentro il gruppo di un figlio il nome non si ripete
+  const verRow = (c, inKid) => {
     const t = data.tasks[c.taskId];
     const tag = (c.scheduleId || '').startsWith('x-') ? ' · 🧹 bacheca' : c.collab ? ' · 🤝 squadra' : t?.optional ? ' · ✨ facoltativo' : '';
     // compito di squadra non ancora confermato da tutti: nessuna stella data, il genitore può confermare
     if (c.collab && !teamDone(c) && !c.contested) return `<div class="row"><div class="body">${taskIcon(t)} <b>${esc(listNames(c.team || []))}</b> · ${esc(t?.title ?? '?')}
       <br><small>${fmtDate(c.date)} · segnato da ${esc(kidName(c.doneBy))}${tag}</small><br><span class="due">⏳ manca la conferma di ${esc(listNames(teamMissing(c)))}</span></div>
       <button class="btn ok" data-pconf="${c.id}">Confermo io</button></div>`;
-    const who = c.collab ? `<b>${esc(listNames(c.team || []))}</b>` : `<b style="color:${kidColor(c.doneBy)}">${esc(kidName(c.doneBy))}</b>`;
+    const who = c.collab ? `<b>${esc(listNames(c.team || []))}</b> · ` : inKid ? '' : `<b style="color:${kidColor(c.doneBy)}">${esc(kidName(c.doneBy))}</b> · `;
     const left = deadline(c) - Date.now(), h = Math.floor(left / 3600e3), m = Math.floor(left % 3600e3 / 60e3);
     const end = new Date(deadline(c));
     const when = `${end.toLocaleDateString('it-IT',{weekday:'short'})} ${fmtMs(deadline(c)).slice(0,5)} alle ${String(end.getHours()).padStart(2,'0')}:${String(end.getMinutes()).padStart(2,'0')}`;
     const due = c.contested ? '' : `<span class="due ${left < 6 * 3600e3 ? 'soon' : ''}">⏳ ${h ? `${h} h ` : ''}${m} min per verificare · fino a ${when}</span>`;
-    return `<div class="row"><div class="body">${taskIcon(t)} ${who} · ${esc(t?.title ?? '?')}
-      <br><small>${fmtDate(c.date)} · +${c.points} ⭐${tag}</small>${due ? `<br>${due}` : ''}</div>
+    return `<div class="row"><div class="body">${taskIcon(t)} ${who}${esc(t?.title ?? '?')}
+      <br><small>${fmtDate(c.date)}${c.collab || isBoardComp(c) ? '' : ` · ${compTime(c)}`} · +${c.points} ⭐${tag}</small>${due ? `<br>${due}` : ''}</div>
       ${c.contested ? '<span class="chip" style="--c:var(--minus)">🟨 contestato</span>'
                     : `<button class="btn no" data-contest="${c.id}">Non è vero!</button>`}</div>`;
-  }).join('') : '<div class="empty">Nessun compito da verificare</div>';
+  };
+  // raggruppate per figlio e poi per fascia; squadra e lavoretti extra (senza un figlio o una fascia fissa) a parte
+  const apart = c => c.collab || isBoardComp(c);
+  const openN = l => l.filter(c => !c.contested).length;
+  const kidGroups = kidsList().map(k => {
+    const list = ver.filter(c => !apart(c) && c.doneBy === k.id); if (!list.length) return '';
+    return `<h3 class="vkid" style="color:${k.color}">${k.avatar || ''} ${esc(k.name)} <small>${openN(list)} da verificare</small></h3>` +
+      bySlot(list, compTime).map(g => slotHead(g, `${g.items.length}`) + g.items.map(c => verRow(c, true)).join('')).join('');
+  }).join('');
+  const other = ver.filter(apart);
+  $('pVerify').innerHTML = ver.length ? kidGroups + (other.length
+      ? `<h3 class="vkid">🤝 Squadra e 🧹 lavoretti extra <small>${openN(other)} da verificare</small></h3>${other.map(c => verRow(c, false)).join('')}` : '')
+    : '<div class="empty">Nessun compito da verificare</div>';
 
   const reqs = kidsList().flatMap(k => data.pending[k.id] || []);
   $('pRedeem').innerHTML = reqs.length ? reqs.map(x => `
@@ -114,9 +127,10 @@ function renderParent(){
   $('schedList').innerHTML = (sched.length ? '' : kidsList().length
       ? `<p class="empty">Ancora nessun compito.</p><button class="btn primary" id="seedBtn">Carica compiti e premi di esempio</button>`
       : `<p class="empty">Prima aggiungi i figli dal ⚙️ Setup.</p>`) +
-    kidsList().map(k => `<h3 style="color:${k.color}">${k.avatar || ''} ${esc(k.name)}</h3>${schedRows(sched.filter(x => x.owner === k.id))}`).join('') +
-    (teams.length ? `<h3>🤝 Compiti di squadra</h3>${schedRows(teams)}` : '') +
-    (orphan.length ? `<h3>Assegnati a figli rimossi</h3>${schedRows(orphan)}` : '');
+    kidsList().map(k => { const l = sched.filter(x => x.owner === k.id);
+      return `<h3 class="vkid" style="color:${k.color}">${k.avatar || ''} ${esc(k.name)} <small>${nTasks(l)}</small></h3>${schedRows(l)}`; }).join('') +
+    (teams.length ? `<h3 class="vkid">🤝 Compiti di squadra <small>${nTasks(teams)}</small></h3>${schedRows(teams)}` : '') +
+    (orphan.length ? `<h3 class="vkid">Assegnati a figli rimossi <small>${nTasks(orphan)}</small></h3>${schedRows(orphan)}` : '');
 
   // B: bacheca
   const bl = boardTasks();
@@ -155,6 +169,12 @@ function renderParent(){
   showPtab(ptab, true);
 }
 
+// orario del compito di un completamento: quello dell'assegnazione, o del compito di recupero
+function compTime(c){
+  const s = data.sched.find(x => x.id === c.scheduleId);
+  return s?.startTime || data.tasks[c.taskId]?.defaultTime || T().evening;
+}
+
 /* primi passi */
 function renderTodo(){
   const box = $('pTodo');
@@ -182,7 +202,13 @@ function renderTodo(){
 }
 
 const daysText = w => w.length === 7 ? 'Tutti i giorni' : w.slice().sort().map(n => DAY_NAMES[n]).join(' ');
+const nTasks = l => `${l.length} ${l.length === 1 ? 'compito' : 'compiti'}`;
 function schedRows(list){
+  if (!list.length) return '<div class="empty">Nessun compito</div>';
+  return bySlot(list, x => x.startTime).map(g =>
+    slotHead(g, nTasks(g.items)) + `<div class="slotbox">${schedItems(g.items)}</div>`).join('');
+}
+function schedItems(list){
   const td = today();
   return list.map(x => { const t = data.tasks[x.taskId], cat = catOf(t); return `
     <div class="sched click ${x.active?'':'off'}" data-edit="${x.id}">

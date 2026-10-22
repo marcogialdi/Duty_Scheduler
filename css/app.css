@@ -94,3 +94,20 @@
 .task.collab{border-left-style:double;border-left-width:6px}
 .check.wait{background:color-mix(in srgb,var(--star) 25%,var(--card));border-color:var(--star)}
 .cwait{font-size:.82rem;color:var(--muted)}
+/* fasce: richiudibili per i ragazzi, blocchi chiari per i genitori */
+.slotbtn{all:unset;box-sizing:border-box;width:100%;display:flex;justify-content:space-between;align-items:baseline;gap:8px;cursor:pointer;
+         padding:6px 4px;border-radius:10px;font:inherit;font-weight:700}
+.slotbtn small{color:var(--muted);font-weight:400}
+.slotbtn:focus-visible{outline:2px solid var(--ink)}
+.slotbtn .chev{font-style:normal;color:var(--muted);font-size:.85em;margin-left:4px}
+.group.shut h2{margin-bottom:0}
+.group.shut .slotbtn{background:color-mix(in srgb,var(--line) 45%,transparent)}
+.slothead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:14px 0 2px;padding:7px 10px;border-radius:10px;
+          background:color-mix(in srgb,var(--line) 55%,transparent);font-weight:700;font-size:.9rem}
+.slothead small{color:var(--muted);font-weight:400}
+.slothead span small{margin-left:6px}
+.slotbox .sched:first-child{border-top:none}
+.vkid{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:18px 0 4px;padding-bottom:4px;border-bottom:2px solid currentColor}
+.vkid small{color:var(--muted);font-weight:400;font-size:.8rem}
+#pVerify > .vkid:first-child{margin-top:4px}
+#schedList > .vkid:first-child{margin-top:4px}

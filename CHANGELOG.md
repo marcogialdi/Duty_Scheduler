@@ -6,6 +6,12 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.10.0 · 22/10/2026
+- **Da verificare** raggruppato per figlio e poi per fascia (🌅 Mattina, ☀️ Pomeriggio, 🌙 Sera); compiti di squadra e lavoretti extra in un gruppo a parte. Ogni voce mostra anche l'orario del compito.
+- **Compiti assegnati** diviso per figlio e per fascia, con orari della fascia e numero di compiti.
+- **Fasce richiudibili** nella giornata dei ragazzi: un tocco sul nome chiude o riapre la fascia; da chiusa mostra quanti compiti mancano. Si chiude da sola se è vuota, tutta fatta o già passata senza obbligatori da fare. La scelta fatta a mano resta per quel figlio e quel giorno sul dispositivo.
+- Regole Firestore invariate (0.9.0).
+
 ## 0.9.0 · 17/10/2026
 - **Compiti di squadra 🤝**: un compito facoltativo con "Collaborazione" vale per una squadra di figli (almeno 2). Uno lo segna, gli altri confermano "l'abbiamo fatto"; le stelle arrivano a tutti, uguali, solo quando hanno confermato tutti. Chi ha segnato può togliere la spunta finché nessuno ha confermato.
 - In "Da verificare" i compiti di squadra in attesa mostrano chi deve ancora confermare, con "Confermo io" per il genitore; "Non è vero!" dà il cartellino giallo a tutta la squadra.

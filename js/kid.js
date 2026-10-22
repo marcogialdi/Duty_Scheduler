@@ -39,14 +39,35 @@ function renderDay(){
 
   renderGoal(compBy, isToday);
 
+  const nowHM = new Date().toTimeString().slice(0, 5);
   $('groups').innerHTML = SLOTS().map(slot => {
     const list = currentItems.filter(i => slotOf(i.time) === slot.name);
-    const sDone = list.filter(i => compDone(compBy[i.key])).length;
-    return `<section class="group"><h2>${slot.icon} ${slot.name} <small>${list.length ? `${sDone}/${list.length} · ` : ''}${slot.range}</small></h2>
-      ${list.length ? list.map(i => taskCard(i, compBy[i.key], isToday)).join('') : '<div class="empty">Nessun compito 🎉</div>'}
+    const isDone = i => compDone(compBy[i.key]);
+    const sDone = list.filter(isDone).length, left = list.filter(i => !i.optional && !isDone(i)).length;
+    // si chiude da sola se vuota, tutta fatta, o già passata senza obbligatori da fare; la scelta a mano vince
+    const past = day < today() || (isToday && nowHM >= SLOT_END()[slot.name]);
+    const auto = !list.length || sDone === list.length || (past && !left);
+    const open = slotOpenGet(slot.name) ?? !auto;
+    const sum = !list.length ? 'nessun compito' : sDone === list.length ? '✓ tutto fatto' : left ? `${left} da fare` : 'restano i facoltativi';
+    return `<section class="group ${open ? '' : 'shut'}">
+      <h2><button type="button" class="slotbtn" data-slot="${slot.name}" aria-expanded="${open}">
+        <span>${slot.icon} ${slot.name} <i class="chev" aria-hidden="true">${open ? '▾' : '▸'}</i></span>
+        <small>${list.length ? `${sDone}/${list.length} · ` : ''}${open ? slot.range : sum}</small></button></h2>
+      ${!open ? '' : list.length ? list.map(i => taskCard(i, compBy[i.key], isToday)).join('') : '<div class="empty">Nessun compito 🎉</div>'}
     </section>`;
   }).join('');
   renderBoard(isToday);
+}
+
+/* fasce richiudibili: la scelta fatta a mano vale per quel figlio e quel giorno, su questo dispositivo */
+const SLOT_END = () => ({Mattina: T().afternoon, Pomeriggio: T().evening, Sera: '24:00'});
+function slotOpenAll(){ try { return JSON.parse(store('get', 'cdc.slotOpen') || '{}'); } catch(e){ return {}; } }
+function slotOpenGet(name){ const v = slotOpenAll()[`${owner}|${day}|${name}`]; return v === undefined ? undefined : v; }
+function slotOpenSet(name, open){
+  const all = slotOpenAll(), keep = addDays(today(), -3);
+  for (const k of Object.keys(all)) if (k.split('|')[1] < keep) delete all[k];   // via le scelte vecchie
+  all[`${owner}|${day}|${name}`] = open;
+  store('set', 'cdc.slotOpen', JSON.stringify(all));
 }
 
 /* =====================================================================
@@ -209,6 +230,7 @@ $('svDay').addEventListener('click', async e => {
   const b = e.target.closest('button'); if (!b) return;
   const ds = day, d = b.dataset, now = serverTimestamp();
   try {
+    if (d.slot){ slotOpenSet(d.slot, b.getAttribute('aria-expanded') !== 'true'); return render(); }
     if (d.pick){ swapPick = d.pick; return render(); }
     if (d.cconf){
       const c = data.comps.find(x => x.id === d.cconf);

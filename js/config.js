@@ -9,9 +9,10 @@ const APP_NAME = 'Compiti di casa';
    Nuove funzioni → si aumenta il secondo numero; solo correzioni → il terzo.
    A ogni rilascio: aggiorna APP_VERSION, APP_DATE e CHANGELOG qui, VERSION in sw.js,
    l'intestazione di firestore.rules (se cambiate) e il file CHANGELOG.md. */
-const APP_VERSION = '0.9.0';
-const APP_DATE = '2026-10-17';
+const APP_VERSION = '0.10.0';
+const APP_DATE = '2026-10-22';
 const CHANGELOG = [
+  ['0.10.0', '2026-10-22', 'Fasce Mattina, Pomeriggio e Sera più chiare: "Da verificare" e "Compiti assegnati" divisi per figlio e per fascia; nella giornata dei ragazzi le fasce si chiudono con un tocco e quelle finite si chiudono da sole.'],
   ['0.9.0', '2026-10-17', 'Compiti di squadra 🤝: uno segna, gli altri confermano, le stelle arrivano a tutti insieme. L\'app è ora divisa in file per funzione (aggiornamenti più leggeri).'],
   ['0.8.0', '2026-10-17', 'Pagina Genitori divisa in schede con contatori; "Primi passi" richiudibile; scadenza visibile per ogni compito da verificare.'],
   ['0.7.2', '2026-10-17', 'I "compiti punizione" si chiamano ora "compiti di recupero" 🔄; lo scambio tra fratelli usa 🤝.'],

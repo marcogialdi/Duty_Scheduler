@@ -25,6 +25,7 @@ function openHelp(section){
     <details ${kid ? 'open' : ''}><summary>🧒 Per i ragazzi: come funziona</summary>
       <ol><li>Tocca il tuo nome e inserisci il tuo <b>PIN</b> segreto.</li>
       <li>Fai i compiti e tocca il <b>cerchio</b> accanto a ognuno: ricevi subito le ⭐.</li>
+      <li>Tocca il nome di una fascia (<b>Mattina, Pomeriggio, Sera</b>) per chiuderla o riaprirla. Quando hai fatto tutto si chiude da sola: se la tocchi di nuovo, l'app si ricorda la tua scelta per quel giorno.</li>
       <li>Fatti tutti? È una <b>giornata perfetta</b>: stelle bonus! Più giorni di fila = serie 🔥.</li>
       <li>Non hai voglia di un compito? <b>🤝 Chiedi</b> a un fratello: se accetta, lo fa lui e guadagna le stelle.</li>
       <li>Sotto i compiti trovi i <b>🧹 lavoretti extra</b>: fai la pattumiera o un altro lavoretto e tocca "L'ho fatto!" per avere stelle in più.</li>
@@ -38,7 +39,9 @@ function openHelp(section){
     <details><summary>🧭 Come è organizzata la pagina Genitori</summary>
       <p>In alto trovi <b>Primi passi</b> (si chiude con un tocco) e sotto le <b>schede</b>: Situazione (punteggi e bonus a mano), Da verificare, Richieste premi (con il catalogo),
       Proposte ragazzi, Gestione compiti (nuovo compito), Compiti assegnati, Bacheca extra, Compiti recupero.
-      Il <b>numero rosso</b> su una scheda indica quante cose aspettano una tua decisione. In "Da verificare" ogni voce mostra quanto tempo resta per contestarla.</p></details>
+      Il <b>numero rosso</b> su una scheda indica quante cose aspettano una tua decisione.</p>
+      <p><b>Da verificare</b> e <b>Compiti assegnati</b> sono divisi per figlio e, dentro, per fascia (🌅 Mattina, ☀️ Pomeriggio, 🌙 Sera). In "Da verificare" compiti di squadra e lavoretti extra stanno in un gruppo a parte e ogni voce mostra quanto tempo resta per contestarla.</p>
+      <p>Nella giornata dei ragazzi le fasce si chiudono con un tocco sul nome; quelle già fatte, o già passate senza compiti obbligatori da fare, si chiudono da sole.</p></details>
     <details open><summary>🚀 Primi passi</summary>
       <ol><li><b>Figli</b>: in ⚙️ Setup aggiungi ogni figlio con nome, icona, colore e un PIN di 6 cifre (diverso per ciascuno).</li>
       <li><b>Compiti</b>: in 👪 Genitori controlla i compiti di esempio o creane di nuovi. Tocca ✏️ per modificarli.</li>
