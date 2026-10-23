@@ -1,6 +1,6 @@
 # Compiti di casa – Documentazione di progetto
 
-Aggiornata al 17/10/2026 · Documento vivo: https://claude.ai/code/artifact/f6b5aada-f0eb-4617-8ac4-e1afd50f7542
+Versione app 0.7.2 · aggiornata al 17/10/2026 · Documento vivo: https://claude.ai/code/artifact/f6b5aada-f0eb-4617-8ac4-e1afd50f7542
 
 ## Panoramica
 
@@ -15,14 +15,22 @@ Aggiornata al 17/10/2026 · Documento vivo: https://claude.ai/code/artifact/f6b5
 
 | Data | Versione | Cosa è cambiato |
 | --- | --- | --- |
-| 17/10/2026 | v7 – compiti fuori programma | A: compiti facoltativi; B: bacheca dei lavoretti extra con limite giornaliero condiviso; C: proposte dei ragazzi con stelle solo dopo approvazione; tipo di compito nel modulo, nuovi esempi, guida e regole aggiornate |
-| 17/10/2026 | v6 – correzioni test | Conferma password in registrazione e invito; salvataggi grandi divisi in gruppi da 6 per il limite di verifiche delle regole Firebase; messaggi d'errore che indicano il passaggio bloccato; rimando dal vecchio `compiti.html` a `compiti/` |
-| 17/10/2026 | v5 – multi-famiglia + PWA | Livello "famiglie" nel database, registrazione guidata in 4 passi con consenso privacy, invito del secondo genitore con codice, attivazione del dispositivo dei figli, icone emoji dei compiti e avatar dei figli, guida integrata, checklist "Primi passi", eliminazione famiglia, PWA installabile, cache offline, saldo calcolato lato server |
-| 17/10/2026 | v4 – usabilità | Modifica di compiti e assegnazioni in una finestra dedicata, descrizione del compito, date gg/mm/aaaa, riquadro "Obiettivo del giorno" con barra di avanzamento, layout per smartphone e tablet |
-| 16/10/2026 | v3 – account e Setup | Login con Firebase Authentication (genitori email+password, figli PIN a 6 cifre), pagina Setup (figli fino a 4, genitori, orari, categorie, regole), regole di sicurezza per ruolo |
-| 16/10/2026 | v2 – gioco | Stelle, giornata perfetta, serie, penalità, contestazione "Non è vero!", cartellini gialli/rossi, negozio premi, estratto conto |
-| 16/10/2026 | v1.1 – Firebase | Passaggio da Supabase a Firebase Firestore (limite di 2 progetti gratuiti su Supabase) |
-| 16/10/2026 | v1 – prima pagina | Pagina HTML con tab Riccardo/Tommaso, compiti per fascia, categorie colorate, scambio compiti con accettazione, sezione genitori; database Supabase |
+| 23/10/2026 | 0.11.0 – inserire e modificare meglio | Compito più volte al giorno (una fascia per orario); «Modifica il compito» ed elenco delle assegnazioni in Gestione compiti; ✏️ sulla giornata del figlio per i genitori; avviso sui titoli doppi e «Unisci» per i doppioni; premi modificabili e sospendibili; catalogo consigliato di 21 premi (50 ⭐ = 1 €, fino al contributo bici da 100 €). Regole invariate (0.9.0) |
+| 22/10/2026 | 0.10.0 – fasce più chiare | «Da verificare» e «Compiti assegnati» divisi per figlio e per fascia (Mattina, Pomeriggio, Sera); squadra e lavoretti extra a parte; nella giornata dei ragazzi fasce richiudibili con un tocco, chiuse da sole se vuote, fatte o passate senza obbligatori da fare; la scelta a mano resta per figlio e giorno sul dispositivo. Regole invariate (0.9.0) |
+| 17/10/2026 | 0.9.0 – compiti di squadra e file separati | Compiti di squadra 🤝: un facoltativo con «Collaborazione» vale per una squadra di figli; uno segna, gli altri confermano, le stelle arrivano a tutti solo a conferme complete; il genitore può confermare; «Non è vero!» dà il giallo a tutta la squadra. App divisa in file per funzione (css/, js/) con la versione nel nome dei file e controlli automatici all'assemblaggio. Regole Firestore 0.9.0 da ripubblicare |
+| 17/10/2026 | 0.8.0 – schede nella pagina Genitori | Pagina Genitori divisa in 8 schede (Situazione, Da verificare, Richieste premi, Proposte ragazzi, Gestione compiti, Compiti assegnati, Bacheca extra, Compiti recupero) con numero rosso sulle schede che chiedono una decisione; "Primi passi" richiudibile; in "Da verificare" tempo rimasto per contestare (rosso sotto le 6 ore), voci ordinate per scadenza. Dati e regole invariati (0.7.0) |
+| 17/10/2026 | 0.7.2 – compiti di recupero | "Compiti punizione" rinominati "compiti di recupero" 🔄; scambio tra fratelli con icona 🤝; controllo automatico sull'assemblaggio della pagina. Dati e regole invariati |
+| 17/10/2026 | 0.7.1 – cambio del tipo di compito | Nella modifica si cambia il tipo (pianificato, facoltativo, lavoretto extra, punizione) con avviso sulle conseguenze; regole Firestore invariate (0.7.0) |
+| 17/10/2026 | 0.7.0 – compiti fuori programma + versione | A: compiti facoltativi; B: bacheca dei lavoretti extra con limite giornaliero condiviso; C: proposte dei ragazzi con stelle solo dopo approvazione; tipo di compito nel modulo, nuovi esempi, guida e regole aggiornate |
+| 17/10/2026 | 0.6.0 – correzioni test | Conferma password in registrazione e invito; salvataggi grandi divisi in gruppi da 6 per il limite di verifiche delle regole Firebase; messaggi d'errore che indicano il passaggio bloccato; rimando dal vecchio `compiti.html` a `compiti/` |
+| 17/10/2026 | 0.5.0 – multi-famiglia + PWA | Livello "famiglie" nel database, registrazione guidata in 4 passi con consenso privacy, invito del secondo genitore con codice, attivazione del dispositivo dei figli, icone emoji dei compiti e avatar dei figli, guida integrata, checklist "Primi passi", eliminazione famiglia, PWA installabile, cache offline, saldo calcolato lato server |
+| 17/10/2026 | 0.4.0 – usabilità | Modifica di compiti e assegnazioni in una finestra dedicata, descrizione del compito, date gg/mm/aaaa, riquadro "Obiettivo del giorno" con barra di avanzamento, layout per smartphone e tablet |
+| 16/10/2026 | 0.3.0 – account e Setup | Login con Firebase Authentication (genitori email+password, figli PIN a 6 cifre), pagina Setup (figli fino a 4, genitori, orari, categorie, regole), regole di sicurezza per ruolo |
+| 16/10/2026 | 0.2.0 – gioco | Stelle, giornata perfetta, serie, penalità, contestazione "Non è vero!", cartellini gialli/rossi, negozio premi, estratto conto |
+| 16/10/2026 | 0.1.1 – Firebase | Passaggio da Supabase a Firebase Firestore (limite di 2 progetti gratuiti su Supabase) |
+| 16/10/2026 | 0.1.0 – prima pagina | Pagina HTML con tab Riccardo/Tommaso, compiti per fascia, categorie colorate, scambio compiti con accettazione, sezione genitori; database Supabase |
+
+**Regola delle versioni.** Numerazione `MAGGIORE.MINORE.CORREZIONE`: `0.x` durante la prova, `1.0.0` alla prima versione da prodotto; nuove funzioni aumentano il secondo numero, le sole correzioni il terzo. Il numero si vede in fondo all'app e nella Guida (Novità), in `sw.js`, nella prima riga di `firestore.rules` e in `CHANGELOG.md`. A ogni rilascio si aggiornano tutti insieme.
 
 ## Funzionalità
 
@@ -48,7 +56,7 @@ Non tutto ha un giorno fisso (es. buttare la pattumiera). Per non rompere la gio
 | | A · Facoltativo ✨ | B · Lavoretto extra in bacheca 🧹 | C · Proposta del ragazzo 💡 |
 | --- | --- | --- | --- |
 | Quando usarlo | capita di solito in certi giorni, ma non sempre | serve ogni tanto, senza giorno né orario | iniziativa spontanea non prevista |
-| Chi lo crea | genitore (Tipo "Facoltativo" o spunta nella modifica) | genitore (Tipo "Lavoretto extra in bacheca") | il figlio, dalla sua giornata (max 3 al giorno) |
+| Chi lo crea | genitore (Tipo "Facoltativo", anche cambiando il tipo con ✏️) | genitore (Tipo "Lavoretto extra in bacheca") | il figlio, dalla sua giornata (max 3 al giorno) |
 | Dove lo vede il figlio | tra i compiti, con l'etichetta "facoltativo" | sezione "Lavoretti extra" sotto i compiti | sezione "Hai fatto qualcos'altro di utile?" |
 | Stelle | quelle del compito, subito | quelle del lavoretto, subito con "L'ho fatto!" | nessuna finché il genitore non approva (1–5) |
 | Limiti | giorni e orario come un compito pianificato | max N volte al giorno in tutto; chi arriva prima lo segna | approvazione o rifiuto del genitore |
@@ -58,11 +66,14 @@ Non tutto ha un giorno fisso (es. buttare la pattumiera). Per non rompere la gio
 
 Un imbroglio su un facoltativo o lavoretto extra dà il cartellino giallo ma non annulla la giornata perfetta. Una proposta ricorrente conviene aggiungerla alla bacheca.
 
+**Compiti di squadra 🤝 (dalla 0.9.0).** Un facoltativo con la casella *Collaborazione* diventa uno solo per una squadra di almeno 2 figli, con un obiettivo comune (es. «Tenere in ordine la camera»). Uno lo segna (nessuna stella), gli altri toccano *Confermo, l'abbiamo fatto*: a conferme complete ognuno riceve le stelle del compito. Chi l'ha segnato può togliere la spunta finché nessuno ha confermato; senza tutte le conferme nessuno prende stelle, ma nessuno ne perde. Il genitore vede in «Da verificare» chi deve confermare e può confermare lui. Mentire richiede complicità: «Non è vero!» dà il cartellino giallo a tutta la squadra. Non si scambia.
+
 ### Genitori
-- Checklist "Primi passi" e banner per attivare il dispositivo.
-- Situazione di ogni figlio; "Da verificare" (ultime 48 ore, "Non è vero!"); richieste premi.
+- Checklist "Primi passi" richiudibile (aperta finché manca qualcosa) e banner per attivare il dispositivo.
+- **Schede** (dalla 0.8.0): Situazione · Da verificare · Richieste premi · Proposte ragazzi · Gestione compiti · Compiti assegnati · Bacheca extra · Compiti recupero. Un numero rosso indica verifiche, premi o proposte in attesa; l'app ricorda l'ultima scheda aperta.
+- Situazione di ogni figlio con bonus o penalità manuali; "Da verificare" (ultime 48 ore, "Non è vero!", con il tempo rimasto per contestare); richieste premi.
 - Nuovo compito con icona suggerita dal titolo, descrizione, categoria, 1–5 stelle, assegnazione a uno o a tutti, giorni, date gg/mm/aaaa.
-- Modifica di compito e assegnazione in una finestra (sospendi, riattiva, elimina); compiti punizione; catalogo premi; bonus o penalità manuali con motivo.
+- Modifica di compito e assegnazione in una finestra (sospendi, riattiva, elimina); compiti di recupero; catalogo premi; bonus o penalità manuali con motivo.
 
 ### Setup
 - Questo dispositivo; figli (aggiungi, rinomina, colore, avatar, nuovo PIN, rimuovi); genitori e inviti.
@@ -82,7 +93,7 @@ Un imbroglio su un facoltativo o lavoretto extra dà il cartellino giallo ma non
 | Imbroglio contestato (entro 48 ore) | restituisce le stelle, perde 2× il valore, perde serie e giornata perfetta, cartellino giallo |
 | 3 gialli in 14 giorni | cartellino rosso; i gialli si azzerano |
 | 1° rosso nel trimestre | per 3 giorni i compiti non danno stelle né bonus |
-| Dal 2° rosso nel trimestre | per 3 giorni compiti punizione, senza stelle |
+| Dal 2° rosso nel trimestre | per 3 giorni compiti di recupero 🔄, senza stelle |
 | Premio richiesto | stelle prenotate; scalate all'approvazione |
 | Bonus o penalità manuale | importo libero con motivo |
 | A · Facoltativo fatto / saltato | fatto: + stelle; saltato: nessun effetto |
@@ -95,10 +106,10 @@ I conti di fine giornata li calcola il dispositivo di un genitore alla prima ape
 
 Nessun server da gestire: la pagina arriva da GitHub Pages e parla direttamente con Firebase (Authentication + Firestore), con costo zero per il test.
 
-- Frontend: un unico file HTML con JavaScript (moduli ES), senza framework né build; Firebase JS SDK 12.9.0 dal CDN di Google.
+- Frontend (dalla 0.9.0): HTML, `css/` (2 fogli) e `js/` (15 file per funzione: config, util, state, game, auth, register, data, kid, parent, edit, collab, setup, help, main + firebase.js). Nessun framework né build: `firebase.js` è l'unico modulo ES (Firebase JS SDK 12.9.0 dal CDN di Google), gli altri sono script normali caricati in ordine che condividono lo stato. Ogni file pubblicato ha `?v=versione` nel nome. Elenco nel `README.md`.
 - Database: Cloud Firestore in tempo reale con cache persistente sul dispositivo (apertura istantanea, offline, sincronizzazione al ritorno della rete).
 - Accessi: Firebase Authentication; una seconda istanza in memoria crea gli account dei figli senza scollegare il genitore.
-- PWA: manifest, service worker (rete prima per la pagina, cache prima per librerie e icone), icone Android/iPhone, pulsante "Installa".
+- PWA: manifest, service worker (rete prima per la pagina, cache prima per librerie, icone e file dell'app con la versione nel nome), icone Android/iPhone, pulsante "Installa".
 - Efficienza: saldo calcolato dal server con una somma; storico limitato a 40 movimenti; scambi e spunte letti solo per il giorno visualizzato; nessun indice composto.
 - Sul dispositivo resta solo ciò che non può essere alterato a proprio vantaggio (famiglia e figli attivati, ultima scheda, ultimo saldo, preferenze). Stelle, compiti e cartellini vivono solo sul server.
 - Prima versione (16/10/2026) su Supabase, abbandonato per il limite di 2 progetti gratuiti.
@@ -110,13 +121,13 @@ Nessun server da gestire: la pagina arriva da GitHub Pages e parla direttamente 
 | `members/{uid}` | familyId, role, kidId, name, email, consentAt, invite | genitore fondatore, genitore invitato, genitori per i figli |
 | `invites/{codice}` | familyId, familyName, createdBy, expiresAt | genitori |
 | `families/{fid}` | name, times, categories, rules, kids[], createdBy, consentAt, lastDeviceAt | genitori |
-| `…/tasks/{id}` | title, icon, description, categoryId, points, optional (A), board + maxPerDay (B), punishment, defaultTime | genitori |
-| `…/schedule/{id}` | taskId, owner, startTime, weekdays, startDate, endDate, active | genitori |
+| `…/tasks/{id}` | title, icon, description, categoryId, points, optional (A), collab (squadra), board + maxPerDay (B), punishment (compito di recupero), defaultTime | genitori |
+| `…/schedule/{id}` | taskId, owner (kidId o "team"), team [kidId…], startTime, weekdays, startDate, endDate, active | genitori |
 | `…/swaps/{scheduleId_data}` | scheduleId, date, fromOwner, toOwner, status | figli coinvolti, genitori |
-| `…/completions/{scheduleId_data}` | scheduleId, taskId, date, doneBy, points, doneAt, contested; bacheca: scheduleId = x-<compito>-<n>, slot, board | figlio (oggi, i suoi), genitori |
+| `…/completions/{scheduleId_data}` | scheduleId, taskId, date, doneBy, points, doneAt, contested; squadra: collab, team, confirmed, completeAt, parentConfirmed; bacheca: scheduleId = x-<compito>-<n>, slot, board | figlio (oggi, i suoi), genitori |
 | `…/rewards/{id}` | title, cost, active | genitori |
 | `…/kids/{kidId}` | streak, lastClosed | genitori |
-| `…/kids/{kidId}/ledger/{id}` | kid, amount, type, reason, date, createdAt, completionId | figlio solo "task", genitori |
+| `…/kids/{kidId}/ledger/{id}` | kid, amount, type (task, collab, perfect, streak, missed, cheat, reward, manual, proposal), reason, date, createdAt, completionId | figlio "task" (sue) e "collab" (anche dei compagni, a conferme complete), genitori |
 | `…/kids/{kidId}/cards/{id}` | type, date, from, until, nth, effect | genitori |
 | `…/kids/{kidId}/redemptions/{id}` | rewardId, title, cost, status | figlio (richiesta, annullo), genitori |
 | `…/kids/{kidId}/proposals/{id}` | kid, title, date, status, points (solo all'approvazione) | figlio (proposta, annullo), genitori |
@@ -127,7 +138,8 @@ Nessun server da gestire: la pagina arriva da GitHub Pages e parla direttamente 
 - Nuovo PIN dal genitore: nuovo account (versione +1), il vecchio perde i permessi.
 - Il dispositivo attivato salva famiglia e figli in locale: "Chi sei?" non legge il database.
 - Regole Firestore: ogni richiesta verifica famiglia e ruolo in `members/{uid}`; famiglie isolate; il primo genitore si registra solo creando la famiglia, il secondo solo con invito valido; i figli scrivono solo le proprie azioni con punti coerenti e leggono solo i propri punteggi.
-- Limite Firebase: ~20 verifiche per salvataggio di gruppo → gruppi da 6.
+- Compiti di squadra: segna solo un membro della squadra dell'assegnazione; un compagno aggiunge solo la propria conferma; chi ha segnato toglie la spunta solo finché mancano conferme; stelle di squadra (`collab_…`) scrivibili da un membro anche per i compagni, solo a conferme complete, non contestate e pari al valore del compito (o 0).
+- Limite Firebase: ~20 verifiche per salvataggio di gruppo → gruppi da 6; stelle di squadra scritte una per figlio, con recupero automatico senza doppioni se qualcosa si interrompe.
 - Limiti accettati: un figlio esperto può guadagnare al massimo +1 stella indebita per compito; gli account dei figli restano in Authentication dopo l'eliminazione.
 
 ## Privacy e dati dei minori
@@ -139,7 +151,9 @@ Nessun server da gestire: la pagina arriva da GitHub Pages e parla direttamente 
 
 | File | Ruolo |
 | --- | --- |
-| `compiti/index.html` | l'intera app |
+| `index.html` | struttura delle schermate |
+| `css/`, `js/` | stile e logica, un file per funzione (vedi `README.md`) |
+| `README.md` | elenco dei file |
 | `compiti/manifest.webmanifest` | installazione |
 | `compiti/sw.js` | service worker |
 | `compiti/icons/` | icone 192, 512, maskable 512, apple-touch 180 |
@@ -149,9 +163,9 @@ Nessun server da gestire: la pagina arriva da GitHub Pages e parla direttamente 
 1. Firestore in modalità produzione (località europea consigliata).
 2. Authentication › Email/password attivo.
 3. Firestore › Regole: pubblicare `firestore.rules`.
-4. `firebaseConfig` del progetto `duty-scheduler-bdd9e` già nel file.
+4. `firebaseConfig` del progetto `duty-scheduler-bdd9e` già in `js/firebase.js`.
 
-Pubblicazione: cartella `compiti` su GitHub Pages → `https://<utente>.github.io/<repository>/compiti/`. Aggiornare: sostituire `index.html`; aumentare `VERSION` in `sw.js` solo se cambiano icone o manifest. Costi: piano Spark gratuito, ampiamente sotto i limiti.
+Pubblicazione: cartella `compiti` su GitHub Pages → `https://<utente>.github.io/<repository>/compiti/`. Aggiornare: caricare tutto il contenuto dello zip, comprese le cartelle `css/` e `js/`. La versione si cambia solo in `js/config.js`; l'assemblaggio la porta nei nomi dei file e nel service worker e blocca il pacchetto se trova errori (pagina incompleta, sintassi, nomi doppi, elementi mancanti, registro versioni, ordine nelle regole). Costi: piano Spark gratuito, ampiamente sotto i limiti.
 
 ## Problemi incontrati e soluzioni
 
@@ -187,10 +201,30 @@ Fonti: https://apps.apple.com/app/id1611068600 · https://apps.apple.com/us/app/
 
 ## Limiti noti e roadmap
 
-Limiti: conti di fine giornata legati all'apertura di un genitore; nessuna notifica push; account dei figli non cancellati; regole non verificate con emulatore; file unico di ~2.200 righe; non presente sugli store.
+Limiti: conti di fine giornata legati all'apertura di un genitore; nessuna notifica push; account dei figli non cancellati; regole non verificate con emulatore; compiti di squadra: se un compagno è nel primo rosso e la conferma finale arriva da un figlio, il compagno riceve comunque le stelle; non presente sugli store.
 
 1. Test con 3–4 famiglie (ora).
 2. Server leggero (Cloud Functions, piano Blaze): chiusura notturna, notifiche push, cancellazione completa, stelle calcolate lato server.
-3. Codice da prodotto: moduli e build (Vite), test delle regole con emulatore, monitoraggio errori.
+3. Codice da prodotto: file già divisi (0.9.0); poi moduli ES e build (Vite), test delle regole con emulatore, monitoraggio errori.
 4. Privacy e legale: consulenza GDPR, informativa completa, database UE.
 5. Distribuzione: PWA; eventualmente store con Capacitor (Google ~25 $ una tantum, Apple ~99 $/anno, Mac per iOS).
+
+**Possibili sviluppi (backlog)**
+
+| Idea | Descrizione | Proposta il | Stato |
+| --- | --- | --- | --- |
+| Schede nella pagina Genitori | Troppo scorrimento: dividere in schede (es. Oggi · Compiti · Premi · Proposte) | 17/10/2026 | Fatto in 0.8.0 |
+| Compiti collaborativi | Compiti per più figli insieme: le stelle arrivano a tutti solo se ognuno fa la sua parte | 17/10/2026 | Fatto in 0.9.0 |
+| Schede nella pagina Setup | Come per Genitori: dividere il Setup in schede (es. Famiglia e orari · Figli · Genitori · Regole del gioco · Questo dispositivo) | 17/10/2026 | Da valutare |
+| Fasce chiare in Gestione compiti | Nella pagina Genitori i compiti di ogni figlio sono un elenco unico per orario: distinguere bene Mattina 🌅, Pomeriggio ☀️ e Sera 🌙 (intestazione con orari e numero di compiti, separazione visiva), come nella giornata dei ragazzi | 17/10/2026 | Fatto in 0.10.0 |
+| Guida contestuale | Oggi la guida cambia solo per ruolo: aprirla sulla sezione della schermata in uso (Setup → Attivare il dispositivo, Da verificare → Controlli, squadra → Compiti di squadra) e, prima dell'accesso, mostrare solo registrazione, invito e PIN | 17/10/2026 | Da valutare |
+| Cambio PIN nella guida ragazzi | Spiegare in «Per i ragazzi» come cambiare il PIN (pulsante 🔢 PIN: attuale, nuovo, ripeti) e cosa fare se lo dimenticano (genitori: Setup › Figli › Nuovo PIN) | 17/10/2026 | Da valutare |
+| Fasce richiudibili | Nella giornata dei ragazzi chiudere e riaprire Mattina 🌅, Pomeriggio ☀️ e Sera 🌙 toccando l'intestazione (resta visibile con il conteggio, es. 4/6); proposta: la fascia completata o passata si chiude da sola e il dispositivo ricorda la scelta | 19/10/2026 | Fatto in 0.10.0 |
+| "Da verificare" raggruppato | Nella scheda Da verificare raggruppare i compiti prima per figlio e poi per fascia (Mattina 🌅, Pomeriggio ☀️, Sera 🌙) per una lettura più facile; compiti di squadra e lavoretti extra in un gruppo a parte | 21/10/2026 | Fatto in 0.10.0 |
+| Compito ripetuto nella giornata | Nel modulo, oltre ai giorni, scegliere le fasce Mattina 🌅 · Pomeriggio ☀️ · Sera 🌙 in cui il compito si ripete, ognuna col suo orario (es. Lavare i denti 07:00, 14:15, 20:50); si crea un'assegnazione per fascia, ognuna si spunta e vale stelle a sé. Oggi: ripetere l'inserimento con «Compito» esistente e un altro orario | 22/10/2026 | Fatto in 0.11.0 |
+| Modifica dei premi del catalogo | Oggi il catalogo permette solo aggiungi/elimina: cambiare nome e costo, sospendere e riattivare un premio (le richieste già fatte mantengono il prezzo di allora) | 22/10/2026 | Fatto in 0.11.0 |
+| Modifica rapida dalla giornata del figlio | Guardando la giornata di un figlio, una ✏️ su ogni compito (solo per i genitori) apre la finestra di modifica, senza cercarlo in Compiti assegnati | 22/10/2026 | Fatto in 0.11.0 |
+| Modifica da Gestione compiti | Scegliendo un compito esistente nel menu «Compito», offrire «Modifica il compito» e mostrare le sue assegnazioni, ognuna modificabile | 22/10/2026 | Fatto in 0.11.0 |
+| Avviso sui compiti doppi | Creando un compito con un titolo già esistente (anche con maiuscole o spazi diversi), proporre di aggiungere un'assegnazione al compito esistente, così le correzioni valgono per tutte le ripetizioni | 22/10/2026 | Fatto in 0.11.0 |
+| Unisci compiti doppi | Unire compiti con lo stesso nome in uno solo, spostando tutte le assegnazioni; storico delle stelle invariato | 22/10/2026 | Fatto in 0.11.0 |
+| Preparare l'app alle lingue | Spostare tutti i testi (pulsanti, messaggi, guida, regole, inviti) in un dizionario italiano, con date e valute per paese; traduzioni dopo il lancio in Italia: inglese e spagnolo, poi tedesco e francese. Analisi nel documento «Pubblicazione sugli store e modello economico» (https://claude.ai/artifact/8wtnm2ayZrs52diVAW4WbV) | 22/10/2026 | Da valutare |

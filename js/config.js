@@ -9,9 +9,10 @@ const APP_NAME = 'Compiti di casa';
    Nuove funzioni → si aumenta il secondo numero; solo correzioni → il terzo.
    A ogni rilascio: aggiorna APP_VERSION, APP_DATE e CHANGELOG qui, VERSION in sw.js,
    l'intestazione di firestore.rules (se cambiate) e il file CHANGELOG.md. */
-const APP_VERSION = '0.10.0';
-const APP_DATE = '2026-10-22';
+const APP_VERSION = '0.11.0';
+const APP_DATE = '2026-10-23';
 const CHANGELOG = [
+  ['0.11.0', '2026-10-23', 'Compiti più facili da inserire e correggere: più volte al giorno, modifica del compito da Gestione compiti e dalla giornata del figlio, avviso e unione dei doppioni; premi modificabili e sospendibili, catalogo consigliato di 21 premi.'],
   ['0.10.0', '2026-10-22', 'Fasce Mattina, Pomeriggio e Sera più chiare: "Da verificare" e "Compiti assegnati" divisi per figlio e per fascia; nella giornata dei ragazzi le fasce si chiudono con un tocco e quelle finite si chiudono da sole.'],
   ['0.9.0', '2026-10-17', 'Compiti di squadra 🤝: uno segna, gli altri confermano, le stelle arrivano a tutti insieme. L\'app è ora divisa in file per funzione (aggiornamenti più leggeri).'],
   ['0.8.0', '2026-10-17', 'Pagina Genitori divisa in schede con contatori; "Primi passi" richiudibile; scadenza visibile per ogni compito da verificare.'],
@@ -57,6 +58,19 @@ const KIND_DESC = {
   board: 'Senza giorni né orario: il figlio lo segna quando lo fa; limite di volte al giorno tra i fratelli.',
   pun: 'Compito di recupero: compare solo durante il cartellino rosso, senza stelle, per rimediare.',
 };
+/* catalogo premi consigliato: 50 ⭐ = 1 €. [titolo, stelle, valore in euro se è un premio economico] */
+const EUR_STARS = 50;
+const CATALOG = [
+  ['15 minuti in più di tablet o videogiochi', 20], ['Scegliere il dolce o il menu della cena', 30],
+  ['Scegliere il film della sera', 40], ['Scegliere la musica in macchina per una settimana', 40],
+  ['Stare alzato 30 minuti in più (venerdì o sabato)', 50], ['Colazione a letto la domenica', 60],
+  ['Serata giochi da tavolo, scelgo io il gioco', 80], ['Invitare un amico a casa a giocare', 120],
+  ['Pomeriggio del sì: decido io cosa fare insieme', 200], ['Pigiama party o dormire da un amico', 300],
+  ['Una bustina di figurine', 50, 1], ['Gelato', 125, 2.5], ['Merenda al bar con mamma o papà', 150, 3],
+  ['5 € nel salvadanaio', 250, 5], ['Fumetto o rivista a scelta', 250, 5], ['Biglietto del cinema', 400, 8],
+  ['Ricarica per un gioco o un\'app', 500, 10], ['Libro a scelta', 600, 12], ['Pizza fuori con un genitore', 750, 15],
+  ['Gioco o set di costruzioni a scelta', 1000, 20], ['🚲 Contributo per la bicicletta nuova', 5000, 100],
+];
 const KID_COLORS = ['#2563eb','#e11d48','#16a34a','#9333ea'];
 const MAX_KIDS = 4;
 const DAY_NAMES = ['','Lun','Mar','Mer','Gio','Ven','Sab','Dom'];

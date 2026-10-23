@@ -111,3 +111,21 @@
 .vkid small{color:var(--muted);font-weight:400;font-size:.8rem}
 #pVerify > .vkid:first-child{margin-top:4px}
 #schedList > .vkid:first-child{margin-top:4px}
+/* 0.11.0: compito esistente, ripetizioni, doppioni, premi */
+.exbox{margin:8px 0 4px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--line) 25%,transparent)}
+.exbox .acts{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.exbox .sched:first-child{border-top:none}
+#fDup{margin:6px 0 0}
+#fDup .acts{margin-top:6px}
+.slotpicks{display:grid;gap:6px;margin:4px 0 6px}
+.slotpick{display:grid;grid-template-columns:1fr 130px;gap:8px;align-items:center;padding:6px 10px;border:1px solid var(--line);border-radius:10px}
+.slotpick label{display:flex;gap:8px;align-items:center;margin:0;font-weight:600}
+.slotpick label input{width:18px;height:18px;min-height:0}
+.slotpick small{display:block;font-weight:400;color:var(--muted)}
+.slotpick:has(input[type=checkbox]:not(:checked)){opacity:.55}
+.merge{margin:0 0 10px}
+.merge .row{border-top:none;padding:4px 0}
+.rewedit{display:grid;grid-template-columns:1fr 110px;gap:8px;width:100%}
+.sched.paused .body{opacity:.5}
+.tedit{background:none;border:none;cursor:pointer;font-size:1rem;padding:4px 6px;border-radius:8px}
+.tedit:hover{background:color-mix(in srgb,var(--line) 50%,transparent)}

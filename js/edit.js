@@ -5,11 +5,12 @@
 let editing = null;
 const kindOf = t => t.punishment ? 'pun' : t.board ? 'board' : t.optional ? 'optional' : 'normal';
 const KIND_NAME = {normal:'Pianificato', optional:'Facoltativo', board:'Lavoretto extra', pun:'Compito di recupero'};
-function openEdit({schedId, taskId}){
+// taskOnly: modifica solo il compito (titolo, tipo, stelle…), senza toccare le sue assegnazioni
+function openEdit({schedId, taskId, taskOnly}){
   const s = schedId ? data.sched.find(x => x.id === schedId) : null;
   const t = data.tasks[s ? s.taskId : taskId]; if (!t) return;
   const teamS = isTeamSched(s);
-  editing = {schedId: s?.id, taskId: t.id, origKind: kindOf(t), origCollab: isCollabTask(t), teamS};
+  editing = {schedId: s?.id, taskId: t.id, origKind: kindOf(t), origCollab: isCollabTask(t), teamS, taskOnly: !s && !!taskOnly};
   $('eCollab').checked = isCollabTask(t);
   $('eTeam').innerHTML = teamBoxes(teamS ? (s.team || []) : kidsList().map(k => k.id));
   $('eTitle').value = t.title; $('eDesc').value = t.description || '';
@@ -31,6 +32,9 @@ function openEdit({schedId, taskId}){
   $('eDays').innerHTML = dayBoxes(s ? (s.weekdays || []) : [1,2,3,4,5,6,7]);
   setDate('eStart', s ? s.startDate : today()); setDate('eEnd', s?.endDate || '');
   $('eToggle').textContent = s?.active === false ? '▶️ Riattiva' : '⏸️ Sospendi';
+  $('eDelete').textContent = s ? '🗑️ Elimina assegnazione' : '🗑️ Elimina compito';
+  // un compito di squadra cambia tipo solo dalla sua assegnazione (servono squadra e orari)
+  $('eKind').disabled = editing.taskOnly && editing.origCollab;
   syncEdit();
   $('editDlg').showModal();
 }
@@ -40,18 +44,20 @@ function syncEdit(){
   const sched = kind === 'normal' || kind === 'optional';
   const collab = kind === 'optional' && $('eCollab').checked;
   const others = data.sched.filter(x => x.taskId === t.id);
-  $('eCollabBox').hidden = kind !== 'optional';
+  const only = editing.taskOnly && sched;
+  $('eCollabBox').hidden = kind !== 'optional' || editing.taskOnly;
   $('eTeamBox').hidden = !(sched && collab);
   $('eOwnerBox').hidden = sched && collab;
   $('eHead').textContent = `✏️ ${kind === 'pun' ? 'Compito di recupero' : kind === 'board' ? 'Lavoretto extra' : t.title}`;
   $('eCatPts').hidden = kind === 'pun';
   $('eMaxBox').hidden = kind !== 'board';
   $('ePunTime').hidden = kind !== 'pun';
-  $('eSchedBox').hidden = !sched;
+  $('eSchedBox').hidden = !sched || only;
   $('eToggle').hidden = !(sched && editing.schedId);
   $('eSchedLegend').textContent = collab ? '🤝 Squadra e orario' : sched && (!editing.schedId || editing.teamS) ? '📅 Nuova assegnazione' : '📅 Assegnazione';
-  $('eShared').textContent = sched && others.length > 1
-    ? `Titolo, tipo, icona, descrizione, categoria e stelle valgono per tutte le ${others.length} assegnazioni di questo compito (${[...new Set(others.map(x => kidName(x.owner)))].join(', ')}).` : '';
+  const whoOf = x => isTeamSched(x) ? listNames(x.team || []) : kidName(x.owner);
+  $('eShared').textContent = sched && (others.length > 1 || only)
+    ? `Titolo, tipo, icona, descrizione, categoria e stelle valgono per ${others.length === 1 ? 'la sua assegnazione' : `tutte le ${others.length} assegnazioni`} di questo compito${others.length ? ` (${[...new Set(others.map(whoOf))].join(', ')})` : ''}.` : '';
   let hint = '';
   const sep = others.filter(x => !isTeamSched(x)).length, tm = others.filter(isTeamSched).length;
   if (collab && !editing.origCollab)
@@ -60,12 +66,13 @@ function syncEdit(){
     hint = `Non è più di squadra: scegli a chi assegnarlo. ${tm === 1 ? 'L\'assegnazione di squadra viene sostituita' : `Le ${tm} assegnazioni di squadra vengono sostituite`} da assegnazioni separate.`;
   else if (kind !== from){
     if (!sched && others.length) hint = `⚠️ Diventando "${KIND_NAME[kind]}" il compito non ha più giorni e orari: ${others.length === 1 ? 'la sua assegnazione verrà eliminata' : `le sue ${others.length} assegnazioni verranno eliminate`}. Lo storico delle stelle resta.`;
-    else if (sched && !editing.schedId) hint = `Scegli a chi assegnarlo, in quali giorni e a che ora.`;
+    else if (sched && !editing.schedId && !editing.taskOnly) hint = `Scegli a chi assegnarlo, in quali giorni e a che ora.`;
     else if (kind === 'optional') hint = 'Da ora dà stelle se fatto, ma non conta più per la giornata perfetta, la serie e le penalità.';
     else if (kind === 'normal') hint = 'Da ora conta per la giornata perfetta: se non viene fatto toglie stelle e interrompe la serie.';
     else if (kind === 'board') hint = 'Comparirà nella bacheca dei lavoretti extra di tutti i figli.';
     else if (kind === 'pun') hint = 'Comparirà solo durante un cartellino rosso, senza stelle.';
   }
+  if (!hint && editing.taskOnly && editing.origCollab) hint = 'Per cambiare il tipo di un compito di squadra usa ✏️ sulla sua assegnazione in "Compiti assegnati".';
   $('eKindHint').textContent = hint; $('eKindHint').hidden = !hint;
   $('eKindDesc').textContent = KIND_DESC[kind];
 }
@@ -79,16 +86,23 @@ $('eToggle').onclick = async () => {
 };
 $('eDelete').onclick = async () => {
   const whole = !editing.schedId;
-  if (!confirm(whole ? 'Eliminare questo compito? Lo storico delle stelle resta.' : 'Eliminare questa assegnazione? Lo storico delle stelle resta.')) return;
-  try { await deleteDoc(whole ? dref('tasks', editing.taskId) : dref('schedule', editing.schedId)); $('editDlg').close(); toast('Eliminato'); }
-  catch(err){ fail(err); }
+  const scheds = whole ? data.sched.filter(x => x.taskId === editing.taskId) : [];
+  if (!confirm(whole ? `Eliminare questo compito${scheds.length ? ` e ${scheds.length === 1 ? 'la sua assegnazione' : `le sue ${scheds.length} assegnazioni`}` : ''}? Lo storico delle stelle resta.`
+                     : 'Eliminare questa assegnazione? Lo storico delle stelle resta.')) return;
+  try {
+    const batch = chunkedBatch();
+    if (whole){ scheds.forEach(x => batch.delete(dref('schedule', x.id))); batch.delete(dref('tasks', editing.taskId)); }
+    else batch.delete(dref('schedule', editing.schedId));
+    await batch.commit(); $('editDlg').close(); toast('Eliminato');
+  } catch(err){ fail(err); }
 };
 $('eSave').onclick = async () => {
   const t = data.tasks[editing.taskId], kind = $('eKind').value;
   const sched = kind === 'normal' || kind === 'optional';
   const title = $('eTitle').value.trim();
   if (!title) return toast('Il titolo non può essere vuoto');
-  const collab = kind === 'optional' && $('eCollab').checked;
+  const only = editing.taskOnly && sched;
+  const collab = only ? editing.origCollab && kind === 'optional' : kind === 'optional' && $('eCollab').checked;
   const taskUpd = {title, description:$('eDesc').value.trim(), icon:$('eIcon').textContent,
                    optional: kind === 'optional', board: kind === 'board', punishment: kind === 'pun', collab};
   if (kind === 'pun'){
@@ -100,7 +114,7 @@ $('eSave').onclick = async () => {
     if (kind === 'board') taskUpd.maxPerDay = Math.min(10, Math.max(1, parseInt($('eMax').value, 10) || 1));
   }
   let schedData = null;
-  if (sched){
+  if (sched && !only){
     const time = $('eTime').value, weekdays = checkedDays('eDays');
     const startDate = dateVal('eStart'), endDate = dateVal('eEnd');
     if (!time || time < T().wake || time > T().bed) return toast(`Orario tra ${T().wake} e ${T().bed}`);
@@ -122,7 +136,8 @@ $('eSave').onclick = async () => {
     const batch = chunkedBatch();
     batch.update(dref('tasks', t.id), taskUpd);
     const cur = editing.schedId, newRow = d => batch.set(doc(col('schedule')), {taskId:t.id, ...d, active:true, createdAt:serverTimestamp()});
-    if (sched && collab){
+    if (only){ /* solo il compito: le assegnazioni restano come sono */ }
+    else if (sched && collab){
       // squadra: un'unica assegnazione; quelle separate del compito spariscono
       if (cur) batch.update(dref('schedule', cur), schedData); else newRow(schedData);
       others.filter(x => x.id !== cur && !isTeamSched(x)).forEach(x => batch.delete(dref('schedule', x.id)));

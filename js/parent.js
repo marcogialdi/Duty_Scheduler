@@ -16,16 +16,44 @@ const syncForm = () => {
   // squadra: casella "Collaborazione" su un nuovo facoltativo, oppure un compito di squadra già esistente
   const team = existing ? isCollabTask(data.tasks[$('fTaskSel').value]) : kind === 'optional' && $('fCollab').checked;
   $('newTaskFields').hidden = existing;
+  $('fExisting').hidden = !existing;
+  if (existing) $('fAssign').innerHTML = schedItems(data.sched.filter(x => x.taskId === $('fTaskSel').value)
+    .sort((a,b) => a.startTime.localeCompare(b.startTime))) || '';
+  // più volte al giorno: una fascia per riga, ognuna con il suo orario
+  const repeat = !noSched && $('fRepeat').checked;
+  $('repeatBox').hidden = noSched;
+  $('fSlots').hidden = !repeat;
+  if (repeat && !$('fSlots').children.length) $('fSlots').innerHTML = slotPicks();
   $('fCollabBox').hidden = kind !== 'optional';
   $('fTeamBox').hidden = !team;
   if (team && !$('fTeam').children.length) $('fTeam').innerHTML = teamBoxes(kidsList().map(k => k.id));
   $('ownerBox').hidden = noSched || team; $('schedBox').hidden = noSched;
-  $('timeBox').hidden = kind === 'board';
+  $('timeBox').hidden = kind === 'board' || repeat;
   $('fMaxBox').hidden = kind !== 'board';
   $('fPts').disabled = kind === 'pun';
   $('fKindDesc').textContent = existing ? '' : KIND_DESC[kind];
 };
-$('fTaskSel').onchange = syncForm; $('fKind').onchange = syncForm; $('fCollab').onchange = syncForm;
+$('fTaskSel').onchange = () => { $('fDup').hidden = true; syncForm(); }; $('fKind').onchange = syncForm; $('fCollab').onchange = syncForm; $('fRepeat').onchange = syncForm;
+$('fEditTask').onclick = () => { const id = $('fTaskSel').value; if (id) openEdit({taskId:id, taskOnly:true}); };
+// orari proposti per fascia: poco dopo la sveglia, un'ora dopo l'inizio del pomeriggio, mezz'ora prima di andare a letto
+const addMin = (t, m) => { const [h, mi] = t.split(':').map(Number), x = Math.max(0, Math.min(1439, h * 60 + mi + m)); return `${String(Math.floor(x / 60)).padStart(2,'0')}:${String(x % 60).padStart(2,'0')}`; };
+const SLOT_DEF = () => ({Mattina: addMin(T().wake, 20), Pomeriggio: addMin(T().afternoon, 60), Sera: addMin(T().bed, -30)});
+const SLOT_LIM = () => ({Mattina: [T().wake, T().afternoon], Pomeriggio: [T().afternoon, T().evening], Sera: [T().evening, T().bed]});
+const slotPicks = () => SLOTS().map(s => `<div class="slotpick"><label><input type="checkbox" data-sl="${s.name}" checked>${s.icon} ${s.name}<small>${s.range}</small></label>
+  <input type="time" data-st="${s.name}" value="${SLOT_DEF()[s.name]}" min="${SLOT_LIM()[s.name][0]}" max="${SLOT_LIM()[s.name][1]}" aria-label="Orario ${s.name}"></div>`).join('');
+/* compiti doppi: stesso titolo a meno di maiuscole, accenti, spazi e punteggiatura */
+const normTitle = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+const sameTitle = title => Object.values(data.tasks).find(t => normTitle(t.title) === normTitle(title));
+$('fTitle').addEventListener('input', () => {
+  const t = $('fTitle').value.trim().length > 2 && sameTitle($('fTitle').value);
+  $('fDup').hidden = !t;
+  if (t){
+    const n = data.sched.filter(x => x.taskId === t.id).length, usable = !t.board && !t.punishment;
+    $('fDup').innerHTML = `⚠️ Esiste già <b>${taskIcon(t)} ${esc(t.title)}</b>${n ? ` (${n} ${n === 1 ? 'assegnazione' : 'assegnazioni'})` : ''}. ${usable
+      ? 'Conviene aggiungere un\'assegnazione a quello: così una correzione del titolo o delle stelle vale per tutte le ripetizioni.<div class="acts"><button type="button" class="btn primary" data-usetask="' + t.id + '">Usa quello esistente</button></div>'
+      : 'È un ' + (t.board ? 'lavoretto extra' : 'compito di recupero') + ': scegli un titolo diverso per non confonderli.'}`;
+  }
+});
 $('fTitle').addEventListener('input', () => { if (!fIconManual) $('fIcon').textContent = suggestIcon($('fTitle').value) || '⭐'; });
 $('fIcon').onclick = () => pickIcon(TASK_ICONS, $('fIcon').textContent, ic => { $('fIcon').textContent = ic; fIconManual = true; });
 const kidOpts = () => kidsList().map(k => `<option value="${k.id}">${k.avatar || ''} ${esc(k.name)}</option>`).join('');
@@ -124,7 +152,11 @@ function renderParent(){
   const sched = data.sched.filter(s => data.tasks[s.taskId] && !data.tasks[s.taskId].punishment).sort((a,b) => a.startTime.localeCompare(b.startTime));
   const orphan = sched.filter(s => !kidById(s.owner) && !isTeamSched(s));
   const teams = sched.filter(isTeamSched);
-  $('schedList').innerHTML = (sched.length ? '' : kidsList().length
+  const dups = dupGroups();
+  $('schedList').innerHTML = (dups.length ? `<div class="banner info merge">🔁 <b>Compiti con lo stesso nome.</b> Unendoli, una correzione di titolo o stelle vale per tutte le ripetizioni; lo storico delle stelle non cambia.
+      ${dups.map(g => `<div class="row"><div class="body">${taskIcon(g[0])} <b>${esc(g[0].title)}</b> × ${g.length} · ${nTasks(data.sched.filter(s => g.some(t => t.id === s.taskId)))}
+        <br><small>${g.map(t => `⭐${t.points || 1}`).join(' · ')}</small></div><button class="btn" data-merge="${g.map(t => t.id).join('|')}">Unisci</button></div>`).join('')}</div>` : '') +
+    (sched.length ? '' : kidsList().length
       ? `<p class="empty">Ancora nessun compito.</p><button class="btn primary" id="seedBtn">Carica compiti e premi di esempio</button>`
       : `<p class="empty">Prima aggiungi i figli dal ⚙️ Setup.</p>`) +
     kidsList().map(k => { const l = sched.filter(x => x.owner === k.id);
@@ -157,9 +189,21 @@ function renderParent(){
       <div class="acts inl"><button class="btn icon" data-editpun="${t.id}" aria-label="Modifica" title="Modifica">✏️</button></div></div>`).join('')
     : '<div class="empty">Nessun compito di recupero: dal secondo cartellino rosso del trimestre non ci sarebbe nulla da recuperare. Aggiungine con "Nuovo compito" › Tipo "Recupero".</div>';
 
-  $('pRewards').innerHTML = data.rewards.length ? data.rewards.slice().sort((a,b) => a.cost - b.cost).map(x => `
-    <div class="sched"><div class="body">${esc(x.title)} <span class="stars">${x.cost} ⭐</span></div>
-      <div class="acts inl"><button class="btn no" data-delrew="${x.id}">Elimina</button></div></div>`).join('')
+  const missing = catalogMissing();
+  $('pCatalog').innerHTML = !missing.length || store('get', `cdc.catalogOff.${fid}`) === '1' ? '' :
+    `<div class="banner info">🎁 <b>Catalogo consigliato</b>: ${CATALOG.length} premi pronti, 10 senza costi e ${CATALOG.filter(c => c[2]).length} con un valore in euro (${EUR_STARS} ⭐ = 1 €), compreso il contributo per la bici.
+      Puoi cambiarli o toglierli dopo.<div class="acts"><button class="btn primary" data-catalog="1">Aggiungi ${missing.length === CATALOG.length ? 'il catalogo' : `i ${missing.length} premi mancanti`}</button>
+      <button class="btn" data-catoff="1">Non mi serve</button></div></div>`;
+  const keepT = $('rwT')?.value, keepC = $('rwC')?.value;
+  const eurTxt = x => x.eur ? ` <small style="color:var(--muted)">≈ ${x.eur.toLocaleString('it-IT', {minimumFractionDigits: x.eur % 1 ? 2 : 0})} €</small>` : '';
+  $('pRewards').innerHTML = data.rewards.length ? data.rewards.slice().sort((a,b) => a.cost - b.cost).map(x => rewEdit === x.id ? `
+    <div class="sched"><div class="rewedit"><input id="rwT" value="${esc(keepT ?? x.title)}" aria-label="Nome del premio">
+        <input id="rwC" type="number" min="1" value="${esc(keepC ?? x.cost)}" aria-label="Costo in stelle"></div>
+      <div class="acts inl"><button class="btn ok" data-rwsave="${x.id}">Salva</button> <button class="btn" data-rwcancel="1">Annulla</button>
+        <button class="btn" data-rwtoggle="${x.id}">${x.active === false ? '▶️ Riattiva' : '⏸️ Sospendi'}</button> <button class="btn no" data-delrew="${x.id}">Elimina</button></div></div>` : `
+    <div class="sched click ${x.active === false ? 'paused' : ''}" data-rwedit="${x.id}"><div class="body">${esc(x.title)} <span class="stars">${x.cost} ⭐</span>${eurTxt(x)}
+      ${x.active === false ? '<div class="sub2">⏸️ sospeso: i figli non lo vedono nel negozio</div>' : ''}</div>
+      <div class="acts inl"><button class="btn icon" data-rwedit="${x.id}" aria-label="Modifica premio" title="Modifica">✏️</button></div></div>`).join('')
     : '<div class="empty">Nessun premio</div>';
   // contatori sulle schede che richiedono un'azione
   const badge = (id, n) => { $(id).textContent = n || ''; $(id).hidden = !n; };
@@ -272,6 +316,9 @@ async function contestTeam(c){
 }
 
 $('parentView').addEventListener('click', async e => {
+  if (e.target.closest('#rwT,#rwC')) return;
+  const rw = e.target.closest('[data-rwedit]');
+  if (rw){ rewEdit = rw.dataset.rwedit; render(); return $('rwT')?.focus(); }
   const row = e.target.closest('[data-edit],[data-editpun]');
   if (row) return row.dataset.edit ? openEdit({schedId:row.dataset.edit}) : openEdit({taskId:row.dataset.editpun});
   const b = e.target.closest('button'); if (!b) return;
@@ -287,6 +334,22 @@ $('parentView').addEventListener('click', async e => {
     if (d.devoff){ store('set', `cdc.devBannerOff.${fid}`, '1'); return render(); }
     if (b.id === 'seedBtn') return await seed();
     if (d.contest) return await contest(d.contest);
+    if (d.usetask){ $('fTaskSel').value = d.usetask; $('fDup').hidden = true; syncForm(); return $('fTaskSel').scrollIntoView({block:'center', behavior:'smooth'}); }
+    if (d.merge) return await mergeTasks(d.merge.split('|'));
+    if (d.catalog) return await loadCatalog();
+    if (d.catoff){ store('set', `cdc.catalogOff.${fid}`, '1'); return render(); }
+    if (d.rwcancel){ rewEdit = null; return render(); }
+    if (d.rwsave){
+      const title = $('rwT').value.trim(), cost = parseInt($('rwC').value, 10);
+      if (!title) return toast('Scrivi il nome del premio');
+      if (!(cost >= 1)) return toast('Il costo deve essere almeno 1 ⭐');
+      await updateDoc(dref('rewards', d.rwsave), {title, cost}); rewEdit = null; render(); return toast('Premio aggiornato ✅');
+    }
+    if (d.rwtoggle){
+      const x = data.rewards.find(r => r.id === d.rwtoggle); if (!x) return;
+      await updateDoc(dref('rewards', x.id), {active: x.active === false}); rewEdit = null;
+      return toast(x.active === false ? 'Premio di nuovo nel negozio ▶️' : 'Premio sospeso: i figli non lo vedono ⏸️');
+    }
     if (d.pconf){ const c = data.verify.find(x => x.id === d.pconf); if (c && !teamDone(c)) await collabConfirm(c, true); return; }
     if (d.approve){
       const [kid, id] = d.approve.split('|');
@@ -297,7 +360,7 @@ $('parentView').addEventListener('click', async e => {
       await batch.commit(); toast('Premio approvato 🎁');
     }
     if (d.deny){ const [kid, id] = d.deny.split('|'); await updateDoc(dref('kids', kid, 'redemptions', id), {status:'rejected', respondedAt:serverTimestamp()}); }
-    if (d.delrew && confirm('Eliminare questo premio?')) await deleteDoc(dref('rewards', d.delrew));
+    if (d.delrew && confirm('Eliminare questo premio? Se vuoi solo toglierlo per un po\' usa "Sospendi".')){ await deleteDoc(dref('rewards', d.delrew)); rewEdit = null; }
     if (d.papprove){
       const [kid, id] = d.papprove.split('|');
       const p = (data.propPending[kid] || []).find(x => x.id === id); if (!p) return;
@@ -316,7 +379,19 @@ $('newForm').onsubmit = async e => {
   const existing = $('fTaskSel').value, kind = existing ? 'normal' : $('fKind').value;
   const pun = kind === 'pun', board = kind === 'board';
   const time = $('fTime').value;
-  if (!board && (!time || time < T().wake || time > T().bed)) return toast(`Orario tra ${T().wake} e ${T().bed}`);
+  const repeat = !pun && !board && $('fRepeat').checked;
+  // gli orari da creare: uno solo, oppure uno per ogni fascia scelta (dentro i suoi limiti)
+  let times = [time];
+  if (repeat){
+    times = [];
+    for (const s of SLOTS()){
+      if (!document.querySelector(`#fSlots [data-sl="${s.name}"]`)?.checked) continue;
+      const v = document.querySelector(`#fSlots [data-st="${s.name}"]`).value, [lo, hi] = SLOT_LIM()[s.name];
+      if (!v || v < lo || v > hi) return toast(`${s.name}: orario tra ${lo} e ${hi}`);
+      times.push(v);
+    }
+    if (!times.length) return toast('Scegli almeno una fascia');
+  } else if (!board && (!time || time < T().wake || time > T().bed)) return toast(`Orario tra ${T().wake} e ${T().bed}`);
   const weekdays = checkedDays('fDays');
   const startDate = dateVal('fStart'), endDate = dateVal('fEnd');
   const sched = !pun && !board;
@@ -333,6 +408,8 @@ $('newForm').onsubmit = async e => {
     if (!taskId){
       const title = $('fTitle').value.trim();
       if (!title) return toast('Scrivi il titolo');
+      const twin = sameTitle(title);
+      if (twin && !confirm(`Esiste già "${twin.title}". Crearne un altro con lo stesso nome? Le correzioni future non varrebbero per entrambi.\n\n(Annulla e usa "Usa quello esistente" per aggiungere solo un'assegnazione.)`)) return;
       const t = {title, icon:$('fIcon').textContent, description:$('fDesc').value.trim(), categoryId:$('fCat').value, points:+$('fPts').value, createdAt:serverTimestamp()};
       if (pun) Object.assign(t, {punishment:true, defaultTime:time, points:0});
       if (board) Object.assign(t, {board:true, maxPerDay:Math.min(10, Math.max(1, parseInt($('fMax').value, 10) || 1))});
@@ -342,16 +419,17 @@ $('newForm').onsubmit = async e => {
     }
     if (sched){
       const o = $('fOwner').value;
-      const batch = writeBatch(db);
-      if (team) batch.set(doc(col('schedule')), {taskId, owner:'team', team:teamIds, startTime:time, weekdays, active:true,
-          startDate:startDate || today(), endDate:endDate || null, createdAt:serverTimestamp()});
-      else for (const ow of (o === 'all' ? kidsList().map(k => k.id) : [o]))
-        batch.set(doc(col('schedule')), {taskId, owner:ow, startTime:time, weekdays, active:true,
-          startDate:startDate || today(), endDate:endDate || null, createdAt:serverTimestamp()});
+      const batch = chunkedBatch();
+      const base = {taskId, weekdays, active:true, startDate:startDate || today(), endDate:endDate || null, createdAt:serverTimestamp()};
+      for (const tm of times){
+        if (team) batch.set(doc(col('schedule')), {...base, owner:'team', team:teamIds, startTime:tm});
+        else for (const ow of (o === 'all' ? kidsList().map(k => k.id) : [o])) batch.set(doc(col('schedule')), {...base, owner:ow, startTime:tm});
+      }
       await batch.commit();
     }
-    toast(pun ? 'Compito di recupero salvato 🔄' : board ? 'Lavoretto aggiunto alla bacheca 🧹' : team ? `Compito di squadra per ${listNames(teamIds)} 🤝` : 'Compito assegnato ✅');
-    e.target.reset(); setDate('fStart', today()); $('fTeam').innerHTML = '';
+    toast(pun ? 'Compito di recupero salvato 🔄' : board ? 'Lavoretto aggiunto alla bacheca 🧹' : team ? `Compito di squadra per ${listNames(teamIds)} 🤝`
+      : times.length > 1 ? `Compito assegnato ${times.length} volte al giorno ✅` : 'Compito assegnato ✅');
+    e.target.reset(); setDate('fStart', today()); $('fTeam').innerHTML = ''; $('fSlots').innerHTML = ''; $('fDup').hidden = true;
     $('fDays').innerHTML = dayBoxes(); $('fIcon').textContent = '⭐'; fIconManual = false;
     syncForm();
   } catch(err){ fail(err); }
@@ -386,7 +464,6 @@ async function seed(){
   const single = [['Apparecchiare la tavola','Casa',2,'19:15',ALL,'🍽️',ids[0]], ['Sparecchiare la cena','Casa',2,'20:00',ALL,'🍴',ids[1 % ids.length]]];
   const punishment = [['Pulire il lavandino del bagno','17:30','🧽'], ['Svuotare la lavastoviglie','18:45','🍽️'], ['Riordinare l\'ingresso','19:30','🧹']];
   const boardEx = [['Buttare la pattumiera','Casa',2,1,'🗑️'], ['Aiutare a stendere il bucato','Casa',1,1,'🧺'], ['Dare l\'acqua alle piante','Casa',1,1,'🪴']];
-  const rewards = [['30 minuti di videogiochi',20], ['Scegliere il film della sera',30], ['Scegliere la cena',40], ['Gelato',50], ['5 €',150]];
   const batch = chunkedBatch(), start = today(), now = serverTimestamp();
   const add = (title, category, points, time, weekdays, icon, owners, optional) => {
     const t = doc(col('tasks'));
@@ -406,7 +483,46 @@ async function seed(){
     {title, icon, categoryId:cat(category), points, board:true, maxPerDay, createdAt:now}));
   punishment.forEach(([title, time, icon]) => batch.set(doc(col('tasks')),
     {title, icon, categoryId:cat('Casa'), points:0, punishment:true, defaultTime:clamp(time), createdAt:now}));
-  if (!data.rewards.length) rewards.forEach(([title, cost]) => batch.set(doc(col('rewards')), {title, cost, active:true, createdAt:now}));
+  if (!data.rewards.length) CATALOG.forEach(c => batch.set(doc(col('rewards')), rewardDoc(c, now)));
   await batch.commit();
   toast('Compiti e premi di esempio caricati');
+}
+
+/* ---------- premi: catalogo consigliato e modifica ---------- */
+let rewEdit = null;
+const rewardDoc = ([title, cost, eur], now) => ({title, cost, active:true, createdAt:now, ...(eur ? {eur} : {})});
+const catalogMissing = () => CATALOG.filter(([t]) => !data.rewards.some(r => normTitle(r.title) === normTitle(t)));
+async function loadCatalog(){
+  const list = catalogMissing(); if (!list.length) return;
+  const batch = chunkedBatch(), now = serverTimestamp();
+  list.forEach(c => batch.set(doc(col('rewards')), rewardDoc(c, now)));
+  await batch.commit();
+  toast(`${list.length} premi aggiunti al catalogo 🎁`);
+}
+
+/* ---------- compiti doppi: gruppi con lo stesso titolo e lo stesso tipo, e la loro unione ---------- */
+function dupGroups(){
+  const m = new Map();
+  for (const t of Object.values(data.tasks)){
+    const k = `${kindOf(t)}|${t.collab ? 1 : 0}|${normTitle(t.title)}`;
+    if (!m.has(k)) m.set(k, []);
+    m.get(k).push(t);
+  }
+  return [...m.values()].filter(g => g.length > 1);
+}
+async function mergeTasks(ids){
+  const ts = ids.map(id => data.tasks[id]).filter(Boolean); if (ts.length < 2) return;
+  const count = t => data.sched.filter(s => s.taskId === t.id).length;
+  // si tiene quello con più assegnazioni (a parità, il più vecchio)
+  const keep = ts.slice().sort((a,b) => count(b) - count(a) || ms(a.createdAt) - ms(b.createdAt))[0];
+  const rest = ts.filter(t => t !== keep), restIds = new Set(rest.map(t => t.id));
+  const moved = data.sched.filter(s => restIds.has(s.taskId));
+  if (!confirm(`Unire ${ts.length} compiti "${keep.title}" in uno solo?\n\n${moved.length === 1 ? 'L\'assegnazione spostata prende' : `Le ${moved.length} assegnazioni spostate prendono`} titolo, icona, descrizione e stelle (⭐${keep.points || 1}) di quello tenuto. Lo storico delle stelle non cambia.`)) return;
+  const batch = chunkedBatch();
+  moved.forEach(s => batch.update(dref('schedule', s.id), {taskId: keep.id}));
+  // i compiti spuntati di recente restano verificabili sotto il compito tenuto
+  data.verify.filter(c => restIds.has(c.taskId)).forEach(c => batch.update(dref('completions', c.id), {taskId: keep.id}));
+  rest.forEach(t => batch.delete(dref('tasks', t.id)));
+  await batch.commit();
+  toast(`Uniti in "${keep.title}" ✅`);
 }

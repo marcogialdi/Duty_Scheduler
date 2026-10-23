@@ -62,7 +62,10 @@ function openHelp(section){
       <ul><li>Un <b>compito</b> (es. "Lavare i denti") può essere assegnato a più figli, con orari e giorni diversi.</li>
       <li>L'<b>icona</b> si sceglie da sola dal titolo; toccala per cambiarla. Le stelle vanno da 1 a 5.</li>
       <li>"Dal / Al" servono per compiti temporanei (es. durante le vacanze). Le date si scrivono gg/mm/aaaa.</li>
-      <li>Con ✏️ modifichi tutto, sospendi un compito per un po' o lo elimini.</li>
+      <li>Con ✏️ modifichi tutto, sospendi un compito per un po' o lo elimini. La ✏️ c'è in "Compiti assegnati" e, per voi genitori, anche su ogni compito della giornata di un figlio.</li>
+      <li><b>Titolo, stelle, icona e descrizione</b> appartengono al compito e cambiano in <b>tutte</b> le sue assegnazioni. In Gestione compiti scegli il compito nel menu "Compito" e tocca <b>Modifica il compito</b>: vedi anche tutte le sue assegnazioni.</li>
+      <li><b>🔁 Più volte al giorno</b>: nel nuovo compito spunta la casella e scegli le fasce (Mattina, Pomeriggio, Sera), ognuna con il suo orario. Ogni ripetizione si spunta e vale stelle a sé.</li>
+      <li><b>Niente doppioni</b>: se scrivi un titolo che esiste già, l'app ti propone di usare quello. Se ci sono già compiti con lo stesso nome, in "Compiti assegnati" trovi <b>Unisci</b>: le assegnazioni passano a un solo compito, lo storico delle stelle non cambia.</li>
       <li>I <b>compiti di recupero 🔄</b> compaiono solo durante un cartellino rosso: servono a rimediare e tornare in pari.</li></ul></details>
     <details><summary>⭐ Il gioco: stelle, serie e cartellini</summary>
       <ul>${fam ? gameRules().map(x => `<li>${x}</li>`).join('') : ''}</ul>
@@ -92,7 +95,9 @@ function openHelp(section){
       Il primo cartellino rosso del trimestre toglie le stelle per alcuni giorni; dal secondo arrivano i compiti di recupero 🔄.</p></details>
     <details><summary>🎁 Premi</summary>
       <p>I figli chiedono un premio dal Negozio; le stelle restano "prenotate" finché non approvate o rifiutate dalla scheda Genitori.
-      Come trasformare i premi virtuali in reali lo decidete voi: il catalogo è vostro.</p></details>
+      Come trasformare i premi virtuali in reali lo decidete voi: il catalogo è vostro.</p>
+      <p>Nel <b>Catalogo premi</b> tocca ✏️ per cambiare nome e costo, oppure <b>Sospendi</b> per toglierlo dal negozio per un po'. Le richieste già fatte restano al prezzo di allora.
+      Il <b>catalogo consigliato</b> ha 21 premi: 10 senza costi (film, amico a casa…) e 11 con un valore in euro (${EUR_STARS} ⭐ = 1 €), fino al contributo di 100 € per la bici.</p></details>
     <details><summary>❓ Domande frequenti</summary>
       <ul><li><b>Un figlio ha dimenticato il PIN?</b> Setup › Figli › Nuovo PIN. Se invece lo vuole cambiare lui, dal suo accesso tocca 🔢 PIN.</li>
       <li><b>Quando arrivano bonus e penalità di fine giornata?</b> Vengono calcolati quando un genitore apre l'app il giorno dopo: apritela almeno una volta al giorno.</li>

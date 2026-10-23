@@ -6,6 +6,15 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.11.0 · 23/10/2026
+- **Più volte al giorno**: nel nuovo compito la casella "🔁 Più volte al giorno" fa scegliere Mattina, Pomeriggio e Sera, ognuna con il suo orario; si crea un'assegnazione per fascia.
+- **Modifica da Gestione compiti**: scelto un compito esistente compaiono "✏️ Modifica il compito" (titolo, stelle, icona, descrizione, tipo: valgono per tutte le assegnazioni) e l'elenco delle sue assegnazioni, ognuna modificabile.
+- **Modifica rapida**: guardando la giornata di un figlio, i genitori hanno una ✏️ su ogni compito e lavoretto extra.
+- **Doppioni**: avviso quando si crea un compito con un titolo già esistente, con "Usa quello esistente"; in "Compiti assegnati" il riquadro "Unisci" riunisce i compiti con lo stesso nome, senza toccare lo storico delle stelle.
+- **Premi**: nome e costo modificabili, "Sospendi / Riattiva" per toglierli dal negozio senza eliminarli; catalogo consigliato di 21 premi (50 ⭐ = 1 €, fino al contributo di 100 € per la bici), caricato anche con gli esempi.
+- Eliminare un compito ora elimina anche le sue assegnazioni.
+- Regole Firestore invariate (0.9.0).
+
 ## 0.10.0 · 22/10/2026
 - **Da verificare** raggruppato per figlio e poi per fascia (🌅 Mattina, ☀️ Pomeriggio, 🌙 Sera); compiti di squadra e lavoretti extra in un gruppo a parte. Ogni voce mostra anche l'orario del compito.
 - **Compiti assegnati** diviso per figlio e per fascia, con orari della fascia e numero di compiti.

@@ -59,6 +59,10 @@ function renderDay(){
   renderBoard(isToday);
 }
 
+// matita di modifica sulle schede dei compiti, solo per i genitori che guardano la giornata di un figlio
+const penBtn = ({schedId, taskId}) => !isParent() ? '' :
+  `<button class="tedit" ${schedId ? `data-pedit="${schedId}"` : `data-peditt="${taskId}"`} aria-label="Modifica il compito" title="Modifica">✏️</button>`;
+
 /* fasce richiudibili: la scelta fatta a mano vale per quel figlio e quel giorno, su questo dispositivo */
 const SLOT_END = () => ({Mattina: T().afternoon, Pomeriggio: T().evening, Sera: '24:00'});
 function slotOpenAll(){ try { return JSON.parse(store('get', 'cdc.slotOpen') || '{}'); } catch(e){ return {}; } }
@@ -101,7 +105,7 @@ function renderBoard(isToday){
       <div class="body"><div class="title">${esc(t.title)}</div>
         ${t.description ? `<div class="desc">${esc(t.description)}</div>` : ''}
         <div class="meta"><span class="stars">+${pts} ⭐</span><span>oggi ${used.length}/${max}</span></div></div>
-      ${action ? `<div class="acts">${action}</div>` : ''}</div>`;
+      ${action || isParent() ? `<div class="acts">${action}${penBtn({taskId:t.id})}</div>` : ''}</div>`;
   }).join('');
   const st = {pending:'⏳ da approvare', approved:'✅ approvata', rejected:'❌ non approvata', cancelled:'annullata'};
   const propRows = props.map(p => `<div class="row"><div class="body">💡 ${esc(p.title)}<br><small>${st[p.status] || ''}${p.status === 'approved' ? ` · +${p.points} ⭐` : ''}</small></div>
@@ -116,6 +120,7 @@ function renderBoard(isToday){
 }
 $('board').addEventListener('click', async e => {
   const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.peditt) return openEdit({taskId:b.dataset.peditt});
   const ds = day, now = serverTimestamp();
   try {
     if (b.dataset.bdo){
@@ -223,7 +228,7 @@ function taskCard(item, comp, isToday){
       ${t.description ? `<div class="desc">${esc(t.description)}</div>` : ''}
       <div class="meta"><span class="tm">🕐 ${item.time}</span>${item.collab ? `<span class="chip" style="--c:var(--star)">🤝 con ${esc(listNames(item.s.team.filter(k => k !== owner)))}</span>` : item.optional ? '<span class="chip" style="--c:var(--star)">facoltativo</span>' : ''}${pun ? '' : `<span class="chip" style="--c:${c}">${esc(cat.name)}</span>`}
         <span class="stars">${pts ? `+${pts} ⭐` : '0 ⭐'}</span></div></div>
-    ${action ? `<div class="acts">${action}</div>` : ''}</div>`;
+    ${action || isParent() ? `<div class="acts">${action}${penBtn(item.s ? {schedId:item.s.id} : {taskId:t.id})}</div>` : ''}</div>`;
 }
 
 $('svDay').addEventListener('click', async e => {
@@ -231,6 +236,7 @@ $('svDay').addEventListener('click', async e => {
   const ds = day, d = b.dataset, now = serverTimestamp();
   try {
     if (d.slot){ slotOpenSet(d.slot, b.getAttribute('aria-expanded') !== 'true'); return render(); }
+    if (d.pedit || d.peditt) return openEdit(d.pedit ? {schedId:d.pedit} : {taskId:d.peditt});
     if (d.pick){ swapPick = d.pick; return render(); }
     if (d.cconf){
       const c = data.comps.find(x => x.id === d.cconf);

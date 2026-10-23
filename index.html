@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Compiti di casa · versione 0.10.0 · la versione si cambia solo in js/config.js (APP_VERSION) -->
+<!-- Compiti di casa · versione 0.11.0 · la versione si cambia solo in js/config.js (APP_VERSION) -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
@@ -14,8 +14,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Compiti">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="stylesheet" href="css/base.css?v=0.10.0">
-<link rel="stylesheet" href="css/app.css?v=0.10.0">
+<link rel="stylesheet" href="css/base.css?v=0.11.0">
+<link rel="stylesheet" href="css/app.css?v=0.11.0">
 </head>
 <body>
 <div class="wrap">
@@ -198,6 +198,8 @@
       <div class="panel"><h2>🎁 Richieste premi</h2><div id="pRedeem"></div></div>
       <div class="panel" id="pShop">
         <h2>🛍️ Catalogo premi</h2>
+        <p class="hint" id="pRewHint">Tocca ✏️ per cambiare nome e costo o per sospendere un premio. Le richieste già fatte restano al prezzo di allora.</p>
+        <div id="pCatalog"></div>
         <div id="pRewards"></div>
         <form id="rewardForm" class="grid3" style="margin-top:10px">
           <div><label>Premio</label><input id="rTitle" placeholder="Es. 30 minuti di videogiochi" required></div>
@@ -215,9 +217,16 @@
         <form id="newForm">
           <label>Compito</label>
           <select id="fTaskSel"><option value="">➕ Nuovo compito…</option></select>
+          <div id="fExisting" class="exbox" hidden>
+            <div class="acts"><button type="button" class="btn" id="fEditTask">✏️ Modifica il compito</button>
+              <small class="hint">titolo, stelle, icona e descrizione cambiano in tutte le sue assegnazioni</small></div>
+            <div id="fAssign"></div>
+            <p class="hint" style="margin:8px 0 0">Sotto puoi aggiungere una nuova assegnazione di questo compito.</p>
+          </div>
           <div id="newTaskFields">
             <label>Titolo</label>
             <input id="fTitle" placeholder="Es. Dare da mangiare al gatto">
+            <div class="banner info" id="fDup" hidden></div>
             <label>Icona</label>
             <div class="iconpick"><button type="button" class="cur" id="fIcon" aria-label="Scegli icona">⭐</button>
               <small>Si sceglie da sola in base al titolo. Toccala per cambiarla.</small></div>
@@ -244,6 +253,11 @@
           <div class="grid2">
             <div id="ownerBox"><label>Assegna a</label><select id="fOwner"></select></div>
             <div id="timeBox"><label id="fTimeLbl">Orario</label><input id="fTime" type="time" value="17:00"></div>
+          </div>
+          <div id="repeatBox">
+            <label class="opt"><input type="checkbox" id="fRepeat"><span><b>🔁 Più volte al giorno</b><br>
+              <small>Scegli le fasce in cui si ripete (es. lavarsi i denti mattina, dopo pranzo e sera): si crea un'assegnazione per ognuna, con il suo orario.</small></span></label>
+            <div id="fSlots" class="slotpicks" hidden></div>
           </div>
           <div id="schedBox">
             <label>Giorni</label>
@@ -424,20 +438,20 @@
 <div class="toast" id="toast"></div>
 
 <!-- Firebase per primo (modulo), poi i file dell'app nell'ordine: tutti partono a pagina pronta, uno dopo l'altro -->
-<script type="module" src="js/firebase.js?v=0.10.0"></script>
-<script defer src="js/config.js?v=0.10.0"></script>
-<script defer src="js/util.js?v=0.10.0"></script>
-<script defer src="js/state.js?v=0.10.0"></script>
-<script defer src="js/game.js?v=0.10.0"></script>
-<script defer src="js/auth.js?v=0.10.0"></script>
-<script defer src="js/register.js?v=0.10.0"></script>
-<script defer src="js/data.js?v=0.10.0"></script>
-<script defer src="js/kid.js?v=0.10.0"></script>
-<script defer src="js/parent.js?v=0.10.0"></script>
-<script defer src="js/edit.js?v=0.10.0"></script>
-<script defer src="js/collab.js?v=0.10.0"></script>
-<script defer src="js/setup.js?v=0.10.0"></script>
-<script defer src="js/help.js?v=0.10.0"></script>
-<script defer src="js/main.js?v=0.10.0"></script>
+<script type="module" src="js/firebase.js?v=0.11.0"></script>
+<script defer src="js/config.js?v=0.11.0"></script>
+<script defer src="js/util.js?v=0.11.0"></script>
+<script defer src="js/state.js?v=0.11.0"></script>
+<script defer src="js/game.js?v=0.11.0"></script>
+<script defer src="js/auth.js?v=0.11.0"></script>
+<script defer src="js/register.js?v=0.11.0"></script>
+<script defer src="js/data.js?v=0.11.0"></script>
+<script defer src="js/kid.js?v=0.11.0"></script>
+<script defer src="js/parent.js?v=0.11.0"></script>
+<script defer src="js/edit.js?v=0.11.0"></script>
+<script defer src="js/collab.js?v=0.11.0"></script>
+<script defer src="js/setup.js?v=0.11.0"></script>
+<script defer src="js/help.js?v=0.11.0"></script>
+<script defer src="js/main.js?v=0.11.0"></script>
 </body>
 </html>
