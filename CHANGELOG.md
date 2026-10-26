@@ -6,6 +6,12 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.12.2 · 26/10/2026
+Correzioni di sicurezza.
+- **Rosso "niente stelle" controllato dalle regole**: quando il genitore dà il rosso, la data di inizio e di fine si salvano anche su `kids/{kid}` (`noStarsFrom`, `noStarsUntil`); in quei giorni le regole accettano dal figlio solo compiti e stelle di squadra a 0. I rossi dati prima si allineano da soli alla prima apertura di un genitore.
+- **App Check (facoltativo)**: con una chiave reCAPTCHA v3 in `APP_CHECK_SITE_KEY` (`js/firebase.js`) solo la pagina pubblicata può usare Firebase; uno script esterno non può provare i PIN a raffica. Vuota = spento.
+- **Regole Firestore 0.12.2: vanno ripubblicate.**
+
 ## 0.12.1 · 26/10/2026
 Correzioni di sicurezza.
 - **Stelle solo per compiti veri**: un figlio può segnare solo un'assegnazione che esiste, sua (o ricevuta con uno scambio accettato), con il compito giusto e una data vicina a oggi; i compiti di recupero valgono 0 stelle. Prima, scrivendo direttamente nel database, poteva crearsi compiti finti con stelle, invisibili in "Da verificare".

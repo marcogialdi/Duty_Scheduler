@@ -1,7 +1,7 @@
-/* Service worker di "Compiti di casa" · versione 0.12.1
+/* Service worker di "Compiti di casa" · versione 0.12.2
    File generato da build.py: non modificare a mano (VERSION viene da APP_VERSION in js/config.js).
    I file dell'app hanno ?v=<versione> nel nome: a ogni versione nuova i telefoni li riscaricano. */
-const VERSION = 'compiti-0.12.1';
+const VERSION = 'compiti-0.12.2';
 const SHELL = [
     "./",
     "./index.html",
@@ -9,24 +9,24 @@ const SHELL = [
     "./icons/icon-192.png",
     "./icons/icon-512.png",
     "./icons/apple-touch-icon.png",
-    "./css/base.css?v=0.12.1",
-    "./css/app.css?v=0.12.1",
-    "./js/firebase.js?v=0.12.1",
-    "./js/config.js?v=0.12.1",
-    "./js/util.js?v=0.12.1",
-    "./js/state.js?v=0.12.1",
-    "./js/game.js?v=0.12.1",
-    "./js/auth.js?v=0.12.1",
-    "./js/register.js?v=0.12.1",
-    "./js/data.js?v=0.12.1",
-    "./js/kid.js?v=0.12.1",
-    "./js/parent.js?v=0.12.1",
-    "./js/verify.js?v=0.12.1",
-    "./js/edit.js?v=0.12.1",
-    "./js/collab.js?v=0.12.1",
-    "./js/setup.js?v=0.12.1",
-    "./js/help.js?v=0.12.1",
-    "./js/main.js?v=0.12.1"
+    "./css/base.css?v=0.12.2",
+    "./css/app.css?v=0.12.2",
+    "./js/firebase.js?v=0.12.2",
+    "./js/config.js?v=0.12.2",
+    "./js/util.js?v=0.12.2",
+    "./js/state.js?v=0.12.2",
+    "./js/game.js?v=0.12.2",
+    "./js/auth.js?v=0.12.2",
+    "./js/register.js?v=0.12.2",
+    "./js/data.js?v=0.12.2",
+    "./js/kid.js?v=0.12.2",
+    "./js/parent.js?v=0.12.2",
+    "./js/verify.js?v=0.12.2",
+    "./js/edit.js?v=0.12.2",
+    "./js/collab.js?v=0.12.2",
+    "./js/setup.js?v=0.12.2",
+    "./js/help.js?v=0.12.2",
+    "./js/main.js?v=0.12.2"
   ];
 
 self.addEventListener('install', e => {

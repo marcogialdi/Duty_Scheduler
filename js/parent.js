@@ -246,13 +246,13 @@ async function contest(compId){
     batch.set(dref('kids', kid, 'ledger', `unperfect_${kid}_${c.date}`), {kid, amount:-r.perfectDay, type:'cheat', date:td, createdAt:now,
       reason:`Giornata perfetta annullata (${fmtDate(c.date)})`});
   batch.set(dref('kids', kid, 'cards', `yellow_${compId}`), {kid, type:'yellow', date:td, reason:t?.title ?? '', createdAt:now});
-  batch.set(dref('kids', kid), {streak:0}, {merge:true});
   let red = null;
   if (activeYellows(kid).length + 1 >= r.yellowsForRed){
     const nth = redsInQuarter(kid, td).length + 1, from = addDays(td, 1);
     red = {kid, type:'red', date:td, from, until:addDays(from, r.redDays - 1), nth, effect: nth === 1 ? 'nostars' : 'extra', createdAt:now};
     batch.set(dref('kids', kid, 'cards', `red_${kid}_${td}`), red);
   }
+  batch.set(dref('kids', kid), {streak:0, ...noStarsOf(red)}, {merge:true});
   await batch.commit();
   toast(red ? `🟥 Cartellino rosso a ${kidName(kid)}!` : `🟨 Cartellino giallo a ${kidName(kid)}`);
 }
@@ -267,13 +267,14 @@ async function contestTeam(c){
     batch.set(dref('kids', kid, 'ledger', `cheat_${c.id}`), {kid, amount:-loss(kid), type:'cheat', date:td, createdAt:now,
       reason:`Imbroglio di squadra: ${t?.title ?? 'compito'} (${fmtDate(c.date)})`});
     batch.set(dref('kids', kid, 'cards', `yellow_${c.id}`), {kid, type:'yellow', date:td, reason:t?.title ?? '', createdAt:now});
-    batch.set(dref('kids', kid), {streak:0}, {merge:true});
+    let red = null;
     if (activeYellows(kid).length + 1 >= r.yellowsForRed){
       const nth = redsInQuarter(kid, td).length + 1, from = addDays(td, 1);
-      batch.set(dref('kids', kid, 'cards', `red_${kid}_${td}`), {kid, type:'red', date:td, from, until:addDays(from, r.redDays - 1), nth,
-        effect: nth === 1 ? 'nostars' : 'extra', createdAt:now});
+      red = {kid, type:'red', date:td, from, until:addDays(from, r.redDays - 1), nth, effect: nth === 1 ? 'nostars' : 'extra', createdAt:now};
+      batch.set(dref('kids', kid, 'cards', `red_${kid}_${td}`), red);
       reds.push(kid);
     }
+    batch.set(dref('kids', kid), {streak:0, ...noStarsOf(red)}, {merge:true});
   }
   await batch.commit();
   toast(reds.length ? `🟥 Cartellino rosso a ${listNames(reds)}!` : `🟨 Cartellino giallo a ${listNames(team)}`);

@@ -4,6 +4,7 @@ import { getAuth, initializeAuth, inMemoryPersistence, onAuthStateChanged, signI
          createUserWithEmailAndPassword, signOut, updatePassword, reauthenticateWithCredential,
          EmailAuthProvider, sendPasswordResetEmail, deleteUser }
   from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js';
+import { initializeAppCheck, ReCaptchaV3Provider } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app-check.js';
 import { initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager,
          collection, doc, onSnapshot, query, where, orderBy, limit, addDoc, setDoc, updateDoc, deleteDoc,
          getDoc, getDocs, writeBatch, runTransaction, serverTimestamp, getAggregateFromServer, sum, Timestamp }
@@ -18,10 +19,19 @@ const firebaseConfig = {
   appId:             "1:106420224624:web:7e9647dac88083247feab5"
 };
 
+// App Check: solo la pagina pubblicata può parlare con Firebase, non uno script che prova i PIN a raffica.
+// Chiave reCAPTCHA v3 del sito (vuota = App Check spento). Va attivato anche in Console Firebase › App Check.
+const APP_CHECK_SITE_KEY = '';
+const appCheck = app => APP_CHECK_SITE_KEY &&
+  initializeAppCheck(app, {provider: new ReCaptchaV3Provider(APP_CHECK_SITE_KEY), isTokenAutoRefreshEnabled: true});
+
 const fbApp = initializeApp(firebaseConfig);
+appCheck(fbApp);
 const auth = getAuth(fbApp);
 // istanza "usa e getta" per creare gli account dei figli senza far uscire il genitore
-const secAuth = initializeAuth(initializeApp(firebaseConfig, 'secondary'), {persistence: inMemoryPersistence});
+const secApp = initializeApp(firebaseConfig, 'secondary');
+appCheck(secApp);
+const secAuth = initializeAuth(secApp, {persistence: inMemoryPersistence});
 // i dati restano salvati anche sul dispositivo: apertura istantanea, funziona offline, meno letture
 let db;
 try { db = initializeFirestore(fbApp, {localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()})}); }

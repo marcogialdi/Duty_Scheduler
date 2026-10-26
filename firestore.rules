@@ -1,7 +1,11 @@
 rules_version = '2';
-// Regole di sicurezza di "Compiti di casa" · versione 0.12.1 (26/10/2026)
+// Regole di sicurezza di "Compiti di casa" · versione 0.12.2 (26/10/2026)
 // Per sapere quale versione è attiva in Firebase, guarda questa riga nella scheda Regole.
 // Incollale in Console Firebase › Firestore Database › Regole › Pubblica.
+//
+// Novità 0.12.2 (sicurezza):
+//   - con il cartellino rosso "niente stelle" (campi noStarsFrom/noStarsUntil su kids/{kid}, scritti dal genitore)
+//     i compiti segnati dal figlio in quei giorni valgono 0 stelle, anche quelli di squadra
 //
 // Novità 0.12.1 (sicurezza):
 //   - completions: il figlio segna solo assegnazioni vere, sue (o ricevute con uno scambio accettato), con il compito giusto
@@ -101,6 +105,12 @@ service cloud.firestore {
       function taskOf(tid)   { return get(/databases/$(database)/documents/families/$(fid)/tasks/$(tid)).data; }
       function schedOf(sid)  { return get(/databases/$(database)/documents/families/$(fid)/schedule/$(sid)).data; }
       function swapPath(sw)  { return /databases/$(database)/documents/families/$(fid)/swaps/$(sw); }
+      // 0.12.2: cartellino rosso "niente stelle" del figlio k nel giorno ds (copiato dal genitore su kids/{k})
+      function kidPath(k)    { return /databases/$(database)/documents/families/$(fid)/kids/$(k); }
+      function noStarsOn(k, ds) {
+        return exists(kidPath(k)) && get(kidPath(k)).data.get('noStarsFrom', '') <= ds
+          && ds <= get(kidPath(k)).data.get('noStarsUntil', '');
+      }
 
       allow read: if inFam(fid);
       allow create: if signed() && d().createdBy == request.auth.uid && noFamilyYet();
@@ -172,7 +182,8 @@ service cloud.firestore {
           && !('contested' in d()) && !('verified' in d())
           && d().points is int && d().points >= 0
           && d().points <= taskOf(d().taskId).points + swapFavor()
-          && boardOk() && collabOk() && planOk());
+          && boardOk() && collabOk() && planOk()
+          && (('collab' in d()) || d().points == 0 || !noStarsOn(myKid(), d().date)));
         // il figlio toglie la spunta solo insieme alle sue stelle, mai dopo una contestazione
         // né dopo la conferma del genitore (0.12.0);
         // un compito di squadra solo finché gli altri non hanno confermato tutti
@@ -199,7 +210,7 @@ service cloud.firestore {
           function collabLedgerOk(c) {
             return c.get('collab', false) == true && myKid() in c.team && kid in c.team
               && c.confirmed.hasAll(c.team) && !('contested' in c)
-              && (d().amount == c.points || d().amount == 0);
+              && (d().amount == 0 || (d().amount == c.points && !noStarsOn(kid, c.date)));
           }
           allow read: if isParentOf(fid) || mine();
           // il figlio registra solo le stelle del compito appena segnato, pari a quelle del compito
