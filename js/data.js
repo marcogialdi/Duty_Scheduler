@@ -19,6 +19,8 @@ function startData(){
   sub(col('rewards'), s => { data.rewards = docs(s); });
   if (isParent()){
     sub(query(col('completions'), where('date','>=',addDays(today(),-2))), s => { data.verify = docs(s); });
+    // scambi degli stessi giorni: servono alla griglia di "Da verificare" per sapere chi doveva fare cosa
+    sub(query(col('swaps'), where('date','>=',addDays(today(),-2))), s => { data.verSwaps = docs(s); });
     sub(query(collection(db,'members'), where('familyId','==',fid), where('role','==','parent')), s => { data.parents = docs(s); });
     sub(query(collection(db,'invites'), where('familyId','==',fid)), s => { data.invites = docs(s); });
   }

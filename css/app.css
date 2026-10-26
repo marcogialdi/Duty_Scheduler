@@ -129,3 +129,73 @@
 .sched.paused .body{opacity:.5}
 .tedit{background:none;border:none;cursor:pointer;font-size:1rem;padding:4px 6px;border-radius:8px}
 .tedit:hover{background:color-mix(in srgb,var(--line) 50%,transparent)}
+/* 0.12.0: "Da verificare" per giorno e fascia, griglia compiti × figli */
+.vfilters{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 6px}
+.vfilters:empty{display:none}
+.vfilter{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;
+         background:var(--card);color:var(--ink);font-size:.85rem;cursor:pointer}
+.vfilter b{font-variant-numeric:tabular-nums}
+.vfilter.on{background:#c2410c;border-color:#c2410c;color:#fff}
+.vfilter:disabled{opacity:.5;cursor:default}
+.vday{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin:18px 0 6px;padding-bottom:4px;border-bottom:2px solid var(--ink);font-size:1rem}
+.vday small{color:var(--muted);font-weight:400;font-size:.8rem}
+#pVerify > .vday:first-child{margin-top:4px}
+.vgroup{margin:10px 0 14px}
+.vhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;padding:6px 8px 6px 10px;border-radius:10px;
+       background:color-mix(in srgb,var(--line) 55%,transparent);font-weight:700;font-size:.9rem}
+.vhead small{color:var(--muted);font-weight:400;margin-left:4px}
+.vhead.soon{background:color-mix(in srgb,#f97316 16%,var(--card));box-shadow:inset 3px 0 0 #f97316}
+.vacts{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-left:auto}
+.vsoon{font-size:.78rem;font-weight:600;color:#c2410c}
+.btn.vok{min-height:34px;padding:5px 12px;font-weight:600}
+.vgrid{display:grid;grid-template-columns:minmax(0,1fr) repeat(var(--n),minmax(58px,74px));margin-top:2px}
+.vrow{display:contents}
+.vrow > *{border-bottom:1px solid var(--line);min-height:50px;display:flex;align-items:center}
+.vrow:last-child > *{border-bottom:none}
+.vrow.vh > *{min-height:30px;border-bottom:1px solid var(--line)}
+.vk{justify-content:center;font-size:.75rem;font-weight:700;color:var(--k);text-align:center;gap:3px;padding:0 2px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.vk i{font-style:normal}
+.vt{gap:8px;padding:4px 6px 4px 2px;min-width:0}
+.vt i{font-style:normal;font-size:1.25rem;flex:0 0 auto;width:28px;text-align:center}
+.vt b{font-weight:500;font-size:.9rem;line-height:1.2;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;flex:1;min-width:0}
+.vt small{color:var(--muted);font-size:.72rem;font-variant-numeric:tabular-nums;white-space:nowrap;flex:0 0 auto}
+.vc{justify-content:center;flex-direction:column;gap:0;margin:4px 3px;border-radius:12px;font-size:1.1rem;line-height:1.1;text-align:center;min-height:42px !important;border-bottom:none !important}
+.vc small{font-size:.68rem;font-variant-numeric:tabular-nums;color:inherit;opacity:.85}
+button.vc{border:2px solid var(--plus);background:color-mix(in srgb,var(--plus) 12%,var(--card));color:var(--plus);font-weight:800;cursor:pointer;font-family:inherit;padding:2px}
+button.vc:active{transform:scale(.96)}
+button.vc.soon{border-color:#f97316;background:color-mix(in srgb,#f97316 14%,var(--card));color:#c2410c}
+button.vc.pend{border:2px dashed var(--minus);background:color-mix(in srgb,var(--minus) 12%,var(--card));color:var(--minus);animation:vpulse 1s infinite alternate}
+@keyframes vpulse{to{background:color-mix(in srgb,var(--minus) 24%,var(--card))}}
+.vc.no{color:var(--muted);font-weight:700}
+.vc.bad{background:color-mix(in srgb,var(--minus) 12%,var(--card))}
+.vc.okd,.vc.old{color:var(--muted)}
+.vc.okd{font-size:1rem}
+.vlines{margin-top:2px}
+.vline{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);min-height:50px}
+.vline:last-child{border-bottom:none}
+.vline .vt{display:flex;flex:1;flex-wrap:wrap;row-gap:0}
+.vline .vt b{flex:1 1 0;min-width:0;-webkit-line-clamp:1}
+.vline .vt small{flex:1 1 100%;padding-left:36px;white-space:normal}
+.vline .vc{width:64px;flex:0 0 64px;display:flex;align-items:center}
+@media (max-width:400px){ .vgrid{grid-template-columns:minmax(0,1fr) repeat(var(--n),minmax(52px,60px))} .vt small{display:none} .vline .vt small{display:block} }
+/* contestazione: barra "Annulla" in basso */
+.undobar{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:20;width:min(560px,calc(100vw - 24px));
+         display:flex;align-items:center;gap:10px;padding:10px 10px 12px 14px;border-radius:14px;background:var(--ink);color:var(--bg);
+         box-shadow:0 10px 30px rgba(0,0,0,.3);overflow:hidden;font-size:.88rem}
+.undobar .ut{flex:1;min-width:0}
+.undobar .btn{background:var(--bg);color:var(--ink);border-color:var(--bg);font-weight:700;min-height:38px}
+.undobar .ubar{position:absolute;left:0;bottom:0;height:4px;width:100%;background:#f97316;transform-origin:left;animation:ushrink linear forwards}
+@keyframes ushrink{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+/* compito confermato dal genitore */
+.chip.vchip{font-size:.75rem;white-space:nowrap}
+/* popup delle novità */
+.news .hint{color:var(--muted);font-size:.85rem;margin:0 0 6px}
+.nver{font-size:.9rem;margin:14px 0 4px;color:var(--muted)}
+.nitem{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.nitem:first-child,.nver + .nitem{border-top:none}
+.nic{flex:0 0 40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:1.35rem;background:color-mix(in srgb,var(--star) 18%,var(--card))}
+.nitem > div > b{display:block;font-size:.95rem}
+.nitem p b{color:var(--ink)}
+.nitem p{margin:2px 0 0;font-size:.88rem;color:var(--muted);line-height:1.4}
+.newsread{margin-top:12px}

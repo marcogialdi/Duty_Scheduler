@@ -59,6 +59,9 @@ function renderDay(){
   renderBoard(isToday);
 }
 
+// compito confermato da un genitore con "Tutto ok" (0.12.0): non si toglie più
+const VCHIP = '<span class="chip vchip" style="--c:var(--plus)" title="Confermato da mamma o papà">👍 controllato</span>';
+
 // matita di modifica sulle schede dei compiti, solo per i genitori che guardano la giornata di un figlio
 const penBtn = ({schedId, taskId}) => !isParent() ? '' :
   `<button class="tedit" ${schedId ? `data-pedit="${schedId}"` : `data-peditt="${taskId}"`} aria-label="Modifica il compito" title="Modifica">✏️</button>`;
@@ -97,6 +100,7 @@ function renderBoard(isToday){
     const pts = mine ? mine.points : boardPoints(t, owner, day);
     let action = '';
     if (mine?.contested) action = `<span class="chip" style="--c:var(--minus)">⚠️ Non era vero</span>`;
+    else if (mine?.verified) action = `<span class="chip" style="--c:var(--plus)">✓ fatto da te</span> ${VCHIP}`;
     else if (mine) action = `<span class="chip" style="--c:var(--plus)">✓ fatto da te</span>${isToday ? ` <button class="btn" data-bundo="${mine.id}">Annulla</button>` : ''}`;
     else if (used.length >= max) action = `<span class="chip" style="--c:var(--line)">già fatto${others.length ? ' da ' + esc(others.join(', ')) : ''}</span>`;
     else if (isToday && !isParent()) action = `<button class="btn ok" data-bdo="${t.id}">✅ L'ho fatto!</button>`;
@@ -219,8 +223,9 @@ function taskCard(item, comp, isToday){
   else if (canSwap) action = siblings.length === 1
     ? `<button class="btn" data-swapto="${siblings[0].id}" data-key="${item.key}">🤝 Chiedi a ${esc(siblings[0].name)}</button>`
     : `<button class="btn" data-pick="${item.key}">🤝 Chiedi a…</button>`;
+  if (done && comp?.verified && !item.collab) action = (action ? action + ' ' : '') + VCHIP;
   const check = cc ? `<button class="check ${cc.cls}" data-done="${item.key}" aria-label="Fatto" ${cc.can ? '' : 'disabled'}>${cc.mark}</button>`
-    : `<button class="check" data-done="${item.key}" aria-label="Fatto" ${isToday && !comp?.contested ? '' : 'disabled'}>${done?'✓':''}</button>`;
+    : `<button class="check" data-done="${item.key}" aria-label="Fatto" ${isToday && !comp?.contested && !comp?.verified ? '' : 'disabled'}>${done?'✓':''}</button>`;
   return `<div class="task ${done?'done':''} ${comp?.contested?'contested':''} ${item.collab?'collab':''}" style="--c:${c}">
     ${check}
     <div class="ticon" aria-hidden="true">${taskIcon(t)}</div>
@@ -250,6 +255,7 @@ $('svDay').addEventListener('click', async e => {
       const cid = `${item.key}_${ds}`;
       const comp = data.comps.find(c => c.id === cid);
       if (comp?.contested) return;
+      if (comp?.verified) return toast('Mamma o papà l\'hanno già controllato 👍');
       if (item.collab){
         if (!comp) return await collabMark(item, ds);
         if (comp.doneBy === owner && (comp.confirmed || []).length === 1) return await collabUndo(comp);

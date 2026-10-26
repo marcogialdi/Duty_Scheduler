@@ -4,7 +4,8 @@
 onAuthStateChanged(auth, async user => {
   if (user && busy) return;       // registrazione in corso: ci pensa lei
   stopData(); stopFam();
-  me = null; fid = null; fam = null;
+  me = null; fid = null; fam = null; newsShown = false;
+  if ($('newsDlg').open) $('newsDlg').close();
   if (!user){ renderWho(); defaultLoggedOut(); return; }
   await loadMe(user);
 });

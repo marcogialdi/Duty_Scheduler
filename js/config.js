@@ -7,11 +7,12 @@ const APP_NAME = 'Compiti di casa';
 /* ---------- VERSIONE ----------
    Numerazione MAGGIORE.MINORE.CORREZIONE: 0.x durante la prova, 1.0.0 = prima versione da prodotto.
    Nuove funzioni → si aumenta il secondo numero; solo correzioni → il terzo.
-   A ogni rilascio: aggiorna APP_VERSION, APP_DATE e CHANGELOG qui, VERSION in sw.js,
+   A ogni rilascio: aggiorna APP_VERSION, APP_DATE, CHANGELOG e NEWS qui,
    l'intestazione di firestore.rules (se cambiate) e il file CHANGELOG.md. */
-const APP_VERSION = '0.11.0';
-const APP_DATE = '2026-10-23';
+const APP_VERSION = '0.12.0';
+const APP_DATE = '2026-10-26';
 const CHANGELOG = [
+  ['0.12.0', '2026-10-26', '"Da verificare" rifatta: per giorno e per fascia, griglia compiti × figli, "Tutto ok ✓" per confermare un gruppo in un tocco, contestazione con un tocco sulla ✓ e "Annulla", filtro "In scadenza". Popup delle novità per figli e genitori.'],
   ['0.11.0', '2026-10-23', 'Compiti più facili da inserire e correggere: più volte al giorno, modifica del compito da Gestione compiti e dalla giornata del figlio, avviso e unione dei doppioni; premi modificabili e sospendibili, catalogo consigliato di 21 premi.'],
   ['0.10.0', '2026-10-22', 'Fasce Mattina, Pomeriggio e Sera più chiare: "Da verificare" e "Compiti assegnati" divisi per figlio e per fascia; nella giornata dei ragazzi le fasce si chiudono con un tocco e quelle finite si chiudono da sole.'],
   ['0.9.0', '2026-10-17', 'Compiti di squadra 🤝: uno segna, gli altri confermano, le stelle arrivano a tutti insieme. L\'app è ora divisa in file per funzione (aggiornamenti più leggeri).'],
@@ -27,6 +28,32 @@ const CHANGELOG = [
   ['0.1.1', '2026-10-16', 'Passaggio a Firebase.'],
   ['0.1.0', '2026-10-16', 'Prima pagina dei compiti per Riccardo e Tommaso.'],
 ];
+
+/* ---------- NOVITÀ ALL'APERTURA ----------
+   Per ogni versione, le novità da mostrare nel popup: separate per i figli (kid) e per i genitori (parent).
+   [icona, titolo, testo]. Se per un ruolo non ci sono novità, il popup per quel ruolo non si apre.
+   Chi ha saltato più versioni vede tutte quelle che non ha ancora letto, dalla più recente. */
+const NEWS = {
+  '0.12.0': {
+    kid: [
+      ['👍', 'Compiti controllati', 'Quando mamma o papà controllano i tuoi compiti, accanto alla spunta compare <b>👍 controllato</b>: quel compito è confermato per sempre.'],
+      ['🆕', 'Le novità per te', 'Ogni volta che l\'app migliora trovi qui cosa è cambiato. Spunta <b>Ho letto</b> e non la vedrai più fino alla prossima novità.'],
+    ],
+    parent: [
+      ['📅', '"Da verificare" per giorno', 'I compiti sono divisi per giorno (Oggi, Ieri…) e poi per fascia: 🌅 Mattina, ☀️ Pomeriggio, 🌙 Sera.'],
+      ['🔲', 'Una griglia da leggere con un\'occhiata', 'Compiti nelle righe, figli nelle colonne: <b>✓ con l\'orario</b> se è stato fatto, <b>—</b> se non è stato fatto. Squadra e lavoretti extra stanno in righe compatte, sotto ogni giorno.'],
+      ['👍', 'Tutto ok ✓', 'Un tocco conferma tutti i compiti di un gruppo: spariscono dalla lista senza aspettare le 48 ore e <b>non si possono più contestare</b>. I ragazzi vedono 👍 controllato.'],
+      ['🟨', 'Contestare con un tocco', 'Tocca la <b>✓</b> di un compito non vero: hai <b>5 secondi</b> per premere <b>Annulla</b> prima che arrivino penalità e cartellino.'],
+      ['⏰', 'Filtro "In scadenza"', 'Mostra solo i gruppi con compiti che tra meno di 6 ore non potrai più contestare.'],
+      ['🆕', 'Questa finestra', 'A ogni aggiornamento trovi qui le novità. Spunta <b>Ho letto</b> per non vederla più fino alla prossima versione.'],
+    ],
+  },
+};
+// confronto tra versioni "0.12.0" (negativo se a < b)
+const cmpVer = (a, b) => { const x = String(a || '0').split('.').map(Number), y = String(b || '0').split('.').map(Number);
+  for (let i = 0; i < 3; i++){ const d = (x[i] || 0) - (y[i] || 0); if (d) return d; } return 0; };
+// chi non ha mai segnato le novità come lette ha conosciuto l'app prima dei popup: le vede dalla 0.12.0
+const NEWS_FIRST = '0.11.0';
 
 /* ---------- impostazioni predefinite di una nuova famiglia ---------- */
 const DEFAULTS = {

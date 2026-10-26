@@ -72,7 +72,7 @@ function showPtab(k, quiet){
   if (!quiet && changed) $('ptabs').scrollIntoView({block:'nearest'});
 }
 $('ptabs').onclick = e => { const b = e.target.closest('[data-pt]'); if (b) showPtab(b.dataset.pt); };
-// le scadenze delle verifiche si aggiornano da sole
+// le scadenze delle verifiche si aggiornano da sole (gruppi "in scadenza", compiti non più contestabili)
 setInterval(() => { if (view === 'parent' && ptab === 'ver' && !document.hidden) render(); }, 60000);
 const propStars = {};
 $('pProps').addEventListener('change', e => { const v = e.target.dataset.pstars; if (v) propStars[v.split('|')[1]] = +e.target.value; });
@@ -94,43 +94,8 @@ function renderParent(){
       ${red ? `<p style="color:var(--minus)">Rosso ${red.effect==='nostars'?'(niente stelle)':'(compiti di recupero)'} dal ${fmtDate(red.from)} al ${fmtDate(red.until)}</p>` : ''}</div>`;
   }).join('');
 
-  $('pVerifyHint').textContent = `Compiti segnati come fatti nelle ultime ${r.contestHours} ore: se uno non è vero, premi "Non è vero!".`;
-  const lim = Date.now() - r.contestHours * 3600 * 1000;
-  // ogni compito spuntato si può contestare per contestHours ore: prima quelli che scadono prima
-  const deadline = c => ms(c.completeAt || c.doneAt) + r.contestHours * 3600 * 1000;
-  const ver = data.verify.filter(c => ms(c.doneAt) >= lim && kidById(c.doneBy))
-    .sort((a,b) => (a.contested - b.contested) || (deadline(a) - deadline(b)));
-  const openVer = ver.filter(c => !c.contested).length;
-  // una riga da verificare; dentro il gruppo di un figlio il nome non si ripete
-  const verRow = (c, inKid) => {
-    const t = data.tasks[c.taskId];
-    const tag = (c.scheduleId || '').startsWith('x-') ? ' · 🧹 bacheca' : c.collab ? ' · 🤝 squadra' : t?.optional ? ' · ✨ facoltativo' : '';
-    // compito di squadra non ancora confermato da tutti: nessuna stella data, il genitore può confermare
-    if (c.collab && !teamDone(c) && !c.contested) return `<div class="row"><div class="body">${taskIcon(t)} <b>${esc(listNames(c.team || []))}</b> · ${esc(t?.title ?? '?')}
-      <br><small>${fmtDate(c.date)} · segnato da ${esc(kidName(c.doneBy))}${tag}</small><br><span class="due">⏳ manca la conferma di ${esc(listNames(teamMissing(c)))}</span></div>
-      <button class="btn ok" data-pconf="${c.id}">Confermo io</button></div>`;
-    const who = c.collab ? `<b>${esc(listNames(c.team || []))}</b> · ` : inKid ? '' : `<b style="color:${kidColor(c.doneBy)}">${esc(kidName(c.doneBy))}</b> · `;
-    const left = deadline(c) - Date.now(), h = Math.floor(left / 3600e3), m = Math.floor(left % 3600e3 / 60e3);
-    const end = new Date(deadline(c));
-    const when = `${end.toLocaleDateString('it-IT',{weekday:'short'})} ${fmtMs(deadline(c)).slice(0,5)} alle ${String(end.getHours()).padStart(2,'0')}:${String(end.getMinutes()).padStart(2,'0')}`;
-    const due = c.contested ? '' : `<span class="due ${left < 6 * 3600e3 ? 'soon' : ''}">⏳ ${h ? `${h} h ` : ''}${m} min per verificare · fino a ${when}</span>`;
-    return `<div class="row"><div class="body">${taskIcon(t)} ${who}${esc(t?.title ?? '?')}
-      <br><small>${fmtDate(c.date)}${c.collab || isBoardComp(c) ? '' : ` · ${compTime(c)}`} · +${c.points} ⭐${tag}</small>${due ? `<br>${due}` : ''}</div>
-      ${c.contested ? '<span class="chip" style="--c:var(--minus)">🟨 contestato</span>'
-                    : `<button class="btn no" data-contest="${c.id}">Non è vero!</button>`}</div>`;
-  };
-  // raggruppate per figlio e poi per fascia; squadra e lavoretti extra (senza un figlio o una fascia fissa) a parte
-  const apart = c => c.collab || isBoardComp(c);
-  const openN = l => l.filter(c => !c.contested).length;
-  const kidGroups = kidsList().map(k => {
-    const list = ver.filter(c => !apart(c) && c.doneBy === k.id); if (!list.length) return '';
-    return `<h3 class="vkid" style="color:${k.color}">${k.avatar || ''} ${esc(k.name)} <small>${openN(list)} da verificare</small></h3>` +
-      bySlot(list, compTime).map(g => slotHead(g, `${g.items.length}`) + g.items.map(c => verRow(c, true)).join('')).join('');
-  }).join('');
-  const other = ver.filter(apart);
-  $('pVerify').innerHTML = ver.length ? kidGroups + (other.length
-      ? `<h3 class="vkid">🤝 Squadra e 🧹 lavoretti extra <small>${openN(other)} da verificare</small></h3>${other.map(c => verRow(c, false)).join('')}` : '')
-    : '<div class="empty">Nessun compito da verificare</div>';
+  // "Da verificare": per giorno e per fascia, griglia compiti × figli (verify.js)
+  const openVer = renderVerify();
 
   const reqs = kidsList().flatMap(k => data.pending[k.id] || []);
   $('pRedeem').innerHTML = reqs.length ? reqs.map(x => `
@@ -264,12 +229,12 @@ function schedItems(list){
 }
 
 
+/* contestazione: la applica la coda di verify.js dopo i 5 secondi di "Annulla" (niente conferma qui) */
 async function contest(compId){
-  const c = data.verify.find(x => x.id === compId); if (!c || c.contested) return;
+  const c = data.verify.find(x => x.id === compId); if (!c || c.contested || c.verified) return;
   if (c.collab) return contestTeam(c);
   const t = data.tasks[c.taskId], base = t?.points || 1, kid = c.doneBy, td = today(), now = serverTimestamp(), r = R();
   const lost = (c.points || 0) + r.cheatMultiplier * base;
-  if (!confirm(`${kidName(kid)} perde ${lost} ⭐, la serie e prende un cartellino giallo. Confermi?`)) return;
   // un facoltativo o un lavoretto extra falso non toglie la giornata perfetta (non ne faceva parte)
   const perfect = (t?.optional || t?.board || (c.scheduleId || '').startsWith('x-')) ? {exists: () => false}
     : await getDoc(dref('kids', kid, 'ledger', `perfect_${kid}_${c.date}`));
@@ -296,7 +261,6 @@ async function contestTeam(c){
   const t = data.tasks[c.taskId], base = t?.points || 1, td = today(), now = serverTimestamp(), r = R();
   const team = (c.team || []).filter(k => kidById(k));
   const loss = k => collabPoints(c, k) + r.cheatMultiplier * base;
-  if (!confirm(`Tutta la squadra (${listNames(team)}) restituisce le stelle, ne perde altre (${team.map(k => `${kidName(k)} −${loss(k)}`).join(', ')}), perde la serie e prende un cartellino giallo. Confermi?`)) return;
   const batch = chunkedBatch(), reds = [];
   batch.update(dref('completions', c.id), {contested:true, contestedAt:now});
   for (const kid of team){
@@ -333,7 +297,6 @@ $('parentView').addEventListener('click', async e => {
     if (d.todooff){ store('set', `cdc.todoOff.${fid}`, '1'); return render(); }
     if (d.devoff){ store('set', `cdc.devBannerOff.${fid}`, '1'); return render(); }
     if (b.id === 'seedBtn') return await seed();
-    if (d.contest) return await contest(d.contest);
     if (d.usetask){ $('fTaskSel').value = d.usetask; $('fDup').hidden = true; syncForm(); return $('fTaskSel').scrollIntoView({block:'center', behavior:'smooth'}); }
     if (d.merge) return await mergeTasks(d.merge.split('|'));
     if (d.catalog) return await loadCatalog();
@@ -350,7 +313,6 @@ $('parentView').addEventListener('click', async e => {
       await updateDoc(dref('rewards', x.id), {active: x.active === false}); rewEdit = null;
       return toast(x.active === false ? 'Premio di nuovo nel negozio ▶️' : 'Premio sospeso: i figli non lo vedono ⏸️');
     }
-    if (d.pconf){ const c = data.verify.find(x => x.id === d.pconf); if (c && !teamDone(c)) await collabConfirm(c, true); return; }
     if (d.approve){
       const [kid, id] = d.approve.split('|');
       const x = (data.pending[kid] || []).find(y => y.id === id); if (!x) return;

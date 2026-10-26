@@ -66,6 +66,7 @@ function route(){
   if (!me?.familyId) return show('scrNoFam');
   if (!fam) return show('loading');
   show('app'); renderTabs(); applyView();
+  setTimeout(maybeShowNews, 400);             // novità non ancora lette (una volta per accesso)
 }
 function defaultLoggedOut(){
   $('appTitle').textContent = device?.famName || APP_NAME;

@@ -32,6 +32,7 @@ function openHelp(section){
       <li>Hai aiutato in un altro modo? Scrivilo in <b>💡 Hai fatto qualcos'altro?</b>: se mamma e papà sono d'accordo, ti danno delle stelle.</li>
       <li>Un compito con <b>🤝</b> è <b>di squadra</b>: organizzatevi e fatelo insieme. Uno lo segna, gli altri toccano "Confermo, l'abbiamo fatto": le stelle arrivano a tutti solo quando avete confermato tutti.</li>
       <li>Con le stelle compri i premi nel <b>🎁 Negozio</b>.</li>
+      <li>Quando mamma o papà controllano un compito compare <b>👍 controllato</b>: da lì non si può più togliere la spunta.</li>
       <li>Attenzione: segnare un compito che non hai fatto costa caro (cartellino giallo 🟨). Dire la verità conviene sempre!</li></ol>
       ${fam ? `<p><b>Le regole complete:</b></p><ul>${gameRules().map(x => `<li>${x}</li>`).join('')}</ul>` : ''}
     </details>`;
@@ -40,7 +41,8 @@ function openHelp(section){
       <p>In alto trovi <b>Primi passi</b> (si chiude con un tocco) e sotto le <b>schede</b>: Situazione (punteggi e bonus a mano), Da verificare, Richieste premi (con il catalogo),
       Proposte ragazzi, Gestione compiti (nuovo compito), Compiti assegnati, Bacheca extra, Compiti recupero.
       Il <b>numero rosso</b> su una scheda indica quante cose aspettano una tua decisione.</p>
-      <p><b>Da verificare</b> e <b>Compiti assegnati</b> sono divisi per figlio e, dentro, per fascia (🌅 Mattina, ☀️ Pomeriggio, 🌙 Sera). In "Da verificare" compiti di squadra e lavoretti extra stanno in un gruppo a parte e ogni voce mostra quanto tempo resta per contestarla.</p>
+      <p><b>Da verificare</b> è diviso per giorno (Oggi, Ieri…) e poi per fascia (🌅 Mattina, ☀️ Pomeriggio, 🌙 Sera): ogni fascia è una griglia con i compiti nelle righe e i figli nelle colonne. Compiti di squadra e lavoretti extra sono righe compatte sotto ogni giorno.
+      <b>Compiti assegnati</b> è diviso per figlio e, dentro, per fascia.</p>
       <p>Nella giornata dei ragazzi le fasce si chiudono con un tocco sul nome; quelle già fatte, o già passate senza compiti obbligatori da fare, si chiudono da sole.</p></details>
     <details open><summary>🚀 Primi passi</summary>
       <ol><li><b>Figli</b>: in ⚙️ Setup aggiungi ogni figlio con nome, icona, colore e un PIN di 6 cifre (diverso per ciascuno).</li>
@@ -83,16 +85,19 @@ function openHelp(section){
       <p><b>🤝 Compiti di squadra (collaborazione)</b> — un compito facoltativo con la casella <b>Collaborazione</b> spuntata diventa <b>uno solo per una squadra</b> di figli (almeno 2), con un unico obiettivo (es. "Tenere in ordine la camera").
         Funziona così: uno lo segna come fatto, gli altri vedono "l'ha segnato" e toccano <b>Confermo, l'abbiamo fatto</b>. <b>Le stelle arrivano a tutti</b>, nella stessa quantità, <b>solo quando hanno confermato tutti</b>;
         se a fine giornata manca una conferma, nessuno prende stelle (ma nessuno ne perde: è un facoltativo). Chi l'ha segnato può togliere la spunta finché nessun altro ha confermato.
-        In "Da verificare" vedi quelli in attesa di conferma e puoi <b>confermare tu</b> se sai che è stato fatto. Se invece non era vero, "Non è vero!" vale per <b>tutta la squadra</b>: ognuno ha confermato, quindi ognuno prende il cartellino giallo.
+        In "Da verificare" vedi quelli in attesa di conferma e puoi <b>confermare tu</b> se sai che è stato fatto. Se invece non era vero, toccando la sua <b>✓</b> lo contesti per <b>tutta la squadra</b>: ognuno ha confermato, quindi ognuno prende il cartellino giallo.
         Come: Nuovo compito › Tipo <b>Facoltativo</b> › spunta <b>🤝 Collaborazione</b> e scegli la squadra; oppure ✏️ su un facoltativo esistente. Li trovi in "Compiti assegnati" › Compiti di squadra.</p>
       <p><b>C · Proposte dei ragazzi 💡</b> — per le iniziative spontanee che non sono in nessuna lista. Il figlio scrive cosa ha fatto (max 3 proposte al giorno);
         <b>nessuna stella finché un genitore non approva</b>. Nel pannello "Proposte dei ragazzi" scegli quante stelle dare (1–5) e premi Approva, oppure No.
         Se una proposta torna spesso, conviene aggiungerla alla bacheca.</p>
       <p>Durante il primo cartellino rosso del trimestre anche facoltativi e lavoretti extra non danno stelle; le proposte le valuti tu.</p></details>
-    <details><summary>🔍 Controlli: "Non è vero!"</summary>
-      <p>Nella scheda Genitori, "Da verificare" mostra i compiti spuntati nelle ultime ${fam?.rules?.contestHours ?? 48} ore.
-      Se scopri che uno non è stato fatto, premi <b>Non è vero!</b>: il figlio restituisce le stelle, ne perde altre, perde la serie e prende un cartellino giallo.
-      Il primo cartellino rosso del trimestre toglie le stelle per alcuni giorni; dal secondo arrivano i compiti di recupero 🔄.</p></details>
+    <details><summary>🔍 Controlli: "Da verificare"</summary>
+      <p>Nella scheda Genitori, "Da verificare" mostra i compiti spuntati nelle ultime ${fam?.rules?.contestHours ?? 48} ore, per giorno e per fascia.
+      Nella griglia ogni figlio ha la sua colonna: <b>✓ con l'orario</b> = fatto, <b>—</b> = non fatto, <b>🟨</b> = contestato, <b>👍</b> = confermato.</p>
+      <ul><li><b>Tutto ok ✓</b> sul gruppo: conferma in un tocco tutti i compiti del gruppo. Spariscono dalla lista senza aspettare le ${fam?.rules?.contestHours ?? 48} ore e <b>non si possono più contestare</b>; i figli vedono 👍 controllato e non possono più togliere la spunta.</li>
+      <li><b>Contestare</b>: tocca la <b>✓</b> del compito non fatto. Per 5 secondi compare <b>Annulla</b> in basso (o tocca di nuovo la casella); poi il figlio restituisce le stelle, ne perde altre, perde la serie e prende un cartellino giallo.</li>
+      <li><b>⏰ In scadenza</b>: mostra solo i gruppi con compiti che tra meno di 6 ore non si potranno più contestare; l'intestazione del gruppo dice quanto manca.</li></ul>
+      <p>Il primo cartellino rosso del trimestre toglie le stelle per alcuni giorni; dal secondo arrivano i compiti di recupero 🔄.</p></details>
     <details><summary>🎁 Premi</summary>
       <p>I figli chiedono un premio dal Negozio; le stelle restano "prenotate" finché non approvate o rifiutate dalla scheda Genitori.
       Come trasformare i premi virtuali in reali lo decidete voi: il catalogo è vostro.</p>
@@ -108,6 +113,45 @@ function openHelp(section){
   if (section === 'news') $('helpBody').querySelectorAll('details').forEach((d, i) => d.open = i === (kid ? 1 : 0));
   $('helpDlg').showModal();
 }
+/* =====================================================================
+   NOVITÀ ALL'APERTURA (0.12.0)
+   Il popup mostra le novità del proprio ruolo (figlio o genitore) non ancora lette.
+   "Chiudi" senza spunta: ricompare alla prossima apertura. Con "Ho letto": si salva la versione
+   in members/{uid}.newsSeen (vale per la persona su ogni dispositivo) e non ricompare più.
+   Copia sul dispositivo per uid: serve finché le regole 0.12.0 non sono pubblicate (i figli non potrebbero salvare).
+   ===================================================================== */
+let newsShown = false;                       // in questo accesso il popup è già comparso
+const newsSeenLocal = uid => store('get', `cdc.news.${uid}`) || '';
+function newsFor(role, seen){
+  return Object.keys(NEWS)
+    .filter(v => cmpVer(v, seen) > 0 && cmpVer(v, APP_VERSION) <= 0 && (NEWS[v][role] || []).length)
+    .sort((a, b) => cmpVer(b, a));
+}
+function maybeShowNews(){
+  if (newsShown || !me?.uid || !me?.role || !fam || document.querySelector('dialog[open]')) return;
+  const role = me.role === 'kid' ? 'kid' : 'parent';
+  const seen = [me.newsSeen || NEWS_FIRST, newsSeenLocal(me.uid)].sort(cmpVer).pop();
+  const vers = newsFor(role, seen);
+  if (!vers.length) return;
+  newsShown = true;
+  const dateOf = v => (CHANGELOG.find(([x]) => x === v) || [])[1];
+  $('newsHead').textContent = role === 'kid' ? `🆕 Novità per te, ${kidName(me.kidId)}!` : '🆕 Novità per i genitori';
+  $('newsSub').textContent = vers.length === 1 ? `Versione ${vers[0]}${dateOf(vers[0]) ? ` · ${fmtDate(dateOf(vers[0]))}` : ''}`
+    : `Versioni ${vers.slice().reverse().join(', ')}`;
+  $('newsBody').innerHTML = vers.map(v => `${vers.length > 1 ? `<h3 class="nver">Versione ${v}</h3>` : ''}${
+    NEWS[v][role].map(([ic, t, txt]) => `<div class="nitem"><span class="nic" aria-hidden="true">${ic}</span><div><b>${esc(t)}</b><p>${txt}</p></div></div>`).join('')}`).join('');
+  $('newsRead').checked = false;
+  $('newsDlg').showModal();
+}
+$('newsDlg').addEventListener('close', async () => {
+  if (!$('newsRead').checked || !me?.uid) return;
+  const uid = me.uid;
+  store('set', `cdc.news.${uid}`, APP_VERSION);
+  me.newsSeen = APP_VERSION;
+  try { await updateDoc(doc(db, 'members', uid), {newsSeen: APP_VERSION}); }
+  catch(e){ console.warn('Novità lette: salvate solo su questo dispositivo', e); }
+});
+
 function openPrivacy(){
   const who = CONTACT.name ? `${esc(CONTACT.name)}${CONTACT.email ? ` (<a href="mailto:${esc(CONTACT.email)}">${esc(CONTACT.email)}</a>)` : ''}` : 'la persona che ti ha invitato a provare l\'app';
   $('privBody').innerHTML = `

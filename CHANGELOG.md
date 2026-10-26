@@ -6,6 +6,16 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.12.0 · 26/10/2026
+- **Da verificare per giorno**: i compiti sono divisi per giorno (Oggi, Ieri…) e poi per fascia (🌅 Mattina, ☀️ Pomeriggio, 🌙 Sera).
+- **Griglia compiti × figli**: in ogni fascia i compiti sono nelle righe e i figli nelle colonne; ✓ con l'orario se fatto, — se non fatto, 🟨 se contestato, 👍 se confermato. Compiti di squadra e lavoretti extra in righe compatte sotto ogni giorno. Tolto il conto alla rovescia su ogni voce.
+- **Tutto ok ✓**: conferma in un tocco tutti i compiti aperti di un gruppo (campo `verified` sul completamento); spariscono dalla lista, non si possono più contestare e il figlio non può più togliere la spunta. I ragazzi vedono "👍 controllato".
+- **Contestazione con un tocco**: al posto dei pulsanti "Non è vero!" si tocca la ✓; per 5 secondi resta "Annulla" (barra in basso o nuovo tocco sulla casella), poi partono penalità e cartellino. Le contestazioni partono una alla volta; se l'app va in secondo piano partono subito.
+- **Filtro "In scadenza"**: solo i gruppi con compiti che tra meno di 6 ore non si potranno più contestare; l'intestazione del gruppo dice quanto manca.
+- **Popup delle novità** all'apertura, diverso per figli e genitori, con "Chiudi" e la spunta "Ho letto": la versione letta si salva in `members/{uid}.newsSeen` (vale su tutti i dispositivi, anche sul tablet di famiglia); chi ha saltato versioni vede tutte le novità non lette; i nuovi account partono già "letti"; il nuovo PIN di un figlio conserva le novità lette. Testi in `NEWS` (js/config.js).
+- Nuovo file `js/verify.js` (scheda Da verificare).
+- **Regole Firestore 0.12.0: vanno ripubblicate** (ognuno aggiorna solo il proprio `newsSeen`; un compito confermato non si può più togliere). Finché non sono pubblicate l'app funziona, ma la spunta "Ho letto" dei figli resta salvata solo sul dispositivo.
+
 ## 0.11.0 · 23/10/2026
 - **Più volte al giorno**: nel nuovo compito la casella "🔁 Più volte al giorno" fa scegliere Mattina, Pomeriggio e Sera, ognuna con il suo orario; si crea un'assegnazione per fascia.
 - **Modifica da Gestione compiti**: scelto un compito esistente compaiono "✏️ Modifica il compito" (titolo, stelle, icona, descrizione, tipo: valgono per tutte le assegnazioni) e l'elenco delle sue assegnazioni, ognuna modificabile.

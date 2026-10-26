@@ -105,7 +105,7 @@ async function createAccount(email, password){
 async function createKid({name, pin, color, avatar}){
   const id = 'k' + rid(), authEmail = kidEmail(id, 1);
   const uid = await createAccount(authEmail, pin);
-  await setDoc(doc(db, 'members', uid), {familyId:fid, role:'kid', kidId:id, name, createdAt:serverTimestamp()});
+  await setDoc(doc(db, 'members', uid), {familyId:fid, role:'kid', kidId:id, name, createdAt:serverTimestamp(), newsSeen:APP_VERSION});
   return {id, name, color, avatar, authEmail, uid, ver:1};
 }
 async function saveKids(kids){ await updateDoc(doc(db, 'families', fid), {kids}); }
@@ -149,8 +149,11 @@ $('kidsList').addEventListener('click', async e => {
       if (pin === null) return;
       if (!/^\d{6}$/.test(pin)) return toast('Il PIN deve avere 6 cifre');
       const ver = (k.ver || 1) + 1, authEmail = kidEmail(k.id, ver);
+      // le novità già lette passano al nuovo account, così non ricompaiono
+      const oldSeen = k.uid ? await getDoc(doc(db, 'members', k.uid)).then(x => x.data()?.newsSeen).catch(() => null) : null;
       const uid = await createAccount(authEmail, pin);
-      await setDoc(doc(db, 'members', uid), {familyId:fid, role:'kid', kidId:k.id, name:k.name, createdAt:serverTimestamp()});
+      await setDoc(doc(db, 'members', uid), {familyId:fid, role:'kid', kidId:k.id, name:k.name, createdAt:serverTimestamp(),
+        ...(oldSeen ? {newsSeen:oldSeen} : {})});
       await saveKids(kidsList().map(x => x.id === k.id ? {...x, authEmail, uid, ver} : x));
       if (k.uid) await deleteDoc(doc(db, 'members', k.uid));
       toast(`Nuovo PIN di ${k.name} attivo ✅`);

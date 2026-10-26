@@ -90,7 +90,8 @@ async function createFamily(){
     const b = writeBatch(db);
     b.set(famRef, {name:famName, times, categories:DEFAULTS.categories, rules:DEFAULTS.rules, kids:[],
                    createdBy:user.uid, createdAt:serverTimestamp(), consentAt:serverTimestamp()});
-    b.set(doc(db,'members',user.uid), {familyId:fid, role:'parent', name, email:user.email, createdAt:serverTimestamp(), consentAt:serverTimestamp()});
+    b.set(doc(db,'members',user.uid), {familyId:fid, role:'parent', name, email:user.email, createdAt:serverTimestamp(), consentAt:serverTimestamp(),
+      newsSeen:APP_VERSION});                      // chi arriva ora ha la guida: niente popup delle novità passate
     await b.commit();
     me = {uid:user.uid, familyId:fid, role:'parent', name};
     fam = mergeCfg({name:famName, times});
@@ -143,7 +144,7 @@ $('joinForm').onsubmit = async e => {
     busy = true;
     const user = auth.currentUser || (await createUserWithEmailAndPassword(auth, $('jEmail').value.trim(), $('jPass').value)).user;
     await setDoc(doc(db, 'members', user.uid), {familyId:inv.data().familyId, role:'parent', name, email:user.email,
-      invite:code, createdAt:serverTimestamp(), consentAt:serverTimestamp()});
+      invite:code, createdAt:serverTimestamp(), consentAt:serverTimestamp(), newsSeen:APP_VERSION});
     busy = false;
     history.replaceState(null, '', location.pathname);
     await loadMe(user);

@@ -14,7 +14,7 @@ function saveDevice(d){ device = d; d ? store('set', DEV_KEY, JSON.stringify(d))
 let fid = null, fam = null, me = null, busy = false;
 let view = null, owner = null, subView = 'day', day = today(), swapPick = null;
 const blank = () => ({ tasks:{}, sched:[], swaps:[], comps:[], rewards:[], verify:[], parents:[], invites:[],
-                       kidState:{}, ledger:{}, cards:{}, redemptions:{}, pending:{}, balance:{}, proposals:{}, propPending:{} });
+                       kidState:{}, ledger:{}, cards:{}, redemptions:{}, pending:{}, balance:{}, proposals:{}, propPending:{}, verSwaps:[] });
 let data = blank();
 const loaded = {};
 let currentItems = [];

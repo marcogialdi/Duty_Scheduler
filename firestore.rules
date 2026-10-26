@@ -1,0 +1,202 @@
+rules_version = '2';
+// Regole di sicurezza di "Compiti di casa" · versione 0.12.0 (26/10/2026)
+// Per sapere quale versione è attiva in Firebase, guarda questa riga nella scheda Regole.
+// Incollale in Console Firebase › Firestore Database › Regole › Pubblica.
+//
+// Novità 0.12.0:
+//   - members: ognuno può aggiornare SOLO il proprio campo newsSeen (popup delle novità letto)
+//   - completions: un compito confermato dal genitore ("Tutto ok", campo verified) non si può più togliere
+//
+// Struttura:
+//   members/{uid}            a quale famiglia appartiene ogni account e con che ruolo (+ newsSeen)
+//   invites/{codice}         inviti per il secondo genitore (7 giorni)
+//   families/{fid}           impostazioni della famiglia e elenco figli
+//     tasks, schedule, swaps, completions, rewards
+//     kids/{kid}             stato del figlio (serie)
+//     (compiti di squadra: schedule con owner 'team' e team [...]; completions con collab, team, confirmed)
+//       ledger, cards, redemptions, proposals
+//
+// Ogni famiglia vede e modifica solo i propri dati.
+// Genitori: tutto nella propria famiglia. Figli: solo le proprie azioni e i propri punteggi.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signed()       { return request.auth != null; }
+    function mPath()        { return /databases/$(database)/documents/members/$(request.auth.uid); }
+    function hasMember()    { return signed() && exists(mPath()); }
+    function me()           { return get(mPath()).data; }
+    function inFam(f)       { return hasMember() && me().get('familyId', '') == f; }
+    function isParentOf(f)  { return inFam(f) && me().role == 'parent'; }
+    function isKidOf(f)     { return inFam(f) && me().role == 'kid'; }
+    function myKid()        { return me().kidId; }
+    function d()            { return request.resource.data; }
+    function famPath(f)     { return /databases/$(database)/documents/families/$(f); }
+    function invPath(c)     { return /databases/$(database)/documents/invites/$(c); }
+    function noFamilyYet()  { return !exists(mPath()) || !('familyId' in get(mPath()).data); }
+
+    // ---------- account ----------
+    match /members/{uid} {
+      // il genitore che crea la propria famiglia (nello stesso salvataggio della famiglia)
+      function founding() {
+        return request.auth.uid == uid && d().role == 'parent'
+          && getAfter(famPath(d().familyId)).data.createdBy == request.auth.uid;
+      }
+      // il genitore che entra con un codice d'invito valido
+      function invited() {
+        return request.auth.uid == uid && d().role == 'parent'
+          && exists(invPath(d().invite))
+          && get(invPath(d().invite)).data.familyId == d().familyId
+          && get(invPath(d().invite)).data.expiresAt > request.time;
+      }
+      // 0.12.0: chiunque (genitore o figlio) segna come lette le novità, senza toccare altro
+      function newsOnly() {
+        return request.auth.uid == uid && ('familyId' in resource.data)
+          && d().diff(resource.data).affectedKeys().hasOnly(['newsSeen'])
+          && d().newsSeen is string && d().newsSeen.size() <= 12;
+      }
+      allow get: if signed() && (request.auth.uid == uid || isParentOf(resource.data.familyId));
+      allow list: if isParentOf(resource.data.familyId);
+      allow create: if founding() || invited()
+        || (isParentOf(d().familyId) && d().role == 'kid');
+      allow update: if (request.auth.uid == uid && !('familyId' in resource.data) && (founding() || invited()))
+        || (isParentOf(resource.data.familyId) && d().familyId == resource.data.familyId)
+        || newsOnly();
+      allow delete: if signed() && (request.auth.uid == uid || isParentOf(resource.data.familyId));
+    }
+
+    // ---------- inviti ----------
+    match /invites/{code} {
+      allow get: if true;   // serve per verificare il codice prima della registrazione
+      allow list: if isParentOf(resource.data.familyId);
+      allow create: if isParentOf(d().familyId) && d().createdBy == request.auth.uid;
+      allow delete: if isParentOf(resource.data.familyId);
+    }
+
+    // ---------- famiglie ----------
+    match /families/{fid} {
+      function swapFavor() { return get(famPath(fid)).data.rules.swapFavor; }
+      function compPath(cid) { return path('/databases/' + database + '/documents/families/' + fid + '/completions/' + cid); }
+
+      allow read: if inFam(fid);
+      allow create: if signed() && d().createdBy == request.auth.uid && noFamilyYet();
+      allow update, delete: if isParentOf(fid);
+
+      match /tasks/{id}    { allow read: if inFam(fid); allow write: if isParentOf(fid); }
+      match /schedule/{id} { allow read: if inFam(fid); allow write: if isParentOf(fid); }
+      match /rewards/{id}  { allow read: if inFam(fid); allow write: if isParentOf(fid); }
+
+      // scambi tra fratelli
+      match /swaps/{id} {
+        allow read: if inFam(fid);
+        allow delete: if isParentOf(fid);
+        allow create: if isParentOf(fid) || (isKidOf(fid) && d().fromOwner == myKid()
+          && d().toOwner != myKid() && d().status == 'pending'
+          && id == d().scheduleId + '_' + d().date);
+        allow update: if isParentOf(fid) || (isKidOf(fid)
+          && d().scheduleId == resource.data.scheduleId && d().date == resource.data.date && (
+               // chi riceve accetta o rifiuta
+               (resource.data.status == 'pending' && resource.data.toOwner == myKid()
+                 && d().fromOwner == resource.data.fromOwner && d().toOwner == resource.data.toOwner
+                 && d().status in ['accepted', 'rejected'])
+               // chi ha chiesto annulla
+            || (resource.data.status == 'pending' && resource.data.fromOwner == myKid()
+                 && d().fromOwner == resource.data.fromOwner && d().toOwner == resource.data.toOwner
+                 && d().status == 'cancelled')
+               // nuova richiesta dopo un rifiuto o un annullamento
+            || (resource.data.status in ['rejected', 'cancelled'] && d().fromOwner == myKid()
+                 && d().toOwner != myKid() && d().status == 'pending')));
+      }
+
+      // compiti segnati come fatti
+      match /completions/{id} {
+        // lavoretti extra della bacheca: un documento per "posto" (x-<compito>-<n>), n al massimo quante volte al giorno
+        function boardOk() {
+          return !d().scheduleId.matches('x-.*') || (
+            d().slot is int && d().slot >= 1
+            && d().scheduleId == 'x-' + d().taskId + '-' + string(d().slot)
+            && get(/databases/$(database)/documents/families/$(fid)/tasks/$(d().taskId)).data.get('board', false) == true
+            && d().slot <= get(/databases/$(database)/documents/families/$(fid)/tasks/$(d().taskId)).data.get('maxPerDay', 1));
+        }
+        // compiti di squadra: chi segna è il primo a confermare; la squadra è quella dell'assegnazione
+        function collabOk() {
+          return !('collab' in d()) || (
+            d().collab == true && d().confirmed == [myKid()] && myKid() in d().team
+            && get(/databases/$(database)/documents/families/$(fid)/schedule/$(d().scheduleId)).data.get('team', []) == d().team
+            && get(/databases/$(database)/documents/families/$(fid)/tasks/$(d().taskId)).data.get('collab', false) == true);
+        }
+        allow read: if inFam(fid);
+        // il figlio non può scrivere da sé contestazione o conferma del genitore
+        allow create: if isParentOf(fid) || (isKidOf(fid) && d().doneBy == myKid()
+          && id == d().scheduleId + '_' + d().date
+          && !('contested' in d()) && !('verified' in d())
+          && d().points is int && d().points >= 0
+          && d().points <= get(/databases/$(database)/documents/families/$(fid)/tasks/$(d().taskId)).data.points + swapFavor()
+          && boardOk() && collabOk());
+        // il figlio toglie la spunta solo insieme alle sue stelle, mai dopo una contestazione
+        // né dopo la conferma del genitore (0.12.0);
+        // un compito di squadra solo finché gli altri non hanno confermato tutti
+        allow delete: if isParentOf(fid) || (isKidOf(fid) && resource.data.doneBy == myKid()
+          && !('contested' in resource.data) && !('verified' in resource.data)
+          && (!resource.data.get('collab', false) || resource.data.confirmed.size() < resource.data.team.size())
+          && !existsAfter(path('/databases/' + database + '/documents/families/' + fid + '/kids/' + myKid() + '/ledger/done_' + id)));
+        // un membro della squadra aggiunge solo la propria conferma
+        allow update: if isParentOf(fid) || (isKidOf(fid)
+          && resource.data.get('collab', false) == true && !('contested' in resource.data)
+          && myKid() in resource.data.team && !(myKid() in resource.data.confirmed)
+          && d().confirmed == resource.data.confirmed.concat([myKid()])
+          && d().diff(resource.data).affectedKeys().hasOnly(['confirmed', 'completeAt']));
+      }
+
+      // ogni figlio vede solo il proprio stato, le proprie stelle, cartellini e richieste
+      match /kids/{kid} {
+        function mine() { return isKidOf(fid) && kid == myKid(); }
+        allow read: if isParentOf(fid) || mine();
+        allow write: if isParentOf(fid);
+
+        match /ledger/{id} {
+          // compito di squadra: a conferme complete un membro scrive le stelle di ognuno, pari al valore del compito (0 col rosso)
+          function collabLedgerOk(c) {
+            return c.get('collab', false) == true && myKid() in c.team && kid in c.team
+              && c.confirmed.hasAll(c.team) && !('contested' in c)
+              && (d().amount == c.points || d().amount == 0);
+          }
+          allow read: if isParentOf(fid) || mine();
+          // il figlio registra solo le stelle del compito appena segnato, pari a quelle del compito
+          allow create: if isParentOf(fid) || (mine() && d().kid == kid && d().type == 'task'
+            && id == 'done_' + d().completionId
+            && getAfter(compPath(d().completionId)).data.doneBy == kid
+            && getAfter(compPath(d().completionId)).data.get('collab', false) == false
+            && getAfter(compPath(d().completionId)).data.points == d().amount)
+            || (isKidOf(fid) && d().kid == kid && d().type == 'collab'
+            && id == 'collab_' + d().completionId
+            && collabLedgerOk(getAfter(compPath(d().completionId)).data));
+          allow delete: if isParentOf(fid) || (mine() && resource.data.type == 'task'
+            && !existsAfter(compPath(resource.data.completionId)));
+          allow update: if isParentOf(fid);
+        }
+        match /cards/{id} {
+          allow read: if isParentOf(fid) || mine();
+          allow write: if isParentOf(fid);
+        }
+        // proposte dei ragazzi: nessuna stella finché un genitore non approva
+        match /proposals/{id} {
+          allow read: if isParentOf(fid) || mine();
+          allow create: if isParentOf(fid) || (mine() && d().kid == kid && d().status == 'pending'
+            && d().title is string && d().title.size() >= 3 && d().title.size() <= 80
+            && !('points' in d()));
+          allow update: if isParentOf(fid) || (mine() && resource.data.status == 'pending'
+            && d().status == 'cancelled' && d().title == resource.data.title && !('points' in d()));
+          allow delete: if isParentOf(fid);
+        }
+        match /redemptions/{id} {
+          allow read: if isParentOf(fid) || mine();
+          allow create: if isParentOf(fid) || (mine() && d().kid == kid && d().status == 'pending'
+            && d().cost == get(/databases/$(database)/documents/families/$(fid)/rewards/$(d().rewardId)).data.cost);
+          allow update: if isParentOf(fid) || (mine() && resource.data.status == 'pending'
+            && d().status == 'cancelled' && d().cost == resource.data.cost && d().kid == resource.data.kid);
+          allow delete: if isParentOf(fid);
+        }
+      }
+    }
+  }
+}

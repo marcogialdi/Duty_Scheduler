@@ -88,7 +88,7 @@ function collabCheck(comp, isToday){
 function collabAction(item, comp, isToday){
   if (!comp) return '';
   if (comp.contested) return `<span class="chip" style="--c:var(--minus)">⚠️ Non era vero</span>`;
-  if (teamDone(comp)) return `<span class="chip" style="--c:var(--plus)">🤝 fatto insieme</span>`;
+  if (teamDone(comp)) return `<span class="chip" style="--c:var(--plus)">🤝 fatto insieme</span>${comp.verified ? ' ' + VCHIP : ''}`;
   if (!(comp.confirmed || []).includes(owner))
     return `<span class="cwait">${esc(kidName(comp.doneBy))} l'ha segnato come fatto</span>` +
       (isToday && !isParent() ? ` <button class="btn ok" data-cconf="${comp.id}">✅ Confermo, l'abbiamo fatto</button>` : '');
