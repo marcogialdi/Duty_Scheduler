@@ -4,7 +4,7 @@ import { getAuth, initializeAuth, inMemoryPersistence, onAuthStateChanged, signI
          createUserWithEmailAndPassword, signOut, updatePassword, reauthenticateWithCredential,
          EmailAuthProvider, sendPasswordResetEmail, deleteUser }
   from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js';
-import { initializeAppCheck, ReCaptchaV3Provider } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app-check.js';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app-check.js';
 import { initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager,
          collection, doc, onSnapshot, query, where, orderBy, limit, addDoc, setDoc, updateDoc, deleteDoc,
          getDoc, getDocs, writeBatch, runTransaction, serverTimestamp, getAggregateFromServer, sum, Timestamp }
@@ -20,10 +20,11 @@ const firebaseConfig = {
 };
 
 // App Check: solo la pagina pubblicata può parlare con Firebase, non uno script che prova i PIN a raffica.
-// Chiave reCAPTCHA v3 del sito (vuota = App Check spento). Va attivato anche in Console Firebase › App Check.
+// Chiave del sito di Google Cloud Fraud Defense (ex reCAPTCHA Enterprise), tipo Sito web, senza casella di controllo.
+// Vuota = App Check spento. La stessa chiave va registrata in Console Firebase › App Check.
 const APP_CHECK_SITE_KEY = '';
 const appCheck = app => APP_CHECK_SITE_KEY &&
-  initializeAppCheck(app, {provider: new ReCaptchaV3Provider(APP_CHECK_SITE_KEY), isTokenAutoRefreshEnabled: true});
+  initializeAppCheck(app, {provider: new ReCaptchaEnterpriseProvider(APP_CHECK_SITE_KEY), isTokenAutoRefreshEnabled: true});
 
 const fbApp = initializeApp(firebaseConfig);
 appCheck(fbApp);

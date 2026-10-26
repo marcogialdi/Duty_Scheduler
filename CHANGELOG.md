@@ -6,10 +6,13 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.12.3 · 26/10/2026
+- **App Check con Google Cloud Fraud Defense** (ex reCAPTCHA Enterprise) al posto di reCAPTCHA v3: la chiave in `APP_CHECK_SITE_KEY` (`js/firebase.js`) è ora una chiave Fraud Defense di tipo Sito web. Vuota = spento. Regole Firestore invariate (0.12.2).
+
 ## 0.12.2 · 26/10/2026
 Correzioni di sicurezza.
 - **Rosso "niente stelle" controllato dalle regole**: quando il genitore dà il rosso, la data di inizio e di fine si salvano anche su `kids/{kid}` (`noStarsFrom`, `noStarsUntil`); in quei giorni le regole accettano dal figlio solo compiti e stelle di squadra a 0. I rossi dati prima si allineano da soli alla prima apertura di un genitore.
-- **App Check (facoltativo)**: con una chiave reCAPTCHA v3 in `APP_CHECK_SITE_KEY` (`js/firebase.js`) solo la pagina pubblicata può usare Firebase; uno script esterno non può provare i PIN a raffica. Vuota = spento.
+- **App Check (facoltativo)**: con una chiave in `APP_CHECK_SITE_KEY` (`js/firebase.js`) solo la pagina pubblicata può usare Firebase; uno script esterno non può provare i PIN a raffica. Vuota = spento.
 - **Regole Firestore 0.12.2: vanno ripubblicate.**
 
 ## 0.12.1 · 26/10/2026
