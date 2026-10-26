@@ -101,7 +101,7 @@ function renderParent(){
   $('pRedeem').innerHTML = reqs.length ? reqs.map(x => `
     <div class="row"><div class="body">${kidAvatar(x.kid)} <b>${esc(kidName(x.kid))}</b> vuole: ${esc(x.title)} <span class="stars">${x.cost} ⭐</span>
       <br><small>saldo: ${balance(x.kid)} ⭐</small></div>
-      <span><button class="btn ok" data-approve="${x.kid}|${x.id}">Approva</button> <button class="btn no" data-deny="${x.kid}|${x.id}">Rifiuta</button></span></div>`).join('')
+      <span><button class="btn ok" data-approve="${esc(x.kid)}|${esc(x.id)}">Approva</button> <button class="btn no" data-deny="${esc(x.kid)}|${esc(x.id)}">Rifiuta</button></span></div>`).join('')
     : '<div class="empty">Nessuna richiesta</div>';
 
   const tasks = Object.values(data.tasks).filter(t => !t.punishment && !t.board).sort((a,b) => a.title.localeCompare(b.title));
@@ -141,9 +141,9 @@ function renderParent(){
   const props = kidsList().flatMap(k => data.propPending[k.id] || []).sort((a,b) => ms(a.createdAt) - ms(b.createdAt));
   $('pProps').innerHTML = props.length ? props.map(p => `
     <div class="row"><div class="body">${kidAvatar(p.kid)} <b>${esc(kidName(p.kid))}</b>: ${esc(p.title)}<br><small>${fmtDate(p.date)}</small></div>
-      <span><select data-pstars="${p.kid}|${p.id}" style="width:auto;min-height:38px;padding:6px" aria-label="Stelle">
+      <span><select data-pstars="${esc(p.kid)}|${esc(p.id)}" style="width:auto;min-height:38px;padding:6px" aria-label="Stelle">
         ${[1,2,3,4,5].map(n => `<option value="${n}" ${n === (propStars[p.id] || 1) ? 'selected' : ''}>⭐ ${n}</option>`).join('')}</select>
-      <button class="btn ok" data-papprove="${p.kid}|${p.id}">Approva</button> <button class="btn no" data-preject="${p.kid}|${p.id}">No</button></span></div>`).join('')
+      <button class="btn ok" data-papprove="${esc(p.kid)}|${esc(p.id)}">Approva</button> <button class="btn no" data-preject="${esc(p.kid)}|${esc(p.id)}">No</button></span></div>`).join('')
     : '<div class="empty">Nessuna proposta da valutare</div>';
 
   const pun = Object.values(data.tasks).filter(t => t.punishment).sort((a,b) => (a.defaultTime||'').localeCompare(b.defaultTime||''));

@@ -6,6 +6,13 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.12.1 · 26/10/2026
+Correzioni di sicurezza.
+- **Stelle solo per compiti veri**: un figlio può segnare solo un'assegnazione che esiste, sua (o ricevuta con uno scambio accettato), con il compito giusto e una data vicina a oggi; i compiti di recupero valgono 0 stelle. Prima, scrivendo direttamente nel database, poteva crearsi compiti finti con stelle, invisibili in "Da verificare".
+- **Niente codice dai dati**: date e codici dei documenti scritti dai figli (proposte, richieste di premi, scambi, movimenti) sono controllati dalle regole e mostrati sempre come testo (`fmtDate`, `esc`).
+- **Inviti monouso**: chi entra con un codice d'invito lo cancella nello stesso salvataggio; un figlio non può più cancellare il proprio account in famiglia per rientrare come genitore.
+- **Regole Firestore 0.12.1: vanno ripubblicate.** Finché non lo sono, l'app funziona ma le correzioni lato database non sono attive.
+
 ## 0.12.0 · 26/10/2026
 - **Da verificare per giorno**: i compiti sono divisi per giorno (Oggi, Ieri…) e poi per fascia (🌅 Mattina, ☀️ Pomeriggio, 🌙 Sera).
 - **Griglia compiti × figli**: in ogni fascia i compiti sono nelle righe e i figli nelle colonne; ✓ con l'orario se fatto, — se non fatto, 🟨 se contestato, 👍 se confermato. Compiti di squadra e lavoretti extra in righe compatte sotto ogni giorno. Tolto il conto alla rovescia su ogni voce.

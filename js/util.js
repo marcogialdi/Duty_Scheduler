@@ -13,7 +13,8 @@ const today = () => iso(new Date());
 const isoWeekday = s => parseISO(s).getDay() || 7;
 const quarterKey = s => { const d = parseISO(s); return d.getFullYear() + 'Q' + (Math.floor(d.getMonth()/3)+1); };
 // date sempre in formato gg/mm/aaaa
-const fmtDate = s => { if (!s) return ''; const [y,m,d] = s.split('-'); return `${d}/${m}/${y}`; };
+// ciò che non è una data aaaa-mm-gg (scritto a mano nei dati) si mostra solo come testo
+const fmtDate = s => { if (!s) return ''; if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return esc(s); const [y,m,d] = s.split('-'); return `${d}/${m}/${y}`; };
 const fmtMs = t => { const d = new Date(t); return fmtDate(iso(d)); };
 const weekdayName = s => parseISO(s).toLocaleDateString('it-IT',{weekday:'long'});
 const parseIT = s => {

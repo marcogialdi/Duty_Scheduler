@@ -143,8 +143,12 @@ $('joinForm').onsubmit = async e => {
     if (!inv.exists() || ms(inv.data().expiresAt) < Date.now()) return toast('Codice non valido o scaduto');
     busy = true;
     const user = auth.currentUser || (await createUserWithEmailAndPassword(auth, $('jEmail').value.trim(), $('jPass').value)).user;
-    await setDoc(doc(db, 'members', user.uid), {familyId:inv.data().familyId, role:'parent', name, email:user.email,
+    // l'invito vale per una persona sola: si cancella nello stesso salvataggio (regole 0.12.1)
+    const b = writeBatch(db);
+    b.set(doc(db, 'members', user.uid), {familyId:inv.data().familyId, role:'parent', name, email:user.email,
       invite:code, createdAt:serverTimestamp(), consentAt:serverTimestamp(), newsSeen:APP_VERSION});
+    b.delete(doc(db, 'invites', code));
+    await b.commit();
     busy = false;
     history.replaceState(null, '', location.pathname);
     await loadMe(user);

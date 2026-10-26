@@ -1,7 +1,14 @@
 rules_version = '2';
-// Regole di sicurezza di "Compiti di casa" · versione 0.12.0 (26/10/2026)
+// Regole di sicurezza di "Compiti di casa" · versione 0.12.1 (26/10/2026)
 // Per sapere quale versione è attiva in Firebase, guarda questa riga nella scheda Regole.
 // Incollale in Console Firebase › Firestore Database › Regole › Pubblica.
+//
+// Novità 0.12.1 (sicurezza):
+//   - completions: il figlio segna solo assegnazioni vere, sue (o ricevute con uno scambio accettato), con il compito giusto
+//     e una data vicina a oggi; i compiti di recupero valgono 0 stelle
+//   - date (aaaa-mm-gg) e codici dei documenti scritti dai figli controllati: niente testo che diventa codice nella pagina
+//   - members: un figlio non può cancellare il proprio account in famiglia (e rientrare come genitore)
+//   - invites: un codice d'invito vale per una sola persona; chi entra lo cancella nello stesso salvataggio
 //
 // Novità 0.12.0:
 //   - members: ognuno può aggiornare SOLO il proprio campo newsSeen (popup delle novità letto)
@@ -33,6 +40,15 @@ service cloud.firestore {
     function famPath(f)     { return /databases/$(database)/documents/families/$(f); }
     function invPath(c)     { return /databases/$(database)/documents/invites/$(c); }
     function noFamilyYet()  { return !exists(mPath()) || !('familyId' in get(mPath()).data); }
+    // date sempre aaaa-mm-gg; codici dei documenti solo lettere, cifre, - e _
+    function dateOk(s)      { return s is string && s.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}'); }
+    function idOk(s)        { return s is string && s.matches('[A-Za-z0-9_-]{1,100}'); }
+    // data vicina a oggi (margine per fusi orari e salvataggi fatti offline)
+    function recentDate(s) {
+      let p = s.split('-');
+      let t = timestamp.date(int(p[0]), int(p[1]), int(p[2]));
+      return t > request.time - duration.value(3, 'd') && t < request.time + duration.value(2, 'd');
+    }
 
     // ---------- account ----------
     match /members/{uid} {
@@ -46,7 +62,8 @@ service cloud.firestore {
         return request.auth.uid == uid && d().role == 'parent'
           && exists(invPath(d().invite))
           && get(invPath(d().invite)).data.familyId == d().familyId
-          && get(invPath(d().invite)).data.expiresAt > request.time;
+          && get(invPath(d().invite)).data.expiresAt > request.time
+          && !existsAfter(invPath(d().invite));      // 0.12.1: l'invito si usa una volta sola
       }
       // 0.12.0: chiunque (genitore o figlio) segna come lette le novità, senza toccare altro
       function newsOnly() {
@@ -61,7 +78,9 @@ service cloud.firestore {
       allow update: if (request.auth.uid == uid && !('familyId' in resource.data) && (founding() || invited()))
         || (isParentOf(resource.data.familyId) && d().familyId == resource.data.familyId)
         || newsOnly();
-      allow delete: if signed() && (request.auth.uid == uid || isParentOf(resource.data.familyId));
+      // 0.12.1: un figlio non cancella da sé il proprio account in famiglia
+      allow delete: if isParentOf(resource.data.familyId)
+        || (signed() && request.auth.uid == uid && !('familyId' in resource.data));
     }
 
     // ---------- inviti ----------
@@ -69,13 +88,19 @@ service cloud.firestore {
       allow get: if true;   // serve per verificare il codice prima della registrazione
       allow list: if isParentOf(resource.data.familyId);
       allow create: if isParentOf(d().familyId) && d().createdBy == request.auth.uid;
-      allow delete: if isParentOf(resource.data.familyId);
+      // 0.12.1: chi entra con il codice lo cancella nello stesso salvataggio
+      allow delete: if isParentOf(resource.data.familyId)
+        || (signed() && getAfter(mPath()).data.get('invite', '') == code
+            && getAfter(mPath()).data.get('familyId', '') == resource.data.familyId);
     }
 
     // ---------- famiglie ----------
     match /families/{fid} {
       function swapFavor() { return get(famPath(fid)).data.rules.swapFavor; }
       function compPath(cid) { return path('/databases/' + database + '/documents/families/' + fid + '/completions/' + cid); }
+      function taskOf(tid)   { return get(/databases/$(database)/documents/families/$(fid)/tasks/$(tid)).data; }
+      function schedOf(sid)  { return get(/databases/$(database)/documents/families/$(fid)/schedule/$(sid)).data; }
+      function swapPath(sw)  { return /databases/$(database)/documents/families/$(fid)/swaps/$(sw); }
 
       allow read: if inFam(fid);
       allow create: if signed() && d().createdBy == request.auth.uid && noFamilyYet();
@@ -91,6 +116,7 @@ service cloud.firestore {
         allow delete: if isParentOf(fid);
         allow create: if isParentOf(fid) || (isKidOf(fid) && d().fromOwner == myKid()
           && d().toOwner != myKid() && d().status == 'pending'
+          && idOk(d().scheduleId) && dateOk(d().date)
           && id == d().scheduleId + '_' + d().date);
         allow update: if isParentOf(fid) || (isKidOf(fid)
           && d().scheduleId == resource.data.scheduleId && d().date == resource.data.date && (
@@ -124,14 +150,29 @@ service cloud.firestore {
             && get(/databases/$(database)/documents/families/$(fid)/schedule/$(d().scheduleId)).data.get('team', []) == d().team
             && get(/databases/$(database)/documents/families/$(fid)/tasks/$(d().taskId)).data.get('collab', false) == true);
         }
+        // 0.12.1: compito di recupero (extra-<compito>-<figlio>, 0 stelle) o assegnazione vera:
+        // dello stesso compito, del figlio e non ceduta, oppure ricevuta con uno scambio accettato
+        function planOk() {
+          return d().scheduleId.matches('x-.*') || ('collab' in d()) || (
+            d().scheduleId.matches('extra-.*')
+              ? d().scheduleId == 'extra-' + d().taskId + '-' + myKid()
+                && taskOf(d().taskId).get('punishment', false) == true && d().points == 0
+              : schedOf(d().scheduleId).taskId == d().taskId
+                && (exists(swapPath(id))
+                    ? (get(swapPath(id)).data.status == 'accepted'
+                        ? get(swapPath(id)).data.toOwner == myKid()
+                        : schedOf(d().scheduleId).owner == myKid())
+                    : schedOf(d().scheduleId).owner == myKid()));
+        }
         allow read: if inFam(fid);
         // il figlio non può scrivere da sé contestazione o conferma del genitore
         allow create: if isParentOf(fid) || (isKidOf(fid) && d().doneBy == myKid()
+          && idOk(d().scheduleId) && dateOk(d().date) && recentDate(d().date)
           && id == d().scheduleId + '_' + d().date
           && !('contested' in d()) && !('verified' in d())
           && d().points is int && d().points >= 0
-          && d().points <= get(/databases/$(database)/documents/families/$(fid)/tasks/$(d().taskId)).data.points + swapFavor()
-          && boardOk() && collabOk());
+          && d().points <= taskOf(d().taskId).points + swapFavor()
+          && boardOk() && collabOk() && planOk());
         // il figlio toglie la spunta solo insieme alle sue stelle, mai dopo una contestazione
         // né dopo la conferma del genitore (0.12.0);
         // un compito di squadra solo finché gli altri non hanno confermato tutti
@@ -164,11 +205,13 @@ service cloud.firestore {
           // il figlio registra solo le stelle del compito appena segnato, pari a quelle del compito
           allow create: if isParentOf(fid) || (mine() && d().kid == kid && d().type == 'task'
             && id == 'done_' + d().completionId
+            && d().date == getAfter(compPath(d().completionId)).data.date
             && getAfter(compPath(d().completionId)).data.doneBy == kid
             && getAfter(compPath(d().completionId)).data.get('collab', false) == false
             && getAfter(compPath(d().completionId)).data.points == d().amount)
             || (isKidOf(fid) && d().kid == kid && d().type == 'collab'
             && id == 'collab_' + d().completionId
+            && d().date == getAfter(compPath(d().completionId)).data.date
             && collabLedgerOk(getAfter(compPath(d().completionId)).data));
           allow delete: if isParentOf(fid) || (mine() && resource.data.type == 'task'
             && !existsAfter(compPath(resource.data.completionId)));
@@ -182,15 +225,18 @@ service cloud.firestore {
         match /proposals/{id} {
           allow read: if isParentOf(fid) || mine();
           allow create: if isParentOf(fid) || (mine() && d().kid == kid && d().status == 'pending'
+            && idOk(id) && dateOk(d().date) && recentDate(d().date)
             && d().title is string && d().title.size() >= 3 && d().title.size() <= 80
             && !('points' in d()));
           allow update: if isParentOf(fid) || (mine() && resource.data.status == 'pending'
-            && d().status == 'cancelled' && d().title == resource.data.title && !('points' in d()));
+            && d().status == 'cancelled' && d().title == resource.data.title && !('points' in d())
+            && d().get('date', '') == resource.data.get('date', ''));
           allow delete: if isParentOf(fid);
         }
         match /redemptions/{id} {
           allow read: if isParentOf(fid) || mine();
           allow create: if isParentOf(fid) || (mine() && d().kid == kid && d().status == 'pending'
+            && idOk(id) && d().title is string && d().title.size() <= 200
             && d().cost == get(/databases/$(database)/documents/families/$(fid)/rewards/$(d().rewardId)).data.cost);
           allow update: if isParentOf(fid) || (mine() && resource.data.status == 'pending'
             && d().status == 'cancelled' && d().cost == resource.data.cost && d().kid == resource.data.kid);
