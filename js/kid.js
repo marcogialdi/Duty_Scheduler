@@ -33,8 +33,8 @@ function renderDay(){
     ${incoming.map(x => { const s = data.sched.find(k => k.id === x.scheduleId), t = s && data.tasks[s.taskId];
       return `<div class="row"><span>${kidAvatar(x.fromOwner)} <b>${esc(kidName(x.fromOwner))}</b> ti chiede: ${taskIcon(t)} <b>${esc(t?.title)}</b> alle ${s?.startTime ?? ''}
         <span class="stars">(+${(t?.points||1) + R().swapFavor} ⭐)</span></span>
-        <span><button class="btn ok" data-acc="${x.id}">Accetto</button>
-        <button class="btn no" data-rej="${x.id}">No grazie</button></span></div>`; }).join('')}
+        <span><button class="btn ok" data-acc="${esc(x.id)}">Accetto</button>
+        <button class="btn no" data-rej="${esc(x.id)}">No grazie</button></span></div>`; }).join('')}
   </div>`;
 
   renderGoal(compBy, isToday);
@@ -113,7 +113,7 @@ function renderBoard(isToday){
   }).join('');
   const st = {pending:'⏳ da approvare', approved:'✅ approvata', rejected:'❌ non approvata', cancelled:'annullata'};
   const propRows = props.map(p => `<div class="row"><div class="body">💡 ${esc(p.title)}<br><small>${st[p.status] || ''}${p.status === 'approved' ? ` · +${p.points} ⭐` : ''}</small></div>
-      ${p.status === 'pending' && !isParent() ? `<button class="btn" data-punreq="${p.id}">Annulla</button>` : ''}</div>`).join('');
+      ${p.status === 'pending' && !isParent() ? `<button class="btn" data-punreq="${esc(p.id)}">Annulla</button>` : ''}</div>`).join('');
   $('board').innerHTML = `
     ${list.length ? `<div class="boardhead"><h2>🧹 Lavoretti extra</h2><small>quando servono · non contano per la giornata perfetta</small></div>${cards}` : ''}
     ${canPropose || props.length ? `<div class="boardhead"><h2>💡 Hai fatto qualcos'altro di utile?</h2></div>
@@ -216,7 +216,7 @@ function taskCard(item, comp, isToday){
   else if (comp?.contested) action = `<span class="chip" style="--c:var(--minus)">⚠️ Non era vero</span>`;
   else if (pun) action = `<span class="chip" style="--c:var(--minus)">🔄 recupero</span>`;
   else if (received) action = `<span class="chip" style="--c:${c}">da ${esc(kidName(item.s.owner))} 🤝</span>`;
-  else if (pendingOut) action = `<button class="btn" data-cancel="${sw.id}">⏳ ${esc(kidName(sw.toOwner))} · annulla</button>`;
+  else if (pendingOut) action = `<button class="btn" data-cancel="${esc(sw.id)}">⏳ ${esc(kidName(sw.toOwner))} · annulla</button>`;
   else if (canSwap && swapPick === item.key)
     action = siblings.map(k => `<button class="btn" data-swapto="${k.id}" data-key="${item.key}">→ ${k.avatar || ''} ${esc(k.name)}</button>`).join(' ') +
              ` <button class="btn" data-swapx="1">✕</button>`;
@@ -303,7 +303,7 @@ function renderShop(){
   $('myRedeem').innerHTML = isParent() ? '<div class="empty">Le richieste da approvare sono nella scheda Genitori.</div>'
     : mine.length ? mine.map(r => `
     <div class="row"><div class="body">${esc(r.title)} <span class="stars">${r.cost} ⭐</span><br><small>${st[r.status]}</small></div>
-      ${r.status === 'pending' ? `<button class="btn" data-unreq="${r.id}">Annulla</button>` : ''}</div>`).join('')
+      ${r.status === 'pending' ? `<button class="btn" data-unreq="${esc(r.id)}">Annulla</button>` : ''}</div>`).join('')
     : '<div class="empty">Nessuna richiesta</div>';
 }
 $('svShop').addEventListener('click', async e => {

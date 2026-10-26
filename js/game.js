@@ -11,6 +11,12 @@ function streakBonusFor(n){
   return n > 14 && (n - 14) % 7 === 0 ? R().streakEveryBonus : 0;
 }
 function redOn(kid, ds){ return cardsOf(kid).find(c => c.type === 'red' && c.from <= ds && ds <= c.until); }
+// il rosso "niente stelle" è copiato anche sullo stato del figlio, dove lo leggono le regole di Firestore
+const noStarsOf = red => red?.effect === 'nostars' ? {noStarsFrom:red.from, noStarsUntil:red.until} : {};
+function noStarsNow(kid){
+  const red = cardsOf(kid).filter(c => c.type === 'red' && c.effect === 'nostars').sort((a,b) => a.from.localeCompare(b.from)).pop();
+  return {noStarsFrom:red?.from || '', noStarsUntil:red?.until || ''};
+}
 function lastRedDate(kid){ return cardsOf(kid).filter(c => c.type === 'red').map(c => c.date).sort().pop() || ''; }
 function activeYellows(kid){
   const lr = lastRedDate(kid), lim = addDays(today(), -R().yellowWindowDays);
@@ -87,6 +93,9 @@ async function closeKid(kid){
   const kref = dref('kids', kid);
   const snap = await getDoc(kref);
   const yesterday = addDays(today(), -1);
+  const ns = noStarsNow(kid);                    // allinea i rossi dati prima della 0.12.2
+  if (ns.noStarsFrom !== (snap.data()?.noStarsFrom || '') || ns.noStarsUntil !== (snap.data()?.noStarsUntil || ''))
+    await setDoc(kref, ns, {merge:true});
   if (!snap.exists() || !snap.data().lastClosed){
     await setDoc(kref, {lastClosed:yesterday, streak:snap.data()?.streak || 0}, {merge:true}); return;
   }

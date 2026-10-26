@@ -6,6 +6,25 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.12.4 · 26/10/2026
+- **App Check attivo**: chiave Fraud Defense del sito in `APP_CHECK_SITE_KEY` (`js/firebase.js`). L'applicazione obbligatoria (Enforce) si attiva in Console Firebase › App Check solo dopo qualche giorno di metriche "verificate". Regole Firestore invariate (0.12.2).
+
+## 0.12.3 · 26/10/2026
+- **App Check con Google Cloud Fraud Defense** (ex reCAPTCHA Enterprise) al posto di reCAPTCHA v3: la chiave in `APP_CHECK_SITE_KEY` (`js/firebase.js`) è ora una chiave Fraud Defense di tipo Sito web. Vuota = spento. Regole Firestore invariate (0.12.2).
+
+## 0.12.2 · 26/10/2026
+Correzioni di sicurezza.
+- **Rosso "niente stelle" controllato dalle regole**: quando il genitore dà il rosso, la data di inizio e di fine si salvano anche su `kids/{kid}` (`noStarsFrom`, `noStarsUntil`); in quei giorni le regole accettano dal figlio solo compiti e stelle di squadra a 0. I rossi dati prima si allineano da soli alla prima apertura di un genitore.
+- **App Check (facoltativo)**: con una chiave in `APP_CHECK_SITE_KEY` (`js/firebase.js`) solo la pagina pubblicata può usare Firebase; uno script esterno non può provare i PIN a raffica. Vuota = spento.
+- **Regole Firestore 0.12.2: vanno ripubblicate.**
+
+## 0.12.1 · 26/10/2026
+Correzioni di sicurezza.
+- **Stelle solo per compiti veri**: un figlio può segnare solo un'assegnazione che esiste, sua (o ricevuta con uno scambio accettato), con il compito giusto e una data vicina a oggi; i compiti di recupero valgono 0 stelle. Prima, scrivendo direttamente nel database, poteva crearsi compiti finti con stelle, invisibili in "Da verificare".
+- **Niente codice dai dati**: date e codici dei documenti scritti dai figli (proposte, richieste di premi, scambi, movimenti) sono controllati dalle regole e mostrati sempre come testo (`fmtDate`, `esc`).
+- **Inviti monouso**: chi entra con un codice d'invito lo cancella nello stesso salvataggio; un figlio non può più cancellare il proprio account in famiglia per rientrare come genitore.
+- **Regole Firestore 0.12.1: vanno ripubblicate.** Finché non lo sono, l'app funziona ma le correzioni lato database non sono attive.
+
 ## 0.12.0 · 26/10/2026
 - **Da verificare per giorno**: i compiti sono divisi per giorno (Oggi, Ieri…) e poi per fascia (🌅 Mattina, ☀️ Pomeriggio, 🌙 Sera).
 - **Griglia compiti × figli**: in ogni fascia i compiti sono nelle righe e i figli nelle colonne; ✓ con l'orario se fatto, — se non fatto, 🟨 se contestato, 👍 se confermato. Compiti di squadra e lavoretti extra in righe compatte sotto ogni giorno. Tolto il conto alla rovescia su ogni voce.
