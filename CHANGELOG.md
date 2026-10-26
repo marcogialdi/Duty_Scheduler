@@ -6,6 +6,9 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.12.4 · 26/10/2026
+- **App Check attivo**: chiave Fraud Defense del sito in `APP_CHECK_SITE_KEY` (`js/firebase.js`). L'applicazione obbligatoria (Enforce) si attiva in Console Firebase › App Check solo dopo qualche giorno di metriche "verificate". Regole Firestore invariate (0.12.2).
+
 ## 0.12.3 · 26/10/2026
 - **App Check con Google Cloud Fraud Defense** (ex reCAPTCHA Enterprise) al posto di reCAPTCHA v3: la chiave in `APP_CHECK_SITE_KEY` (`js/firebase.js`) è ora una chiave Fraud Defense di tipo Sito web. Vuota = spento. Regole Firestore invariate (0.12.2).
 

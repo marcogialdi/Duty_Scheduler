@@ -22,7 +22,7 @@ const firebaseConfig = {
 // App Check: solo la pagina pubblicata può parlare con Firebase, non uno script che prova i PIN a raffica.
 // Chiave del sito di Google Cloud Fraud Defense (ex reCAPTCHA Enterprise), tipo Sito web, senza casella di controllo.
 // Vuota = App Check spento. La stessa chiave va registrata in Console Firebase › App Check.
-const APP_CHECK_SITE_KEY = '';
+const APP_CHECK_SITE_KEY = '6LcejgEuAAAAAHC2JQe9igZ9uFtPK69Xz5IiJ05d';
 const appCheck = app => APP_CHECK_SITE_KEY &&
   initializeAppCheck(app, {provider: new ReCaptchaEnterpriseProvider(APP_CHECK_SITE_KEY), isTokenAutoRefreshEnabled: true});
 

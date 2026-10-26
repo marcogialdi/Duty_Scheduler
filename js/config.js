@@ -9,9 +9,10 @@ const APP_NAME = 'Compiti di casa';
    Nuove funzioni → si aumenta il secondo numero; solo correzioni → il terzo.
    A ogni rilascio: aggiorna APP_VERSION, APP_DATE, CHANGELOG e NEWS qui,
    l'intestazione di firestore.rules (se cambiate) e il file CHANGELOG.md. */
-const APP_VERSION = '0.12.3';
+const APP_VERSION = '0.12.4';
 const APP_DATE = '2026-10-26';
 const CHANGELOG = [
+  ['0.12.4', '2026-10-26', 'App Check attivo con la chiave di Google Cloud Fraud Defense.'],
   ['0.12.3', '2026-10-26', 'App Check passa a Google Cloud Fraud Defense (ex reCAPTCHA Enterprise).'],
   ['0.12.2', '2026-10-26', 'Correzioni di sicurezza: con il cartellino rosso "niente stelle" il database stesso rifiuta le stelle dei compiti; predisposto App Check contro i tentativi a raffica sui PIN.'],
   ['0.12.1', '2026-10-26', 'Correzioni di sicurezza: si possono segnare solo i propri compiti veri e di questi giorni, i testi scritti nei dati non diventano mai codice nella pagina, ogni codice d\'invito vale per una sola persona.'],
