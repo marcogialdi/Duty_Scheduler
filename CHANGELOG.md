@@ -6,15 +6,16 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
-## Prossima versione – da fare (sicurezza)
-Dalla scansione di sicurezza del 27/10/2026 sulla 0.12.4. Tutte richiedono un account della famiglia; nessuna è sfruttabile da un estraneo.
-Quando una voce è sistemata, spostarla tra le novità della versione che la contiene.
-- [ ] **Media** · `js/auth.js` (`showPick`), anche `js/data.js` (`renderTabs`): colore, icona e id dei figli finiscono nella pagina senza `esc()`. Escapare o costruire gli elementi con `textContent`; accettare solo colori `#rrggbb` e icone della lista; controllarli anche nelle regole di `families/{fid}`; aggiungere una Content-Security-Policy.
-- [ ] **Media** · `firestore.rules`, `founding()`: un genitore fondatore rimosso può rientrare. Permettere `founding()` solo se la famiglia viene creata nella stessa operazione.
-- [ ] **Bassa** · `firestore.rules`, scambi: un figlio può proporre lo scambio di un compito non suo. Richiedere che l'assegnazione sia di chi chiede lo scambio, anche nel ramo "nuova richiesta" e in `planOk`.
-- [ ] **Bassa** · `firestore.rules`, `collabLedgerOk`: le stelle di squadra di un compagno possono essere scritte a 0. Richiedere l'importo esatto (0 solo con il rosso "niente stelle").
-- [ ] **Bassa** · `firestore.rules`, cancellazione dei compiti fatti: nessun limite di data. Permetterla al figlio solo per i giorni non ancora chiusi.
-- [ ] **Bassa** · `firestore.rules`, `collabOk`: non controlla che il compito sia quello dell'assegnazione di squadra. Richiedere che coincida.
+## 0.12.5 · 27/10/2026
+Correzioni di sicurezza dalla scansione del 27/10/2026 sulla 0.12.4 (tutte richiedevano un account della famiglia).
+- **Dati dei figli controllati prima di mostrarli**: colore, icona e codice di ogni figlio, letti dal documento della famiglia o dal dispositivo, passano da `cleanKids` (`js/util.js`): solo codici di lettere e cifre, colori `#rrggbb` e icone della lista; la schermata "Chi sei?" escapa tutto con `esc()`.
+- **Content-Security-Policy** in `index.html`: gli script si caricano solo dal sito e dai domini di Firebase e reCAPTCHA; niente script scritti dentro la pagina.
+- **Fondatore rimosso**: `founding()` vale solo quando la famiglia nasce nello stesso salvataggio, quindi un fondatore rimosso da un altro genitore non può rientrare da solo.
+- **Scambi**: un figlio può proporre lo scambio solo delle proprie assegnazioni, e un compito ricevuto vale solo se lo scambio viene dal titolare.
+- **Compiti di squadra**: il compito segnato deve essere quello dell'assegnazione di squadra; le stelle di un compagno si scrivono solo per l'importo esatto (0 solo con il rosso "niente stelle").
+- **Giorni chiusi**: un figlio può togliere la spunta solo nei giorni non ancora chiusi dal genitore.
+- **Regole Firestore 0.12.5: vanno ripubblicate.**
+- Da tenere presente: le regole non possono controllare i campi dentro la lista `kids` della famiglia; la protezione è nell'app (`cleanKids`, `esc()`, CSP).
 
 ## 0.12.4 · 26/10/2026
 - **App Check attivo**: chiave Fraud Defense del sito in `APP_CHECK_SITE_KEY` (`js/firebase.js`). L'applicazione obbligatoria (Enforce) si attiva in Console Firebase › App Check solo dopo qualche giorno di metriche "verificate". Regole Firestore invariate (0.12.2).

@@ -23,6 +23,11 @@ const parseIT = s => {
   return iso(parseISO(ds)) === ds ? ds : null;
 };
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+// figli letti dal documento della famiglia o dal dispositivo: arrivano nella pagina solo id, colori e icone validi
+const cleanKids = kids => (Array.isArray(kids) ? kids : [])
+  .filter(k => /^[A-Za-z0-9_-]{1,40}$/.test(k?.id))
+  .map(k => ({...k, color: /^#[0-9a-f]{6}$/i.test(k.color) ? k.color : '#94a3b8',
+              avatar: AVATAR_LIST.includes(k.avatar) ? k.avatar : ''}));
 const ms = ts => ts?.toMillis ? ts.toMillis() : Date.now();
 const amtCls = a => a > 0 ? 'p' : a < 0 ? 'm' : 'z';
 const sign = a => (a > 0 ? '+' : '') + a;

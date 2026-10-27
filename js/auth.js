@@ -19,7 +19,7 @@ function mergeCfg(raw){
     times: {...DEFAULTS.times, ...(raw?.times||{})},
     rules: {...DEFAULTS.rules, ...(raw?.rules||{})},
     categories: raw?.categories?.length ? raw.categories : DEFAULTS.categories,
-    kids: raw?.kids || [],
+    kids: cleanKids(raw?.kids),
   };
 }
 
@@ -138,7 +138,7 @@ let pinKid = null, pinVal = '';
 function showPick(){
   $('appTitle').textContent = device.famName || APP_NAME;
   $('loginTiles').innerHTML = device.kids.map(k => `
-    <button class="tile" style="--k:${k.color}" data-kid="${k.id}"><span class="av">${k.avatar || esc(k.name.charAt(0).toUpperCase())}</span>${esc(k.name)}</button>`).join('') +
+    <button class="tile" style="--k:${esc(k.color)}" data-kid="${esc(k.id)}"><span class="av">${esc(k.avatar || String(k.name ?? '').charAt(0).toUpperCase())}</span>${esc(k.name)}</button>`).join('') +
     `<button class="tile" data-par="1"><span class="av">👪</span>Genitori</button>`;
   show('scrPick');
 }
