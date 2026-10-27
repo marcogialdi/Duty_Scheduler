@@ -6,6 +6,16 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## Prossima versione – da fare (sicurezza)
+Dalla scansione di sicurezza del 27/10/2026 sulla 0.12.4. Tutte richiedono un account della famiglia; nessuna è sfruttabile da un estraneo.
+Quando una voce è sistemata, spostarla tra le novità della versione che la contiene.
+- [ ] **Media** · `js/auth.js` (`showPick`), anche `js/data.js` (`renderTabs`): colore, icona e id dei figli finiscono nella pagina senza `esc()`. Escapare o costruire gli elementi con `textContent`; accettare solo colori `#rrggbb` e icone della lista; controllarli anche nelle regole di `families/{fid}`; aggiungere una Content-Security-Policy.
+- [ ] **Media** · `firestore.rules`, `founding()`: un genitore fondatore rimosso può rientrare. Permettere `founding()` solo se la famiglia viene creata nella stessa operazione.
+- [ ] **Bassa** · `firestore.rules`, scambi: un figlio può proporre lo scambio di un compito non suo. Richiedere che l'assegnazione sia di chi chiede lo scambio, anche nel ramo "nuova richiesta" e in `planOk`.
+- [ ] **Bassa** · `firestore.rules`, `collabLedgerOk`: le stelle di squadra di un compagno possono essere scritte a 0. Richiedere l'importo esatto (0 solo con il rosso "niente stelle").
+- [ ] **Bassa** · `firestore.rules`, cancellazione dei compiti fatti: nessun limite di data. Permetterla al figlio solo per i giorni non ancora chiusi.
+- [ ] **Bassa** · `firestore.rules`, `collabOk`: non controlla che il compito sia quello dell'assegnazione di squadra. Richiedere che coincida.
+
 ## 0.12.4 · 26/10/2026
 - **App Check attivo**: chiave Fraud Defense del sito in `APP_CHECK_SITE_KEY` (`js/firebase.js`). L'applicazione obbligatoria (Enforce) si attiva in Console Firebase › App Check solo dopo qualche giorno di metriche "verificate". Regole Firestore invariate (0.12.2).
 
