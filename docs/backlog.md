@@ -13,7 +13,7 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 | Guida contestuale | Oggi la guida cambia solo per ruolo: aprirla sulla sezione della schermata in uso (Setup → Attivare il dispositivo, Da verificare → Controlli, squadra → Compiti di squadra) e, prima dell'accesso, mostrare solo registrazione, invito e PIN | 17/10/2026 | Da valutare |
 | Preparare l'app alle lingue | Spostare tutti i testi (pulsanti, messaggi, guida, regole, inviti) in un dizionario italiano, con date e valute per paese; traduzioni dopo il lancio in Italia: inglese e spagnolo, poi tedesco e francese. Analisi nel documento «Pubblicazione sugli store e modello economico» (https://claude.ai/artifact/8wtnm2ayZrs52diVAW4WbV) | 22/10/2026 | Da valutare |
 | Gruppi richiudibili in Da verificare | Gruppi chiusi di default con un riassunto nell'intestazione (es. «🌅 Mattina lun 26 · Ricky 7 · Tommy 5 ▸»); in cima i gruppi con compiti in scadenza | 26/10/2026 | Rinviato |
-| Il mio obiettivo 🎯 | Il figlio sceglie dal catalogo il premio che vuole raggiungere e vede tutto l'anno una barra di avanzamento nella sua giornata e in «Le mie stelle»; le stelle restano spendibili per qualsiasi premio. Nuovo campo `goalRewardId` per figlio, scrivibile anche dal figlio. Prerequisito del regalo di compleanno, sviluppabile prima | 27/10/2026 | Da valutare |
+| Il mio obiettivo 🎯 | Il figlio sceglie nel 🎁 Negozio il premio che vuole raggiungere: se le stelle bastano parte la richiesta, se non bastano diventa il suo obiettivo, con una barra di avanzamento nella sua giornata e in «Le mie stelle»; le stelle restano spendibili per qualsiasi premio. Dettaglio in [Il mio obiettivo](#il-mio-obiettivo--proposta-aggiornata-il-30102026). Prerequisito del regalo di compleanno, sviluppabile prima | 27/10/2026 | Da valutare (definita il 30/10/2026) |
 | Tagli della valuta 🪐 | Le stelle si mostrano in tre tagli: ⭐ stella, 🪐 pianeta = 100 ⭐, 🌌 galassia = 1.000 ⭐ (es. 2.345 ⭐ → 2 🌌 3 🪐 45 ⭐). Dettaglio in [Tagli della valuta](#tagli-della-valuta--proposta-27102026) | 27/10/2026 | Da valutare |
 | Regalo di compleanno 🎂 | Il giorno del compleanno il figlio riceve gli auguri con un pop-up e un regalo in stelle che lo fa avanzare verso il premio scelto come obiettivo; le stelle dipendono da un punteggio sul comportamento degli ultimi 12 mesi, entro un minimo e un massimo decisi dai genitori. Dettaglio in [Regalo di compleanno – algoritmo](#regalo-di-compleanno--algoritmo-proposta-del-27102026). Regalo in € da valutare | 27/10/2026 | Da valutare |
 
@@ -43,6 +43,28 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 | Cambio PIN nella guida ragazzi | Spiegare in «Per i ragazzi» come cambiare il PIN (pulsante 🔢 PIN: attuale, nuovo, ripeti) e cosa fare se lo dimenticano (genitori: Setup › Figli › Nuovo PIN) | 17/10/2026 | Fatto in 0.13.0 |
 
 ## Schede delle proposte
+
+### Il mio obiettivo – proposta (aggiornata il 30/10/2026)
+
+**Idea.** Il risparmio diventa visibile: il figlio sceglie un premio che non può ancora permettersi e vede ogni giorno quanto gli manca. Serve l'obiettivo «gestione dei guadagni» della [filosofia](filosofia.md): scegliere tra un piacere subito e un obiettivo più grande.
+
+**Come funziona.**
+1. Il figlio apre il **🎁 Negozio** e tocca un premio.
+2. **Se le stelle bastano** (saldo meno le stelle già prenotate da richieste in attesa): conferma e parte la **richiesta del premio**, come oggi. Non si può scegliere come obiettivo un premio che si può già comprare.
+3. **Se le stelle non bastano**: la conferma lo imposta come **obiettivo**. Compare una barra di avanzamento nella sua giornata e in «Le mie stelle» (es. «🎯 Bici: 2.000 ⭐ su 5.000 ⭐»; con i [tagli della valuta](#tagli-della-valuta--proposta-27102026), «2 🌌 su 5 🌌»).
+4. **Cambiare obiettivo**: scegliendo nel Negozio un altro premio non ancora raggiungibile, questo sostituisce il precedente (con conferma). L'obiettivo si può anche togliere.
+5. **Obiettivo raggiunto**: quando il saldo disponibile arriva al prezzo, festa «Hai raggiunto il tuo obiettivo! 🎉» con il pulsante per richiederlo. Quando il genitore approva la richiesta, l'obiettivo si svuota.
+
+**Se il premio cambia.**
+- **Prezzo cambiato** dal genitore: l'obiettivo segue il prezzo nuovo; il figlio vede l'avviso «Il prezzo del tuo obiettivo è cambiato».
+- **Premio sospeso o eliminato**: il figlio vede un avviso, ma l'obiettivo resta, con nome e prezzo salvati al momento della scelta; potrà sceglierne un altro quando vuole. Finché il premio è sospeso o eliminato non si può richiedere.
+
+**Dati e sicurezza.**
+- L'obiettivo si salva sul documento di stato del figlio `families/{fid}/kids/{kidId}`, campo `goal`: `{rewardId, title, cost, setAt}` (titolo e prezzo copiati per mostrarlo anche se il premio viene eliminato). **Non** in `families/{fid}.kids[]`: quella lista la scrivono solo i genitori e le regole non possono controllarne i campi.
+- Regole Firestore: il figlio può cambiare **solo** il campo `goal` del proprio documento (o toglierlo); `rewardId` deve essere un premio esistente e `cost` uguale al suo prezzo. Il resto del documento (serie, rosso, giornate chiuse) resta scrivibile solo dai genitori.
+- Test in `tests/rules.test.mjs`: il figlio imposta il proprio obiettivo (consentito); con un prezzo diverso da quello del catalogo, sull'obiettivo di un fratello o toccando altri campi (negato).
+
+**Da decidere in sviluppo.** Dove mostrare l'avviso (banner nella giornata o popup una volta sola); se i genitori vedono l'obiettivo di ogni figlio nella Situazione (consigliato: aiuta a «celebrare i traguardi»).
 
 ### Regalo di compleanno – algoritmo (proposta del 27/10/2026)
 
