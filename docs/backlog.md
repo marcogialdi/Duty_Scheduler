@@ -1,6 +1,6 @@
 # Compiti di casa – Backlog
 
-Idee e sviluppi proposti per l'app, con il loro stato. Aggiornato al 30/10/2026 (versione 0.13.0).
+Idee e sviluppi proposti per l'app, con il loro stato. Aggiornato al 30/10/2026 (versione 0.14.0).
 
 Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima era in fondo alla [documentazione di progetto](../compiti-di-casa-documentazione.md). Ogni nuova idea va confrontata con la [filosofia del progetto](filosofia.md): deve servire almeno uno dei tre obiettivi (responsabilità, cooperazione, gestione dei guadagni). L'ordine in cui sviluppare le voci aperte è nella [roadmap evolutiva](https://claude.ai/artifact/PBUdhmMP3JW7j9n86Ksg7X).
 
@@ -10,7 +10,6 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 
 | Idea | Descrizione | Proposta il | Stato |
 | --- | --- | --- | --- |
-| Guida contestuale | Oggi la guida cambia solo per ruolo: aprirla sulla sezione della schermata in uso (Setup → Attivare il dispositivo, Da verificare → Controlli, squadra → Compiti di squadra) e, prima dell'accesso, mostrare solo registrazione, invito e PIN | 17/10/2026 | Da valutare |
 | Preparare l'app alle lingue | Spostare tutti i testi (pulsanti, messaggi, guida, regole, inviti) in un dizionario italiano, con date e valute per paese; traduzioni dopo il lancio in Italia: inglese e spagnolo, poi tedesco e francese. Analisi nel documento «Pubblicazione sugli store e modello economico» (https://claude.ai/artifact/8wtnm2ayZrs52diVAW4WbV) | 22/10/2026 | Da valutare |
 | Gruppi richiudibili in Da verificare | Gruppi chiusi di default con un riassunto nell'intestazione (es. «🌅 Mattina lun 26 · Ricky 7 · Tommy 5 ▸»); in cima i gruppi con compiti in scadenza | 26/10/2026 | Rinviato |
 | Il mio obiettivo 🎯 | Il figlio sceglie nel 🎁 Negozio il premio che vuole raggiungere: se le stelle bastano parte la richiesta, se non bastano diventa il suo obiettivo, con una barra di avanzamento nella sua giornata e in «Le mie stelle»; le stelle restano spendibili per qualsiasi premio. Dettaglio in [Il mio obiettivo](#il-mio-obiettivo--proposta-aggiornata-il-30102026). Prerequisito del regalo di compleanno, sviluppabile prima | 27/10/2026 | Da valutare (definita il 30/10/2026) |
@@ -40,6 +39,7 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 | Filtri in Da verificare | Filtri rapidi in alto: per figlio · Squadra · In scadenza | 26/10/2026 | Fatto in 0.12.0 (solo «In scadenza») |
 | Novità all'apertura | Popup con le novità della versione, diverse per figli e genitori, con «Ho letto»; stato in `members/{uid}.newsSeen`, valido per persona su ogni dispositivo; chi ha saltato versioni vede le novità arretrate | 26/10/2026 | Fatto in 0.12.0 |
 | Schede nella pagina Setup | Dividere il Setup in schede: Famiglia e orari · Figli · Genitori · Regole del gioco · Questo dispositivo | 17/10/2026 | Fatto in 0.13.0 |
+| Guida contestuale | La guida si apre sulla sezione della schermata in uso (Setup → Attivare il dispositivo, Da verificare → Controlli, squadra → Compiti di squadra) e, prima dell'accesso, mostra solo registrazione, invito e accesso; ❓ accanto ad alcuni titoli | 17/10/2026 | Fatto in 0.14.0 |
 | Cambio PIN nella guida ragazzi | Spiegare in «Per i ragazzi» come cambiare il PIN (pulsante 🔢 PIN: attuale, nuovo, ripeti) e cosa fare se lo dimenticano (genitori: Setup › Figli › Nuovo PIN) | 17/10/2026 | Fatto in 0.13.0 |
 
 ## Schede delle proposte

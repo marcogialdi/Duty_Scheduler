@@ -126,7 +126,7 @@ function renderParent(){
       : `<p class="empty">Prima aggiungi i figli dal ⚙️ Setup.</p>`) +
     kidsList().map(k => { const l = sched.filter(x => x.owner === k.id);
       return `<h3 class="vkid" style="color:${k.color}">${k.avatar || ''} ${esc(k.name)} <small>${nTasks(l)}</small></h3>${schedRows(l)}`; }).join('') +
-    (teams.length ? `<h3 class="vkid">🤝 Compiti di squadra <small>${nTasks(teams)}</small></h3>${schedRows(teams)}` : '') +
+    (teams.length ? `<h3 class="vkid">🤝 Compiti di squadra <small>${nTasks(teams)}</small> <button class="link helpq" data-helpsec="team" aria-label="Guida: compiti di squadra">❓</button></h3>${schedRows(teams)}` : '') +
     (orphan.length ? `<h3 class="vkid">Assegnati a figli rimossi <small>${nTasks(orphan)}</small></h3>${schedRows(orphan)}` : '');
 
   // B: bacheca
@@ -294,7 +294,7 @@ $('parentView').addEventListener('click', async e => {
       showPtab({pNew:'new', pShop:'prem'}[d.goto] || 'sit');
       return $(d.goto)?.scrollIntoView({behavior:'smooth', block:'start'});
     }
-    if (d.help) return openHelp();
+    if (d.help) return openHelp('first');
     if (d.todooff){ store('set', `cdc.todoOff.${fid}`, '1'); return render(); }
     if (d.devoff){ store('set', `cdc.devBannerOff.${fid}`, '1'); return render(); }
     if (b.id === 'seedBtn') return await seed();

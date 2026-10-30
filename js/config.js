@@ -9,9 +9,10 @@ const APP_NAME = 'Compiti di casa';
    Nuove funzioni → si aumenta il secondo numero; solo correzioni → il terzo.
    A ogni rilascio: aggiorna APP_VERSION, APP_DATE, CHANGELOG e NEWS qui,
    l'intestazione di firestore.rules (se cambiate) e il file CHANGELOG.md. */
-const APP_VERSION = '0.13.0';
+const APP_VERSION = '0.14.0';
 const APP_DATE = '2026-10-30';
 const CHANGELOG = [
+  ['0.14.0', '2026-10-30', 'Guida contestuale: si apre sulla parte che riguarda la schermata in uso; prima dell\'accesso mostra solo come creare la famiglia, entrare con un invito e accedere; ❓ accanto ad alcuni titoli.'],
   ['0.13.0', '2026-10-30', 'Setup diviso in schede (Famiglia e orari, Figli, Genitori, Regole del gioco, Questo dispositivo); nella guida dei ragazzi come cambiare il PIN; regole più strette per l\'annullamento di proposte e premi e test automatici delle regole.'],
   ['0.12.5', '2026-10-27', 'Correzioni di sicurezza dalla scansione del 27/10: colori, icone e codici dei figli controllati prima di mostrarli, Content-Security-Policy; regole più strette per fondatore della famiglia, scambi, compiti di squadra e spunte dei giorni già chiusi.'],
   ['0.12.4', '2026-10-26', 'App Check attivo con la chiave di Google Cloud Fraud Defense.'],
@@ -40,6 +41,12 @@ const CHANGELOG = [
    [icona, titolo, testo]. Se per un ruolo non ci sono novità, il popup per quel ruolo non si apre.
    Chi ha saltato più versioni vede tutte quelle che non ha ancora letto, dalla più recente. */
 const NEWS = {
+  '0.14.0': {
+    parent: [
+      ['❓', 'Una guida che sa dove sei', 'Tocca <b>❓ Guida</b>: si apre sulla parte che riguarda la schermata in uso (per esempio Da verificare, Setup › Questo dispositivo, Setup › Figli). Le altre parti restano chiuse sotto.'],
+      ['🔎', 'Aiuto con un tocco', 'Accanto ad alcuni titoli (Compiti di squadra, Da verificare, Questo dispositivo, Genitori) trovi un piccolo <b>❓</b> che apre subito la spiegazione giusta.'],
+    ],
+  },
   '0.13.0': {
     kid: [
       ['🔢', 'Cambiare il PIN', 'Nella <b>❓ Guida</b> trovi come cambiare il tuo PIN: tocca <b>🔢 PIN</b> in alto, scrivi quello attuale e poi quello nuovo. Se lo dimentichi, chiedi a mamma o papà.'],
