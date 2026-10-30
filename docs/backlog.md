@@ -16,6 +16,7 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 | Tagli della valuta 🪐 | Le stelle si mostrano in tre tagli: ⭐ stella, 🪐 pianeta = 100 ⭐, 🌌 galassia = 1.000 ⭐ (es. 2.345 ⭐ → 2 🌌 3 🪐 45 ⭐). Dettaglio in [Tagli della valuta](#tagli-della-valuta--proposta-27102026) | 27/10/2026 | Da valutare |
 | Regalo di compleanno 🎂 | Il giorno del compleanno il figlio riceve gli auguri con un pop-up e un regalo in stelle che lo fa avanzare verso il premio scelto come obiettivo; le stelle dipendono da un punteggio sul comportamento degli ultimi 12 mesi, entro un minimo e un massimo decisi dai genitori. Dettaglio in [Regalo di compleanno – algoritmo](#regalo-di-compleanno--algoritmo-proposta-del-27102026). Regalo in € da valutare | 27/10/2026 | Da valutare |
 | Medaglie 🏅 | 32 medaglie per piccoli traguardi (es. «Prima giornata perfetta», «Settimana perfetta»), 8 per area: costanza, onestà e fiducia, cooperazione e iniziativa, gestione dei guadagni. Assegnate solo in automatico dall'app, una volta sola, senza livelli e senza stelle. Dettaglio in [Medaglie](#medaglie--proposta-del-30102026) | 30/10/2026 | Da valutare (definita il 30/10/2026) |
+| Sfide tra famiglie 🏁 | Sfide su invito tra famiglie, con classifiche condivise. I genitori approvano la partecipazione di ogni figlio; in classifica il figlio compare con un nickname scelto da lui, mai con il nome vero. Richiede il server della roadmap (Fase 4). Dettaglio in [Sfide tra famiglie](#sfide-tra-famiglie--proposta-del-30102026) | 30/10/2026 | Da valutare |
 
 ## Fatto
 
@@ -44,6 +45,35 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 | Cambio PIN nella guida ragazzi | Spiegare in «Per i ragazzi» come cambiare il PIN (pulsante 🔢 PIN: attuale, nuovo, ripeti) e cosa fare se lo dimenticano (genitori: Setup › Figli › Nuovo PIN) | 17/10/2026 | Fatto in 0.13.0 |
 
 ## Schede delle proposte
+
+### Sfide tra famiglie – proposta (del 30/10/2026)
+
+**Idea.** Più famiglie partecipano a una sfida comune (es. «Novembre perfetto»: chi fa più giornate perfette in un mese) e vedono una classifica. Serve soprattutto la **cooperazione** della [filosofia](filosofia.md) se la sfida è anche a squadre (la famiglia come squadra), e la **responsabilità** perché premia la costanza. Nella roadmap è la Fase 4 («Challenge tra famiglie amiche»), base delle future sfide sponsorizzate (Fase 6).
+
+**Privacy prima di tutto.**
+- **Consenso dei genitori**: un figlio partecipa solo se un genitore della sua famiglia lo approva, **sfida per sfida**, scegliendo quali figli far partecipare. Il genitore può ritirare il figlio in qualsiasi momento: da quel momento sparisce dalla classifica.
+- **Nickname**: in classifica il figlio compare con un **nickname scelto da lui** e la sua icona; mai nome, cognome, foto o nome della famiglia (la famiglia può avere un nome di squadra scelto dai genitori).
+- **Nickname approvato dal genitore** (proposto): il figlio lo propone, un genitore lo approva prima che compaia; lunghezza 3–16 caratteri, solo lettere, numeri e spazi. Evita nomi veri, parole offensive e dati personali scritti per sbaglio.
+- Gli altri vedono solo nickname, icona e punteggio della sfida: niente compiti, stelle, premi o cartellini.
+
+**Classifiche eque.** Ogni famiglia decide da sé quante stelle vale un compito, quindi le **stelle non sono confrontabili** tra famiglie. La classifica usa misure di comportamento uguali per tutti, per esempio:
+- giornate perfette nel periodo della sfida;
+- percentuale di compiti obbligatori fatti;
+- serie più lunga nel periodo.
+I compiti contestati non contano.
+
+**Come funzionerebbe.**
+1. Un genitore crea la sfida (tipo, periodo, misura) e invita altre famiglie con un codice, come per l'invito del secondo genitore.
+2. Un genitore di ogni famiglia accetta e sceglie i figli che partecipano (con il nickname già approvato).
+3. Durante la sfida ogni figlio vede la classifica e la sua posizione; alla fine, festa per i primi e una medaglia per chi ha completato la sfida (si lega alle [medaglie](#medaglie--proposta-del-30102026)).
+
+**Dati e sicurezza.**
+- Oggi le famiglie sono **isolate** per scelta di sicurezza: nessuna famiglia può leggere i dati di un'altra. Le classifiche richiedono quindi il **server leggero** della roadmap (Cloud Functions, piano Blaze): calcola i punteggi dai dati di ogni famiglia e scrive in un documento condiviso solo nickname, icona e punteggio.
+- Un punteggio scritto dall'app del figlio o del genitore sarebbe falsificabile: deve calcolarlo il server.
+- Nuovi dati: `challenges/{id}` (sfida, partecipanti, classifica), consenso per figlio e sfida, `nickname` e il suo stato di approvazione sul documento del figlio. Regole e test: nessun accesso ai dati delle altre famiglie, partecipazione solo con consenso del genitore.
+- Privacy: condividere dati di minori con altre famiglie richiede di aggiornare l'informativa e il consenso dei genitori (voce «Privacy e legale» della roadmap).
+
+**Da decidere.** Se il nickname va approvato dal genitore (consigliato); sfide individuali, per famiglia o entrambe; chi può creare una sfida (ogni genitore o, all'inizio, solo l'app con sfide stagionali); se le famiglie si vedono solo con nome di squadra o restano anonime; durata tipica (una settimana, un mese).
 
 ### Medaglie – proposta (del 30/10/2026)
 
