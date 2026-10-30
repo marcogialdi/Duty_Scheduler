@@ -15,6 +15,7 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 | Il mio obiettivo 🎯 | Il figlio sceglie nel 🎁 Negozio il premio che vuole raggiungere: se le stelle bastano parte la richiesta, se non bastano diventa il suo obiettivo, con una barra di avanzamento nella sua giornata e in «Le mie stelle»; le stelle restano spendibili per qualsiasi premio. Dettaglio in [Il mio obiettivo](#il-mio-obiettivo--proposta-aggiornata-il-30102026). Prerequisito del regalo di compleanno, sviluppabile prima | 27/10/2026 | Da valutare (definita il 30/10/2026) |
 | Tagli della valuta 🪐 | Le stelle si mostrano in tre tagli: ⭐ stella, 🪐 pianeta = 100 ⭐, 🌌 galassia = 1.000 ⭐ (es. 2.345 ⭐ → 2 🌌 3 🪐 45 ⭐). Dettaglio in [Tagli della valuta](#tagli-della-valuta--proposta-27102026) | 27/10/2026 | Da valutare |
 | Regalo di compleanno 🎂 | Il giorno del compleanno il figlio riceve gli auguri con un pop-up e un regalo in stelle che lo fa avanzare verso il premio scelto come obiettivo; le stelle dipendono da un punteggio sul comportamento degli ultimi 12 mesi, entro un minimo e un massimo decisi dai genitori. Dettaglio in [Regalo di compleanno – algoritmo](#regalo-di-compleanno--algoritmo-proposta-del-27102026). Regalo in € da valutare | 27/10/2026 | Da valutare |
+| Medaglie 🏅 | 32 medaglie per piccoli traguardi (es. «Prima giornata perfetta», «Settimana perfetta»), 8 per area: costanza, onestà e fiducia, cooperazione e iniziativa, gestione dei guadagni. Assegnate solo in automatico dall'app, una volta sola, senza livelli e senza stelle. Dettaglio in [Medaglie](#medaglie--proposta-del-30102026) | 30/10/2026 | Da valutare (definita il 30/10/2026) |
 
 ## Fatto
 
@@ -43,6 +44,89 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 | Cambio PIN nella guida ragazzi | Spiegare in «Per i ragazzi» come cambiare il PIN (pulsante 🔢 PIN: attuale, nuovo, ripeti) e cosa fare se lo dimenticano (genitori: Setup › Figli › Nuovo PIN) | 17/10/2026 | Fatto in 0.13.0 |
 
 ## Schede delle proposte
+
+### Medaglie – proposta (del 30/10/2026)
+
+**Idea.** Una medaglia sancisce un piccolo traguardo: «la prima giornata perfetta», «la prima settimana perfetta». Raggiunto l'obiettivo, si prende la medaglia. È un riconoscimento, non un guadagno: rende visibili i progressi su responsabilità, cooperazione e gestione dei guadagni della [filosofia](filosofia.md).
+
+**Decisioni (30/10/2026).**
+- **32 medaglie**, 8 per ciascuna delle quattro aree qui sotto.
+- **Una volta sola, senza livelli** (niente bronzo, argento, oro).
+- **Nessuna stella**: la medaglia non dà stelle, così non diventa una seconda valuta.
+- **Solo in automatico**: le assegna l'app quando il traguardo è raggiunto; i genitori non possono assegnarle a mano.
+- Proposto, da confermare: una medaglia vinta **non si perde** (anche dopo un cartellino) e tutte sono **visibili** come traguardi in grigio, nessuna segreta.
+
+**Le 32 medaglie.** Difficoltà: 🟢 facile (prime settimane) · 🟡 media (qualche mese) · 🔴 difficile (un anno o più). Si calcolano con dati che l'app registra già (estratto conto, serie, cartellini, scambi, squadre, proposte, premi).
+
+*✅ Costanza*
+
+| | Medaglia | Si vince quando… | |
+| --- | --- | --- | --- |
+| 🌟 | Prima giornata perfetta | completa la prima giornata perfetta | 🟢 |
+| 📅 | Settimana perfetta | 7 giornate perfette di fila | 🟢 |
+| 🔥 | Due settimane di fuoco | serie di 14 giorni | 🟡 |
+| 🏆 | Mese perfetto | serie di 30 giorni | 🔴 |
+| 💯 | Cento compiti | 100 compiti fatti (non contestati) | 🟢 |
+| 🎖️ | Cinquecento compiti | 500 compiti fatti (non contestati) | 🔴 |
+| 🌅 | Mattiniero | 7 giorni di fila con tutti i compiti della mattina fatti | 🟡 |
+| 📆 | Un mese da campione | 20 giornate perfette in un mese di calendario | 🟡 |
+
+*🤝 Onestà e fiducia*
+
+| | Medaglia | Si vince quando… | |
+| --- | --- | --- | --- |
+| 👍 | Primo «controllato» | un genitore conferma con «Tutto ok» un suo compito | 🟢 |
+| 🛡️ | Parola d'oro | 50 compiti confermati da un genitore, nessuno contestato | 🟡 |
+| 🕊️ | Un mese pulito | 30 giorni senza cartellini | 🟡 |
+| 💎 | Fiducia totale | 90 giorni senza cartellini | 🔴 |
+| 🌈 | Ripartenza | dopo un cartellino rosso, 7 giornate perfette di fila | 🟡 |
+| 🔄 | Rimediato | completa tutti i compiti di recupero di un cartellino rosso | 🟡 |
+| 🧭 | Trimestre senza rossi | un trimestre intero senza cartellini rossi | 🟡 |
+| 👑 | Un anno d'oro | un anno senza cartellini rossi | 🔴 |
+
+*🤗 Cooperazione e iniziativa*
+
+| | Medaglia | Si vince quando… | |
+| --- | --- | --- | --- |
+| 🤲 | Primo favore | accetta per la prima volta uno scambio di un fratello | 🟢 |
+| 💪 | Buon fratello | 10 scambi accettati | 🟡 |
+| 👥 | Prima squadra | primo compito di squadra completato | 🟢 |
+| 🧩 | Squadra affiatata | 20 compiti di squadra completati | 🟡 |
+| 💡 | Prima idea | prima proposta approvata da un genitore | 🟢 |
+| 🌱 | Sempre un'idea | 10 proposte approvate | 🟡 |
+| 🧹 | Primo lavoretto extra | primo lavoretto della bacheca | 🟢 |
+| 🦸 | Super aiutante | 50 lavoretti extra | 🔴 |
+
+*💰 Gestione dei guadagni*
+
+| | Medaglia | Si vince quando… | |
+| --- | --- | --- | --- |
+| 🎁 | Primo premio | primo premio approvato | 🟢 |
+| 🐷 | Salvadanaio | arriva a 200 ⭐ di saldo | 🟢 |
+| 🪐 | Primo pianeta | 100 ⭐ guadagnate in totale | 🟢 |
+| 🌌 | Prima galassia | 1.000 ⭐ guadagnate in totale | 🟡 |
+| ⏳ | So aspettare | 30 giorni senza spendere, con il saldo che cresce | 🟡 |
+| 🎯 | Obiettivo raggiunto | raggiunge il premio scelto come obiettivo | 🟡 |
+| 🚲 | Grande traguardo | ottiene un premio da almeno 1.000 ⭐ | 🔴 |
+| 🏦 | Risparmiatore esperto | arriva a 2.000 ⭐ di saldo | 🔴 |
+
+**Dipendenze.** 🎯 Obiettivo raggiunto richiede [Il mio obiettivo](#il-mio-obiettivo--proposta-aggiornata-il-30102026); 🪐 e 🌌 si legano ai [tagli della valuta](#tagli-della-valuta--proposta-27102026), ma funzionano anche senza.
+
+**Come si vedono.**
+- Bacheca «🏅 Le mie medaglie» per ogni figlio: le vinte a colori con la data, le altre in grigio con la condizione per vincerle.
+- Popup di festa alla prima apertura dopo la vincita, una volta sola per medaglia.
+- I genitori vedono le medaglie di ogni figlio nella Situazione.
+
+**Dati e sicurezza.**
+- Un documento per medaglia vinta: `families/{fid}/kids/{kidId}/medals/{medalId}` con `wonAt`, `source: 'app'` (in futuro altre origini, es. un partner) e `seenAt` (popup già mostrato).
+- L'elenco delle 32 medaglie e delle loro condizioni sta nel codice dell'app (come le regole del gioco), non nel database.
+- Assegnazione sul dispositivo del genitore, insieme ai conti di fine giornata (come serie e giornate perfette); le medaglie di oggi (es. Primo premio) anche all'apertura di un genitore. Con il server della roadmap passerà lì.
+- Regole Firestore: scrive solo un genitore; il figlio legge le proprie medaglie e può aggiornare solo `seenAt`. Nessuna assegnazione manuale nell'interfaccia.
+- Test in `tests/rules.test.mjs`: il figlio non può darsi una medaglia né cambiarne la data; può segnarla come vista.
+
+**In futuro.** Il campo `source` permette medaglie di partner (sfide sponsorizzate della roadmap), con le cautele già annotate sul marketing verso i minori.
+
+**Da decidere in sviluppo.** Conferma di «non si perde» e «nessuna medaglia segreta»; aspetto della bacheca (griglia per area); se assegnare a ritroso le medaglie già meritate con i dati esistenti al primo avvio (consigliato, con un unico popup riassuntivo).
 
 ### Il mio obiettivo – proposta (aggiornata il 30/10/2026)
 
