@@ -54,7 +54,9 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 - **Una volta sola, senza livelli** (niente bronzo, argento, oro).
 - **Nessuna stella**: la medaglia non dà stelle, così non diventa una seconda valuta.
 - **Solo in automatico**: le assegna l'app quando il traguardo è raggiunto; i genitori non possono assegnarle a mano.
-- Proposto, da confermare: una medaglia vinta **non si perde** (anche dopo un cartellino) e tutte sono **visibili** come traguardi in grigio, nessuna segreta.
+- **Non si perdono**: una medaglia vinta resta per sempre, anche dopo un cartellino.
+- **Al primo avvio si assegnano a ritroso** le medaglie già meritate con lo storico esistente (estratto conto, cartellini, scambi, proposte, premi), con un unico popup riassuntivo invece di uno per medaglia.
+- Proposto, da confermare: tutte **visibili** come traguardi in grigio, nessuna segreta.
 
 **Le 32 medaglie.** Difficoltà: 🟢 facile (prime settimane) · 🟡 media (qualche mese) · 🔴 difficile (un anno o più). Si calcolano con dati che l'app registra già (estratto conto, serie, cartellini, scambi, squadre, proposte, premi).
 
@@ -126,7 +128,9 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 
 **In futuro.** Il campo `source` permette medaglie di partner (sfide sponsorizzate della roadmap), con le cautele già annotate sul marketing verso i minori.
 
-**Da decidere in sviluppo.** Conferma di «non si perde» e «nessuna medaglia segreta»; aspetto della bacheca (griglia per area); se assegnare a ritroso le medaglie già meritate con i dati esistenti al primo avvio (consigliato, con un unico popup riassuntivo).
+**Assegnazione a ritroso (primo avvio).** Alla prima apertura di un genitore con la versione che introduce le medaglie, l'app ricalcola tutte le condizioni sullo storico di ogni figlio e salva le medaglie meritate, con `wonAt` uguale alla data in cui il traguardo è stato raggiunto (se ricavabile) e `source: 'app'`. Il figlio vede un solo popup «Hai già conquistato N medaglie!» con l'elenco; le medaglie vinte dopo hanno ognuna il suo popup. Le condizioni che lo storico non permette di ricostruire con certezza (es. «Mattiniero», se mancano gli orari delle spunte più vecchie) si valutano solo da quel momento in avanti.
+
+**Da decidere in sviluppo.** «Nessuna medaglia segreta»; aspetto della bacheca (griglia per area).
 
 ### Il mio obiettivo – proposta (aggiornata il 30/10/2026)
 
