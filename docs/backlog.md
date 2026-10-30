@@ -16,7 +16,8 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 | Tagli della valuta 🪐 | Le stelle si mostrano in tre tagli: ⭐ stella, 🪐 pianeta = 100 ⭐, 🌌 galassia = 1.000 ⭐ (es. 2.345 ⭐ → 2 🌌 3 🪐 45 ⭐). Dettaglio in [Tagli della valuta](#tagli-della-valuta--proposta-27102026) | 27/10/2026 | Da valutare |
 | Regalo di compleanno 🎂 | Il giorno del compleanno il figlio riceve gli auguri con un pop-up e un regalo in stelle che lo fa avanzare verso il premio scelto come obiettivo; le stelle dipendono da un punteggio sul comportamento degli ultimi 12 mesi, entro un minimo e un massimo decisi dai genitori. Dettaglio in [Regalo di compleanno – algoritmo](#regalo-di-compleanno--algoritmo-proposta-del-27102026). Regalo in € da valutare | 27/10/2026 | Da valutare |
 | Medaglie 🏅 | 32 medaglie per piccoli traguardi (es. «Prima giornata perfetta», «Settimana perfetta»), 8 per area: costanza, onestà e fiducia, cooperazione e iniziativa, gestione dei guadagni. Assegnate solo in automatico dall'app, una volta sola, senza livelli e senza stelle. Dettaglio in [Medaglie](#medaglie--proposta-del-30102026) | 30/10/2026 | Da valutare (definita il 30/10/2026) |
-| Sfide tra famiglie 🏁 | Sfide su invito tra famiglie, con classifiche condivise. I genitori approvano la partecipazione di ogni figlio; in classifica il figlio compare con un nickname scelto da lui, mai con il nome vero. Richiede il server della roadmap (Fase 4). Dettaglio in [Sfide tra famiglie](#sfide-tra-famiglie--proposta-del-30102026) | 30/10/2026 | Da valutare |
+| Sfide tra famiglie 🏁 | Sfide su invito tra famiglie, con classifiche condivise. I genitori approvano la partecipazione di ogni figlio; in classifica il figlio compare con un nickname scelto da lui, mai con il nome vero. Richiede il [server leggero](#server-leggero--scheda-del-30102026) (roadmap, Fase 4). Dettaglio in [Sfide tra famiglie](#sfide-tra-famiglie--proposta-del-30102026) | 30/10/2026 | Da valutare |
+| Server leggero ☁️ | Codice nostro che gira da Google (Cloud Functions, piano Blaze): chiusura notturna delle giornate, notifiche, cancellazione completa, calcoli affidabili, classifiche delle sfide. Prima funzione consigliata: la chiusura notturna. Dettaglio in [Server leggero](#server-leggero--scheda-del-30102026) | 30/10/2026 | Rinviato (dopo il test con le famiglie) |
 
 ## Fatto
 
@@ -45,6 +46,37 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 | Cambio PIN nella guida ragazzi | Spiegare in «Per i ragazzi» come cambiare il PIN (pulsante 🔢 PIN: attuale, nuovo, ripeti) e cosa fare se lo dimenticano (genitori: Setup › Figli › Nuovo PIN) | 17/10/2026 | Fatto in 0.13.0 |
 
 ## Schede delle proposte
+
+### Server leggero – scheda (del 30/10/2026)
+
+**Oggi.** L'app non ha un server suo: il sito (GitHub Pages) consegna solo i file, tutti i calcoli (stelle, giornate perfette, serie, cartellini, conti di fine giornata) li fa l'app sul telefono, Firestore conserva i dati e le regole dicono solo sì o no a ogni scrittura, senza calcolare. Limiti che ne derivano:
+1. i conti di fine giornata si fanno solo quando un genitore apre l'app;
+2. nessuno può agire da solo: niente notifiche, niente accrediti a un orario (es. compleanno a mezzanotte);
+3. ci si deve fidare del telefono: i calcoli fatti lì vanno difesi con regole sempre più complicate;
+4. le famiglie sono isolate (giusto così), quindi nessuno può calcolare classifiche tra famiglie.
+
+**Con il server.** Cloud Functions: piccoli programmi nostri che girano nei computer di Google, **fidati** (nessun figlio può modificarli). Partono **a orario** (es. ogni notte alle 00:30: chiudere le giornate, accreditare i compleanni, assegnare le medaglie) o **a evento** (es. un compito segnato: aggiornare una classifica, mandare una notifica).
+
+| Cosa | Senza server | Con il server |
+| --- | --- | --- |
+| Chiusura delle giornate | solo quando un genitore apre l'app | ogni notte, per tutti |
+| Notifiche push | impossibili | sì |
+| Cancellazione completa | gli account dei figli restano | completa (utile per il GDPR) |
+| Stelle e anti-imbroglio | calcolati sul telefono, difesi dalle regole | calcolati in modo affidabile |
+| [Medaglie](#medaglie--proposta-del-30102026) | dal telefono del genitore | più tempestive e affidabili |
+| [Regalo di compleanno](#regalo-di-compleanno--algoritmo-proposta-del-27102026) | con conferma del genitore | accreditato a mezzanotte |
+| [Sfide tra famiglie](#sfide-tra-famiglie--proposta-del-30102026) | non fattibili in sicurezza | fattibili: pubblica solo nickname e punteggi |
+
+Non servono il server: Il mio obiettivo, Tagli della valuta, Medaglie (versione dal telefono), Guida.
+
+**Costi.** Serve il piano **Blaze** (a consumo, con carta di credito collegata al progetto) al posto di Spark. Blaze include le stesse quote gratuite di Spark più una quota gratuita mensile per le funzioni: con poche famiglie la spesa attesa è vicina a zero, da verificare sul listino Firebase prima di decidere. Mettere un **avviso di budget** (es. 5 €/mese): è un avviso via email, non un blocco. Il rischio vero è un errore che fa girare una funzione all'infinito: si previene con test ed emulatore.
+
+**Lavoro.** Nuova cartella `functions/` (JavaScript, come l'app); pubblicazione con lo strumento di Firebase oltre a GitHub Pages (la prima volta serve un accesso del proprietario del progetto); prove con lo stesso emulatore dei test delle regole; server in **Europa** (coerente con la voce privacy della roadmap); alcune cose oggi fatte dall'app (la chiusura delle giornate) si spostano sul server.
+
+**Ordine consigliato.**
+1. Ora no: test con le famiglie, Il mio obiettivo, Tagli della valuta e Medaglie non lo richiedono.
+2. Dopo il test, una sola funzione piccola e utile: la **chiusura notturna delle giornate** (il limite più visibile, costo minimo, banco di prova).
+3. Poi, una alla volta: notifiche, cancellazione completa, calcoli affidabili; per ultime le sfide, che richiedono anche la parte privacy.
 
 ### Sfide tra famiglie – proposta (del 30/10/2026)
 
