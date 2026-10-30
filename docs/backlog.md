@@ -1,0 +1,120 @@
+# Compiti di casa – Backlog
+
+Idee e sviluppi proposti per l'app, con il loro stato. Aggiornato al 30/10/2026 (versione 0.13.0).
+
+Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima era in fondo alla [documentazione di progetto](../compiti-di-casa-documentazione.md). Ogni nuova idea va confrontata con la [filosofia del progetto](filosofia.md): deve servire almeno uno dei tre obiettivi (responsabilità, cooperazione, gestione dei guadagni). L'ordine in cui sviluppare le voci aperte è nella [roadmap evolutiva](https://claude.ai/artifact/PBUdhmMP3JW7j9n86Ksg7X).
+
+**Stati**: *Da valutare* (idea registrata, non ancora decisa) · *Rinviato* (decisa, ma non ora) · *Fatto in x.y.z* (rilasciata in quella versione).
+
+## Da fare
+
+| Idea | Descrizione | Proposta il | Stato |
+| --- | --- | --- | --- |
+| Guida contestuale | Oggi la guida cambia solo per ruolo: aprirla sulla sezione della schermata in uso (Setup → Attivare il dispositivo, Da verificare → Controlli, squadra → Compiti di squadra) e, prima dell'accesso, mostrare solo registrazione, invito e PIN | 17/10/2026 | Da valutare |
+| Preparare l'app alle lingue | Spostare tutti i testi (pulsanti, messaggi, guida, regole, inviti) in un dizionario italiano, con date e valute per paese; traduzioni dopo il lancio in Italia: inglese e spagnolo, poi tedesco e francese. Analisi nel documento «Pubblicazione sugli store e modello economico» (https://claude.ai/artifact/8wtnm2ayZrs52diVAW4WbV) | 22/10/2026 | Da valutare |
+| Gruppi richiudibili in Da verificare | Gruppi chiusi di default con un riassunto nell'intestazione (es. «🌅 Mattina lun 26 · Ricky 7 · Tommy 5 ▸»); in cima i gruppi con compiti in scadenza | 26/10/2026 | Rinviato |
+| Il mio obiettivo 🎯 | Il figlio sceglie dal catalogo il premio che vuole raggiungere e vede tutto l'anno una barra di avanzamento nella sua giornata e in «Le mie stelle»; le stelle restano spendibili per qualsiasi premio. Nuovo campo `goalRewardId` per figlio, scrivibile anche dal figlio. Prerequisito del regalo di compleanno, sviluppabile prima | 27/10/2026 | Da valutare |
+| Tagli della valuta 🪐 | Le stelle si mostrano in tre tagli: ⭐ stella, 🪐 pianeta = 100 ⭐, 🌌 galassia = 1.000 ⭐ (es. 2.345 ⭐ → 2 🌌 3 🪐 45 ⭐). Dettaglio in [Tagli della valuta](#tagli-della-valuta--proposta-27102026) | 27/10/2026 | Da valutare |
+| Regalo di compleanno 🎂 | Il giorno del compleanno il figlio riceve gli auguri con un pop-up e un regalo in stelle che lo fa avanzare verso il premio scelto come obiettivo; le stelle dipendono da un punteggio sul comportamento degli ultimi 12 mesi, entro un minimo e un massimo decisi dai genitori. Dettaglio in [Regalo di compleanno – algoritmo](#regalo-di-compleanno--algoritmo-proposta-del-27102026). Regalo in € da valutare | 27/10/2026 | Da valutare |
+
+## Fatto
+
+| Idea | Descrizione | Proposta il | Stato |
+| --- | --- | --- | --- |
+| Schede nella pagina Genitori | Troppo scorrimento: dividere in schede (es. Oggi · Compiti · Premi · Proposte) | 17/10/2026 | Fatto in 0.8.0 |
+| Compiti collaborativi | Compiti per più figli insieme: le stelle arrivano a tutti solo se ognuno fa la sua parte | 17/10/2026 | Fatto in 0.9.0 |
+| Fasce chiare in Gestione compiti | Nella pagina Genitori distinguere bene Mattina 🌅, Pomeriggio ☀️ e Sera 🌙 (intestazione con orari e numero di compiti, separazione visiva), come nella giornata dei ragazzi | 17/10/2026 | Fatto in 0.10.0 |
+| Fasce richiudibili | Nella giornata dei ragazzi chiudere e riaprire Mattina 🌅, Pomeriggio ☀️ e Sera 🌙 toccando l'intestazione (resta visibile con il conteggio, es. 4/6); la fascia completata o passata si chiude da sola e il dispositivo ricorda la scelta | 19/10/2026 | Fatto in 0.10.0 |
+| «Da verificare» raggruppato | Raggruppare i compiti prima per figlio e poi per fascia (Mattina 🌅, Pomeriggio ☀️, Sera 🌙); compiti di squadra e lavoretti extra in un gruppo a parte | 21/10/2026 | Fatto in 0.10.0 |
+| Compito ripetuto nella giornata | Nel modulo scegliere le fasce in cui il compito si ripete, ognuna col suo orario (es. Lavare i denti 07:00, 14:15, 20:50); si crea un'assegnazione per fascia, ognuna si spunta e vale stelle a sé | 22/10/2026 | Fatto in 0.11.0 |
+| Modifica dei premi del catalogo | Cambiare nome e costo, sospendere e riattivare un premio (le richieste già fatte mantengono il prezzo di allora) | 22/10/2026 | Fatto in 0.11.0 |
+| Modifica rapida dalla giornata del figlio | Guardando la giornata di un figlio, una ✏️ su ogni compito (solo per i genitori) apre la finestra di modifica, senza cercarlo in Compiti assegnati | 22/10/2026 | Fatto in 0.11.0 |
+| Modifica da Gestione compiti | Scegliendo un compito esistente nel menu «Compito», offrire «Modifica il compito» e mostrare le sue assegnazioni, ognuna modificabile | 22/10/2026 | Fatto in 0.11.0 |
+| Avviso sui compiti doppi | Creando un compito con un titolo già esistente (anche con maiuscole o spazi diversi), proporre di aggiungere un'assegnazione al compito esistente | 22/10/2026 | Fatto in 0.11.0 |
+| Unisci compiti doppi | Unire compiti con lo stesso nome in uno solo, spostando tutte le assegnazioni; storico delle stelle invariato | 22/10/2026 | Fatto in 0.11.0 |
+| «Da verificare» per giorno | Raggruppare prima per giorno (Oggi · Ieri · Sabato…), poi per fascia, con i compiti in ordine di orario: il genitore ripercorre la giornata invece di inseguire le scadenze | 26/10/2026 | Fatto in 0.12.0 |
+| Griglia routine in Da verificare | Per ogni giorno e fascia, una tabella con i compiti nelle righe e i figli nelle colonne: ✓ con l'orario se fatto, — se non fatto; toccando una ✓ si contesta | 26/10/2026 | Fatto in 0.12.0 (compiti pianificati) |
+| Righe compatte in Da verificare | Una riga sola per compito: emoji, nome, ora, ⭐; badge arancione «scade tra X h» solo sotto le 6 ore; «Facoltativo» come piccolo tag | 26/10/2026 | Fatto in 0.12.0 (squadra e lavoretti extra) |
+| «Tutto ok» per gruppo | Un pulsante «Tutto ok ✓» su ogni gruppo conferma subito i compiti e li toglie dalla lista, senza aspettare le 48 ore | 26/10/2026 | Fatto in 0.12.0 (definitivo) |
+| Contestazione più discreta | Al posto dei pulsanti rossi «Non è vero!», un tocco sulla ✓ e un avviso «Annulla» per qualche secondo; il rosso solo sul compito contestato | 26/10/2026 | Fatto in 0.12.0 (tocco sulla ✓ + Annulla 5 s) |
+| Filtri in Da verificare | Filtri rapidi in alto: per figlio · Squadra · In scadenza | 26/10/2026 | Fatto in 0.12.0 (solo «In scadenza») |
+| Novità all'apertura | Popup con le novità della versione, diverse per figli e genitori, con «Ho letto»; stato in `members/{uid}.newsSeen`, valido per persona su ogni dispositivo; chi ha saltato versioni vede le novità arretrate | 26/10/2026 | Fatto in 0.12.0 |
+| Schede nella pagina Setup | Dividere il Setup in schede: Famiglia e orari · Figli · Genitori · Regole del gioco · Questo dispositivo | 17/10/2026 | Fatto in 0.13.0 |
+| Cambio PIN nella guida ragazzi | Spiegare in «Per i ragazzi» come cambiare il PIN (pulsante 🔢 PIN: attuale, nuovo, ripeti) e cosa fare se lo dimenticano (genitori: Setup › Figli › Nuovo PIN) | 17/10/2026 | Fatto in 0.13.0 |
+
+## Schede delle proposte
+
+### Regalo di compleanno – algoritmo (proposta del 27/10/2026)
+
+**Idea.** Il giorno del compleanno, alla prima apertura, il figlio vede un pop-up di auguri con il suo regalo: un pacchetto di stelle che lo fa avanzare verso il premio che ha scelto come obiettivo. Le stelle nascono da una «pagella dell'anno» da 0 a 100 calcolata sugli ultimi 12 mesi: più alto il punteggio, più stelle, sempre dentro un minimo garantito e un massimo fissati dai genitori. Si resta nel gioco delle stelle; il regalo in euro resta un'alternativa da valutare.
+
+**Principi.**
+- Misurare il *comportamento*, non la quantità: percentuali e frequenze, non le stelle totali, così un figlio con meno compiti assegnati non è svantaggiato e le stelle già spese nel negozio premi non contano.
+- Il regalo minimo è garantito: il compleanno resta una festa, il comportamento decide quanto è grande il regalo, non se c'è.
+- Dire la verità conviene anche qui: un compito non fatto pesa poco, un imbroglio pesa molto (coerente con il regolamento).
+- Il miglioramento viene premiato: chi chiude l'anno meglio di come l'ha iniziato prende un bonus.
+- Il regalo si vede come progresso: non solo «+1.800 ⭐», ma quanto si è avvicinato il suo obiettivo.
+
+**Le quattro voci della pagella** (dati già presenti in `ledger`, `cards` e `completions`):
+
+| Voce | Cosa misura | Formula (punteggio 0–100) | Peso |
+| --- | --- | --- | --- |
+| Costanza ✅ | compiti obbligatori fatti sul totale (fatti + non fatti) | 0 sotto il 50%, 100 dal 95% in su, lineare in mezzo | 40% |
+| Onestà 🤝 | imbrogli contestati ogni 100 compiti fatti; cartellini rossi | 100 − 20 per ogni imbroglio ogni 100 compiti − 15 per ogni rosso, minimo 0 | 25% |
+| Giornate perfette ⭐ | giornate perfette sui giorni con compiti | 100 se almeno il 70% dei giorni, proporzionale sotto | 20% |
+| Iniziativa 💡 | facoltativi fatti, lavoretti extra, proposte approvate, compiti di squadra, al mese | 100 da 8 al mese (circa 2 a settimana), proporzionale sotto | 15% |
+
+Punteggio = 0,40 × Costanza + 0,25 × Onestà + 0,20 × Giornate perfette + 0,15 × Iniziativa.
+
+**Bonus miglioramento.** Se la pagella degli ultimi 6 mesi supera di almeno 10 punti quella dei 6 mesi precedenti: +5 punti (massimo 100).
+
+**Dal punteggio alle stelle.** I genitori fissano in Setup › Regole un regalo minimo e un regalo massimo in stelle (predefiniti: 500 ⭐ e 2.500 ⭐; a 50 ⭐ = 1 € valgono 10 € e 50 €, valore mostrato solo ai genitori).
+- Punteggio fino a 40 → regalo minimo.
+- Punteggio da 95 in su → regalo massimo.
+- In mezzo: minimo + (massimo − minimo) × (punteggio − 40) / 55, arrotondato a 50 ⭐.
+- Fasce mostrate al figlio: Regalo 🎁 (sotto 40), Bel regalo 🎁🎁 (40–69), Grande regalo 🎁🎁🎁 (70–89), Super regalo 🌟 (90 e oltre).
+
+**Esempio.** Costanza 90% → 89; 1 imbroglio ogni 100 compiti, nessun rosso → 80; giornate perfette 50% → 71; iniziativa 6 al mese → 75. Punteggio = 35,6 + 20 + 14,3 + 11,3 = 81 → Grande regalo. Con 500–2.500 ⭐: 500 + 2.000 × 41/55 = 1.991 → **2.000 ⭐**. Se l'obiettivo è il contributo bici (100 € = 5.000 ⭐) e il figlio ha 2.000 ⭐, passa dal 40% all'80% della barra.
+
+**Casi particolari.**
+- Figlio nell'app da meno di 12 mesi: si usa il periodo disponibile; sotto i 60 giorni di dati, regalo a metà tra minimo e massimo e nessuna pagella mostrata.
+- Giorni di primo rosso (compiti senza stelle) e di compiti di recupero: contano normalmente per Costanza (il compito va comunque fatto); il blocco delle stelle del primo rosso non si applica al regalo di compleanno.
+- Le stelle del regalo si sommano al saldo come un movimento a sé e non contano per la pagella dell'anno successivo.
+
+**Flusso.**
+1. 7 giorni prima: nella pagina Genitori compare «Compleanno in arrivo» con pagella, stelle proposte e dettaglio delle voci.
+2. Il genitore conferma o corregge le stelle e può aggiungere un messaggio di auguri.
+3. Il giorno del compleanno, alla prima apertura del figlio: pop-up con auguri e coriandoli, fascia del regalo, «+2.000 ⭐» e la barra dell'obiettivo che avanza; poi «Ecco cosa hai fatto di bello quest'anno» con le voci migliori, senza mettere in evidenza quelle basse.
+4. Le stelle arrivano con la conferma del genitore; se il genitore non conferma, al compleanno arrivano le stelle proposte. Il pop-up si mostra una volta sola e resta rivedibile da «Le mie stelle».
+
+**Dati e sicurezza.**
+- Nuovo campo per figlio in `families/{fid}.kids[]`: `birthday` in formato gg/mm (solo giorno e mese; da valutare l'anno per «Buon 10° compleanno») e `goalRewardId` (obiettivo scelto, scrivibile anche dal figlio).
+- Nuovo tipo di movimento in `ledger`: `birthday`, scrivibile solo dai genitori (le regole Firestore devono impedirlo ai figli).
+- Nuovo documento `…/kids/{kidId}/birthdays/{anno}`: score, voci, stars, tier, message, confirmedAt, seenAt. Scrive solo il genitore; il figlio legge il proprio e scrive solo `seenAt`.
+- Calcolo sul dispositivo del genitore (come i conti di fine giornata): lettura di `ledger` e `cards` dell'ultimo anno, una volta sola.
+- Privacy: la data di nascita di un minore è un dato personale; va aggiunta all'informativa.
+
+**Da decidere.** Pesi e soglie (fissi o configurabili in Setup › Regole); minimo e massimo predefiniti in stelle; se rendere visibile durante l'anno una «pagella in corso» come incentivo; regalo in € come alternativa.
+
+### Tagli della valuta – proposta (27/10/2026)
+
+**Idea.** Con premi grandi (contributo bici 5.000 ⭐) e il regalo di compleanno (fino a 2.500 ⭐) i numeri diventano lunghi. Tre tagli, non di più, rendono i saldi leggibili e danno la soddisfazione di «formare» un pianeta o una galassia.
+
+| Taglio | Vale | In euro (50 ⭐ = 1 €, solo per i genitori) |
+| --- | --- | --- |
+| ⭐ Stella | 1 | 0,02 € |
+| 🪐 Pianeta | 100 ⭐ | 2 € |
+| 🌌 Galassia | 1.000 ⭐ = 10 🪐 | 20 € |
+
+**Regole.**
+- Solo visualizzazione: nel database tutto resta in stelle (`ledger.amount`, `rewards.cost`), quindi nessuna modifica a dati, regole Firestore o conti.
+- Cambio automatico: il saldo si mostra sempre nella forma più compatta, es. 2.345 ⭐ → **2 🌌 3 🪐 45 ⭐**; i tagli a zero non si mostrano (1.045 ⭐ → 1 🌌 45 ⭐).
+- I compiti restano in stelle (1–5 ⭐); i tagli compaiono su saldo, costi dei premi, barra dell'obiettivo e regalo di compleanno.
+- Momento di festa: quando il saldo supera una soglia di 100 compare «Hai formato un pianeta! 🪐», a 1.000 «Hai formato una galassia! 🌌» (animazione breve, una volta per soglia).
+- Una spesa può «rompere» un pianeta o una galassia: il resto torna in stelle automaticamente, come il resto in monete.
+- Valore educativo: i tagli seguono centinaia e migliaia, utile ai bambini per esercitarsi con il valore posizionale.
+- Opzione in Setup › Regole: mostrare i tagli oppure solo le stelle (per i più piccoli).
+
+**Esempio.** Saldo 2.000 ⭐ = 2 🌌; obiettivo bici 5.000 ⭐ = 5 🌌; la barra mostra «2 🌌 su 5 🌌». Con il regalo di compleanno da 2.000 ⭐ diventa «4 🌌 su 5 🌌».
+
+**Da decidere.** Nomi alternativi (es. 🌙 luna, ☀️ sole) e se mostrare nel negozio premi il prezzo misto (1 🌌 5 🪐) o con i decimali (1,5 🌌; sconsigliato per i bambini).
