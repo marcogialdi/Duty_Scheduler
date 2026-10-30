@@ -215,22 +215,4 @@ Limiti: conti di fine giornata legati all'apertura di un genitore; nessuna notif
 4. Privacy e legale: consulenza GDPR, informativa completa, database UE.
 5. Distribuzione: PWA; eventualmente store con Capacitor (Google ~25 $ una tantum, Apple ~99 $/anno, Mac per iOS).
 
-**Possibili sviluppi (backlog)**
-
-| Idea | Descrizione | Proposta il | Stato |
-| --- | --- | --- | --- |
-| Schede nella pagina Genitori | Troppo scorrimento: dividere in schede (es. Oggi · Compiti · Premi · Proposte) | 17/10/2026 | Fatto in 0.8.0 |
-| Compiti collaborativi | Compiti per più figli insieme: le stelle arrivano a tutti solo se ognuno fa la sua parte | 17/10/2026 | Fatto in 0.9.0 |
-| Schede nella pagina Setup | Come per Genitori: dividere il Setup in schede (es. Famiglia e orari · Figli · Genitori · Regole del gioco · Questo dispositivo) | 17/10/2026 | Fatto in 0.13.0 |
-| Fasce chiare in Gestione compiti | Nella pagina Genitori i compiti di ogni figlio sono un elenco unico per orario: distinguere bene Mattina 🌅, Pomeriggio ☀️ e Sera 🌙 (intestazione con orari e numero di compiti, separazione visiva), come nella giornata dei ragazzi | 17/10/2026 | Fatto in 0.10.0 |
-| Guida contestuale | Oggi la guida cambia solo per ruolo: aprirla sulla sezione della schermata in uso (Setup → Attivare il dispositivo, Da verificare → Controlli, squadra → Compiti di squadra) e, prima dell'accesso, mostrare solo registrazione, invito e PIN | 17/10/2026 | Da valutare |
-| Cambio PIN nella guida ragazzi | Spiegare in «Per i ragazzi» come cambiare il PIN (pulsante 🔢 PIN: attuale, nuovo, ripeti) e cosa fare se lo dimenticano (genitori: Setup › Figli › Nuovo PIN) | 17/10/2026 | Fatto in 0.13.0 |
-| Fasce richiudibili | Nella giornata dei ragazzi chiudere e riaprire Mattina 🌅, Pomeriggio ☀️ e Sera 🌙 toccando l'intestazione (resta visibile con il conteggio, es. 4/6); proposta: la fascia completata o passata si chiude da sola e il dispositivo ricorda la scelta | 19/10/2026 | Fatto in 0.10.0 |
-| "Da verificare" raggruppato | Nella scheda Da verificare raggruppare i compiti prima per figlio e poi per fascia (Mattina 🌅, Pomeriggio ☀️, Sera 🌙) per una lettura più facile; compiti di squadra e lavoretti extra in un gruppo a parte | 21/10/2026 | Fatto in 0.10.0 |
-| Compito ripetuto nella giornata | Nel modulo, oltre ai giorni, scegliere le fasce Mattina 🌅 · Pomeriggio ☀️ · Sera 🌙 in cui il compito si ripete, ognuna col suo orario (es. Lavare i denti 07:00, 14:15, 20:50); si crea un'assegnazione per fascia, ognuna si spunta e vale stelle a sé. Oggi: ripetere l'inserimento con «Compito» esistente e un altro orario | 22/10/2026 | Fatto in 0.11.0 |
-| Modifica dei premi del catalogo | Oggi il catalogo permette solo aggiungi/elimina: cambiare nome e costo, sospendere e riattivare un premio (le richieste già fatte mantengono il prezzo di allora) | 22/10/2026 | Fatto in 0.11.0 |
-| Modifica rapida dalla giornata del figlio | Guardando la giornata di un figlio, una ✏️ su ogni compito (solo per i genitori) apre la finestra di modifica, senza cercarlo in Compiti assegnati | 22/10/2026 | Fatto in 0.11.0 |
-| Modifica da Gestione compiti | Scegliendo un compito esistente nel menu «Compito», offrire «Modifica il compito» e mostrare le sue assegnazioni, ognuna modificabile | 22/10/2026 | Fatto in 0.11.0 |
-| Avviso sui compiti doppi | Creando un compito con un titolo già esistente (anche con maiuscole o spazi diversi), proporre di aggiungere un'assegnazione al compito esistente, così le correzioni valgono per tutte le ripetizioni | 22/10/2026 | Fatto in 0.11.0 |
-| Unisci compiti doppi | Unire compiti con lo stesso nome in uno solo, spostando tutte le assegnazioni; storico delle stelle invariato | 22/10/2026 | Fatto in 0.11.0 |
-| Preparare l'app alle lingue | Spostare tutti i testi (pulsanti, messaggi, guida, regole, inviti) in un dizionario italiano, con date e valute per paese; traduzioni dopo il lancio in Italia: inglese e spagnolo, poi tedesco e francese. Analisi nel documento «Pubblicazione sugli store e modello economico» (https://claude.ai/artifact/8wtnm2ayZrs52diVAW4WbV) | 22/10/2026 | Da valutare |
+**Backlog.** Le idee e gli sviluppi proposti, con il loro stato, sono ora in un documento a parte: [`docs/backlog.md`](docs/backlog.md).

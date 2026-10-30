@@ -5,6 +5,8 @@ Dati e accessi su Firebase (Firestore e Authentication); pubblicata su GitHub Pa
 
 **Filosofia del progetto**: [`docs/filosofia.md`](docs/filosofia.md) — responsabilità, cooperazione e gestione dei guadagni. È il riferimento per le scelte di prodotto: leggerlo prima di proporre o sviluppare nuove funzioni.
 
+**Backlog**: [`docs/backlog.md`](docs/backlog.md) — idee e sviluppi proposti, con il loro stato.
+
 ## Come sono organizzati i file
 
 | File | Contenuto |
