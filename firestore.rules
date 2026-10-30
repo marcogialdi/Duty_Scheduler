@@ -1,7 +1,11 @@
 rules_version = '2';
-// Regole di sicurezza di "Compiti di casa" · versione 0.12.5 (27/10/2026)
+// Regole di sicurezza di "Compiti di casa" · versione 0.13.0 (30/10/2026)
 // Per sapere quale versione è attiva in Firebase, guarda questa riga nella scheda Regole.
 // Incollale in Console Firebase › Firestore Database › Regole › Pubblica.
+//
+// Novità 0.13.0:
+//   - proposals, redemptions: annullando una richiesta il figlio cambia solo lo stato, nessun altro campo
+//   - le regole hanno i loro test automatici: cartella tests/ (vedi tests/README.md)
 //
 // Novità 0.12.5 (sicurezza):
 //   - members: founding() solo quando la famiglia nasce nello stesso salvataggio (un fondatore rimosso non rientra)
@@ -254,9 +258,9 @@ service cloud.firestore {
             && idOk(id) && dateOk(d().date) && recentDate(d().date)
             && d().title is string && d().title.size() >= 3 && d().title.size() <= 80
             && !('points' in d()));
+          // 0.13.0: annullando, il figlio cambia solo lo stato
           allow update: if isParentOf(fid) || (mine() && resource.data.status == 'pending'
-            && d().status == 'cancelled' && d().title == resource.data.title && !('points' in d())
-            && d().get('date', '') == resource.data.get('date', ''));
+            && d().status == 'cancelled' && d().diff(resource.data).affectedKeys().hasOnly(['status']));
           allow delete: if isParentOf(fid);
         }
         match /redemptions/{id} {
@@ -265,7 +269,7 @@ service cloud.firestore {
             && idOk(id) && d().title is string && d().title.size() <= 200
             && d().cost == get(/databases/$(database)/documents/families/$(fid)/rewards/$(d().rewardId)).data.cost);
           allow update: if isParentOf(fid) || (mine() && resource.data.status == 'pending'
-            && d().status == 'cancelled' && d().cost == resource.data.cost && d().kid == resource.data.kid);
+            && d().status == 'cancelled' && d().diff(resource.data).affectedKeys().hasOnly(['status']));
           allow delete: if isParentOf(fid);
         }
       }

@@ -24,6 +24,7 @@ function openHelp(section){
   const forKids = `
     <details ${kid ? 'open' : ''}><summary>🧒 Per i ragazzi: come funziona</summary>
       <ol><li>Tocca il tuo nome e inserisci il tuo <b>PIN</b> segreto.</li>
+      <li>Vuoi cambiare il PIN? Quando sei dentro tocca <b>🔢 PIN</b> in alto: scrivi il PIN attuale, poi quello nuovo (6 cifre) e ripetilo. Non dirlo a nessuno, nemmeno ai fratelli. Se lo dimentichi, chiedi a mamma o papà: te ne danno uno nuovo da ⚙️ Setup › Figli › Nuovo PIN.</li>
       <li>Fai i compiti e tocca il <b>cerchio</b> accanto a ognuno: ricevi subito le ⭐.</li>
       <li>Tocca il nome di una fascia (<b>Mattina, Pomeriggio, Sera</b>) per chiuderla o riaprirla. Quando hai fatto tutto si chiude da sola: se la tocchi di nuovo, l'app si ricorda la tua scelta per quel giorno.</li>
       <li>Fatti tutti? È una <b>giornata perfetta</b>: stelle bonus! Più giorni di fila = serie 🔥.</li>
@@ -43,7 +44,8 @@ function openHelp(section){
       Il <b>numero rosso</b> su una scheda indica quante cose aspettano una tua decisione.</p>
       <p><b>Da verificare</b> è diviso per giorno (Oggi, Ieri…) e poi per fascia (🌅 Mattina, ☀️ Pomeriggio, 🌙 Sera): ogni fascia è una griglia con i compiti nelle righe e i figli nelle colonne. Compiti di squadra e lavoretti extra sono righe compatte sotto ogni giorno.
       <b>Compiti assegnati</b> è diviso per figlio e, dentro, per fascia.</p>
-      <p>Nella giornata dei ragazzi le fasce si chiudono con un tocco sul nome; quelle già fatte, o già passate senza compiti obbligatori da fare, si chiudono da sole.</p></details>
+      <p>Nella giornata dei ragazzi le fasce si chiudono con un tocco sul nome; quelle già fatte, o già passate senza compiti obbligatori da fare, si chiudono da sole.</p>
+      <p>Anche <b>⚙️ Setup</b> è diviso in schede: Famiglia e orari (nome, orari, categorie ed eliminazione della famiglia), Figli, Genitori, Regole del gioco, Questo dispositivo. Il pulsante <b>Salva</b> compare in Famiglia e orari e in Regole del gioco e salva entrambe.</p></details>
     <details open><summary>🚀 Primi passi</summary>
       <ol><li><b>Figli</b>: in ⚙️ Setup aggiungi ogni figlio con nome, icona, colore e un PIN di 6 cifre (diverso per ciascuno).</li>
       <li><b>Compiti</b>: in 👪 Genitori controlla i compiti di esempio o creane di nuovi. Tocca ✏️ per modificarli.</li>
@@ -55,7 +57,7 @@ function openHelp(section){
       <ol><li>Apri l'app ed entra come genitore.</li><li>Vai in ⚙️ Setup › <b>Questo dispositivo</b>.</li>
       <li>Scegli <b>Dispositivo personale</b> (si apre sul PIN di quel figlio) oppure <b>Tablet di famiglia</b> (ognuno tocca il suo nome).</li>
       <li>Premi Salva ed <b>Esci</b>: da ora all'apertura compare l'accesso dei figli.</li></ol>
-      <p>Il tuo telefono lascialo su "Solo genitori". I figli escono da soli dopo ${fam?.rules?.autoLogoutMin ?? 10} minuti di inattività (si cambia in Setup).</p></details>
+      <p>Il tuo telefono lascialo su "Solo genitori". I figli escono da soli dopo ${fam?.rules?.autoLogoutMin ?? 10} minuti di inattività (si cambia in Setup › Famiglia e orari).</p></details>
     <details><summary>📲 Installarla come app</summary>
       <p><b>iPhone e iPad</b>: apri il link con <b>Safari</b> › tocca Condividi <b>⬆️</b> › <b>Aggiungi alla schermata Home</b>.</p>
       <p><b>Android</b>: apri con <b>Chrome</b> › menu <b>⋮</b> › <b>Installa app</b> (o il pulsante 📲 Installa in alto).</p>
@@ -107,7 +109,7 @@ function openHelp(section){
       <ul><li><b>Un figlio ha dimenticato il PIN?</b> Setup › Figli › Nuovo PIN. Se invece lo vuole cambiare lui, dal suo accesso tocca 🔢 PIN.</li>
       <li><b>Quando arrivano bonus e penalità di fine giornata?</b> Vengono calcolati quando un genitore apre l'app il giorno dopo: apritela almeno una volta al giorno.</li>
       <li><b>Senza connessione?</b> L'app si apre e mostra i dati salvati; le spunte vengono inviate appena torna la rete.</li>
-      <li><b>Come cancello tutto?</b> Setup › Elimina famiglia: cancella definitivamente tutti i dati.</li></ul></details>
+      <li><b>Come cancello tutto?</b> Setup › Famiglia e orari › Elimina famiglia: cancella definitivamente tutti i dati.</li></ul></details>
     ${forKids}`;
   $('helpDlg').querySelector('h2').textContent = `❓ Guida · versione ${APP_VERSION}`;
   if (section === 'news') $('helpBody').querySelectorAll('details').forEach((d, i) => d.open = i === (kid ? 1 : 0));
@@ -162,7 +164,7 @@ function openPrivacy(){
     <p><b>Dove:</b> sui server di Google Firebase (database e servizio di accesso), oltre che in parte sul tuo dispositivo per farlo funzionare più velocemente.</p>
     <p><b>Perché:</b> solo per far funzionare l'app durante la prova. Niente pubblicità, niente profilazione, nessuna cessione a terzi.</p>
     <p><b>Per quanto:</b> fino alla fine della prova o finché non elimini la famiglia.</p>
-    <p><b>I tuoi diritti:</b> puoi vedere e correggere tutto dall'app e cancellare definitivamente la famiglia e i dati da ⚙️ Setup › Elimina famiglia.
+    <p><b>I tuoi diritti:</b> puoi vedere e correggere tutto dall'app e cancellare definitivamente la famiglia e i dati da ⚙️ Setup › Famiglia e orari › Elimina famiglia.
       Per qualsiasi richiesta scrivi a chi gestisce la prova.</p>
     <p><b>Consiglio:</b> per i figli usate soprannomi.</p>`;
   $('privDlg').showModal();

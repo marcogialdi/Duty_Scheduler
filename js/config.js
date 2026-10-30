@@ -9,9 +9,10 @@ const APP_NAME = 'Compiti di casa';
    Nuove funzioni → si aumenta il secondo numero; solo correzioni → il terzo.
    A ogni rilascio: aggiorna APP_VERSION, APP_DATE, CHANGELOG e NEWS qui,
    l'intestazione di firestore.rules (se cambiate) e il file CHANGELOG.md. */
-const APP_VERSION = '0.12.5';
-const APP_DATE = '2026-10-27';
+const APP_VERSION = '0.13.0';
+const APP_DATE = '2026-10-30';
 const CHANGELOG = [
+  ['0.13.0', '2026-10-30', 'Setup diviso in schede (Famiglia e orari, Figli, Genitori, Regole del gioco, Questo dispositivo); nella guida dei ragazzi come cambiare il PIN; regole più strette per l\'annullamento di proposte e premi e test automatici delle regole.'],
   ['0.12.5', '2026-10-27', 'Correzioni di sicurezza dalla scansione del 27/10: colori, icone e codici dei figli controllati prima di mostrarli, Content-Security-Policy; regole più strette per fondatore della famiglia, scambi, compiti di squadra e spunte dei giorni già chiusi.'],
   ['0.12.4', '2026-10-26', 'App Check attivo con la chiave di Google Cloud Fraud Defense.'],
   ['0.12.3', '2026-10-26', 'App Check passa a Google Cloud Fraud Defense (ex reCAPTCHA Enterprise).'],
@@ -39,6 +40,15 @@ const CHANGELOG = [
    [icona, titolo, testo]. Se per un ruolo non ci sono novità, il popup per quel ruolo non si apre.
    Chi ha saltato più versioni vede tutte quelle che non ha ancora letto, dalla più recente. */
 const NEWS = {
+  '0.13.0': {
+    kid: [
+      ['🔢', 'Cambiare il PIN', 'Nella <b>❓ Guida</b> trovi come cambiare il tuo PIN: tocca <b>🔢 PIN</b> in alto, scrivi quello attuale e poi quello nuovo. Se lo dimentichi, chiedi a mamma o papà.'],
+    ],
+    parent: [
+      ['⚙️', 'Setup a schede', 'Il Setup è diviso in schede: <b>Famiglia e orari</b>, <b>Figli</b>, <b>Genitori</b>, <b>Regole del gioco</b>, <b>Questo dispositivo</b>. Il pulsante <b>Salva</b> compare in Famiglia e orari e in Regole del gioco; l\'eliminazione della famiglia è in fondo a Famiglia e orari.'],
+      ['🛡️', 'Più sicurezza', 'Altre correzioni di sicurezza: le regole controllano meglio scambi, compiti di squadra, giorni già chiusi e richieste annullate, e ora hanno i loro test automatici.'],
+    ],
+  },
   '0.12.0': {
     kid: [
       ['👍', 'Compiti controllati', 'Quando mamma o papà controllano i tuoi compiti, accanto alla spunta compare <b>👍 controllato</b>: quel compito è confermato per sempre.'],

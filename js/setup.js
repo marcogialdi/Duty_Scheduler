@@ -5,6 +5,20 @@
    SETUP
    ===================================================================== */
 let catDraft = [];
+
+/* schede del Setup; il pulsante Salva vale per Famiglia e orari e per Regole del gioco */
+const STAB_OF = {sDevice:'dev', sKids:'kids', sParents:'par'};
+let stab = store('get', 'cdc.stab') || 'fam';
+function showStab(k){
+  if (!document.querySelector(`.ssec[data-ss="${k}"]`)) k = 'fam';
+  stab = k; store('set', 'cdc.stab', k);
+  document.querySelectorAll('#stabs [data-st]').forEach(b => { b.classList.toggle('on', b.dataset.st === k); b.setAttribute('aria-selected', b.dataset.st === k); });
+  document.querySelectorAll('.ssec').forEach(x => x.hidden = x.dataset.ss !== k);
+  $('saveSetup').hidden = !['fam','rules'].includes(k);
+  $('sDanger').hidden = k !== 'fam';
+}
+$('stabs').onclick = e => { const b = e.target.closest('[data-st]'); if (b) showStab(b.dataset.st); };
+
 function fillSetup(){
   applyView.filled = true;
   $('sTitle').value = fam.name;
@@ -17,6 +31,7 @@ function fillSetup(){
   $('kAv').textContent = AVATAR_LIST[(kidsList().length * 3) % AVATAR_LIST.length];
   fillDevice();
   renderSetupLists();
+  showStab(stab);
 }
 function fillDevice(){
   const mode = device?.fid === fid ? device.mode : 'none';

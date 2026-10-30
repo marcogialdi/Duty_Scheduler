@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Compiti di casa · versione 0.12.5 · la versione si cambia solo in js/config.js (APP_VERSION) -->
+<!-- Compiti di casa · versione 0.13.0 · la versione si cambia solo in js/config.js (APP_VERSION) -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
@@ -15,8 +15,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Compiti">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="stylesheet" href="css/base.css?v=0.12.5">
-<link rel="stylesheet" href="css/app.css?v=0.12.5">
+<link rel="stylesheet" href="css/base.css?v=0.13.0">
+<link rel="stylesheet" href="css/app.css?v=0.13.0">
 </head>
 <body>
 <div class="wrap">
@@ -287,6 +287,14 @@
 
     <!-- setup -->
     <div id="setupView" hidden>
+      <nav class="ptabs" id="stabs" aria-label="Sezioni del Setup">
+        <button data-st="fam">🏠 Famiglia e orari</button>
+        <button data-st="kids">👧👦 Figli</button>
+        <button data-st="par">👪 Genitori</button>
+        <button data-st="rules">🎮 Regole del gioco</button>
+        <button data-st="dev">📱 Questo dispositivo</button>
+      </nav>
+      <section class="ssec" data-ss="dev" hidden>
       <div class="panel" id="sDevice">
         <h2>📱 Questo dispositivo</h2>
         <p class="hint">Chi userà questo telefono o tablet quando nessun genitore è collegato?</p>
@@ -298,7 +306,9 @@
           <small>All'apertura ogni figlio tocca il suo nome e inserisce il suo PIN.</small></span></label>
         <button class="btn primary" id="saveDev">Salva per questo dispositivo</button>
       </div>
+      </section>
 
+      <section class="ssec" data-ss="kids" hidden>
       <div class="panel" id="sKids">
         <h2>👧👦 Figli (fino a 4)</h2>
         <p class="hint">Ogni figlio entra con il suo PIN di 6 cifre. Il PIN non è visibile a nessuno: se lo dimentica, ne impostate uno nuovo da qui.</p>
@@ -311,7 +321,9 @@
           <div class="rm"><button class="btn primary icon" type="submit" aria-label="Aggiungi figlio">➕</button></div>
         </form>
       </div>
+      </section>
 
+      <section class="ssec" data-ss="par" hidden>
       <div class="panel" id="sParents">
         <h2>👪 Genitori</h2>
         <div id="parentsList"></div>
@@ -319,7 +331,9 @@
         <button class="btn primary" id="inviteBtn">✉️ Crea codice d'invito</button>
         <div id="inviteList"></div>
       </div>
+      </section>
 
+      <section class="ssec" data-ss="fam" hidden>
       <div class="panel">
         <h2>🏠 Generale</h2>
         <div class="grid2">
@@ -341,13 +355,16 @@
         <div id="catList"></div>
         <button class="btn" id="addCat" type="button">➕ Aggiungi categoria</button>
       </div>
+      </section>
+      <section class="ssec" data-ss="rules" hidden>
       <div class="panel">
         <h2>🎮 Regole del gioco</h2>
         <div class="gridr" id="rulesForm"></div>
       </div>
-      <button class="btn primary big" id="saveSetup" style="width:100%">💾 Salva generale, orari, categorie e regole</button>
+      </section>
+      <button class="btn primary big" id="saveSetup" style="width:100%" hidden>💾 Salva famiglia, orari, categorie e regole</button>
 
-      <div class="panel danger" style="margin-top:24px">
+      <div class="panel danger" id="sDanger" style="margin-top:24px" hidden>
         <h2>⚠️ Elimina famiglia</h2>
         <p class="hint">Cancella per sempre famiglia, compiti, stelle, premi e storico, e anche il tuo account. Non si può annullare.</p>
         <button class="btn no" id="delFam">Elimina famiglia e tutti i dati</button>
@@ -454,21 +471,21 @@
 <div class="toast" id="toast"></div>
 
 <!-- Firebase per primo (modulo), poi i file dell'app nell'ordine: tutti partono a pagina pronta, uno dopo l'altro -->
-<script type="module" src="js/firebase.js?v=0.12.5"></script>
-<script defer src="js/config.js?v=0.12.5"></script>
-<script defer src="js/util.js?v=0.12.5"></script>
-<script defer src="js/state.js?v=0.12.5"></script>
-<script defer src="js/game.js?v=0.12.5"></script>
-<script defer src="js/auth.js?v=0.12.5"></script>
-<script defer src="js/register.js?v=0.12.5"></script>
-<script defer src="js/data.js?v=0.12.5"></script>
-<script defer src="js/kid.js?v=0.12.5"></script>
-<script defer src="js/parent.js?v=0.12.5"></script>
-<script defer src="js/verify.js?v=0.12.5"></script>
-<script defer src="js/edit.js?v=0.12.5"></script>
-<script defer src="js/collab.js?v=0.12.5"></script>
-<script defer src="js/setup.js?v=0.12.5"></script>
-<script defer src="js/help.js?v=0.12.5"></script>
-<script defer src="js/main.js?v=0.12.5"></script>
+<script type="module" src="js/firebase.js?v=0.13.0"></script>
+<script defer src="js/config.js?v=0.13.0"></script>
+<script defer src="js/util.js?v=0.13.0"></script>
+<script defer src="js/state.js?v=0.13.0"></script>
+<script defer src="js/game.js?v=0.13.0"></script>
+<script defer src="js/auth.js?v=0.13.0"></script>
+<script defer src="js/register.js?v=0.13.0"></script>
+<script defer src="js/data.js?v=0.13.0"></script>
+<script defer src="js/kid.js?v=0.13.0"></script>
+<script defer src="js/parent.js?v=0.13.0"></script>
+<script defer src="js/verify.js?v=0.13.0"></script>
+<script defer src="js/edit.js?v=0.13.0"></script>
+<script defer src="js/collab.js?v=0.13.0"></script>
+<script defer src="js/setup.js?v=0.13.0"></script>
+<script defer src="js/help.js?v=0.13.0"></script>
+<script defer src="js/main.js?v=0.13.0"></script>
 </body>
 </html>

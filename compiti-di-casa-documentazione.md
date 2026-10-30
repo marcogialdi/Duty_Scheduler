@@ -15,6 +15,9 @@ Versione app 0.7.2 · aggiornata al 17/10/2026 · Documento vivo: https://claude
 
 | Data | Versione | Cosa è cambiato |
 | --- | --- | --- |
+| 30/10/2026 | 0.13.0 – Setup a schede e test delle regole | ⚙️ Setup diviso in schede (Famiglia e orari · Figli · Genitori · Regole del gioco · Questo dispositivo); nella guida dei ragazzi come cambiare il PIN; annullando una proposta o una richiesta di premio il figlio cambia solo lo stato; test automatici delle regole con l'emulatore in `tests/`. Regole 0.13.0 |
+| 26–27/10/2026 | 0.12.1–0.12.5 – sicurezza | Due revisioni di sicurezza (manuale e scansione Claude Security): stelle solo per compiti veri, propri e di questi giorni; date e codici controllati (niente XSS); inviti monouso; cartellino rosso "niente stelle" applicato dalle regole; App Check con Google Cloud Fraud Defense; dati dei figli controllati prima di mostrarli e Content-Security-Policy; fondatore rimosso, scambi, compiti di squadra e giorni chiusi protetti dalle regole. Regole 0.12.5 |
+| 26/10/2026 | 0.12.0 – Da verificare rifatta | «Da verificare» per giorno e fascia con griglia compiti × figli, «Tutto ok ✓», contestazione con un tocco e Annulla, filtro «In scadenza», popup delle novità. Regole 0.12.0 |
 | 23/10/2026 | 0.11.0 – inserire e modificare meglio | Compito più volte al giorno (una fascia per orario); «Modifica il compito» ed elenco delle assegnazioni in Gestione compiti; ✏️ sulla giornata del figlio per i genitori; avviso sui titoli doppi e «Unisci» per i doppioni; premi modificabili e sospendibili; catalogo consigliato di 21 premi (50 ⭐ = 1 €, fino al contributo bici da 100 €). Regole invariate (0.9.0) |
 | 22/10/2026 | 0.10.0 – fasce più chiare | «Da verificare» e «Compiti assegnati» divisi per figlio e per fascia (Mattina, Pomeriggio, Sera); squadra e lavoretti extra a parte; nella giornata dei ragazzi fasce richiudibili con un tocco, chiuse da sole se vuote, fatte o passate senza obbligatori da fare; la scelta a mano resta per figlio e giorno sul dispositivo. Regole invariate (0.9.0) |
 | 17/10/2026 | 0.9.0 – compiti di squadra e file separati | Compiti di squadra 🤝: un facoltativo con «Collaborazione» vale per una squadra di figli; uno segna, gli altri confermano, le stelle arrivano a tutti solo a conferme complete; il genitore può confermare; «Non è vero!» dà il giallo a tutta la squadra. App divisa in file per funzione (css/, js/) con la versione nel nome dei file e controlli automatici all'assemblaggio. Regole Firestore 0.9.0 da ripubblicare |
@@ -138,9 +141,11 @@ Nessun server da gestire: la pagina arriva da GitHub Pages e parla direttamente 
 - Nuovo PIN dal genitore: nuovo account (versione +1), il vecchio perde i permessi.
 - Il dispositivo attivato salva famiglia e figli in locale: "Chi sei?" non legge il database.
 - Regole Firestore: ogni richiesta verifica famiglia e ruolo in `members/{uid}`; famiglie isolate; il primo genitore si registra solo creando la famiglia, il secondo solo con invito valido; i figli scrivono solo le proprie azioni con punti coerenti e leggono solo i propri punteggi.
-- Compiti di squadra: segna solo un membro della squadra dell'assegnazione; un compagno aggiunge solo la propria conferma; chi ha segnato toglie la spunta solo finché mancano conferme; stelle di squadra (`collab_…`) scrivibili da un membro anche per i compagni, solo a conferme complete, non contestate e pari al valore del compito (o 0).
+- Compiti di squadra: segna solo un membro della squadra dell'assegnazione, e solo il compito di quell'assegnazione; un compagno aggiunge solo la propria conferma; chi ha segnato toglie la spunta solo finché mancano conferme; stelle di squadra (`collab_…`) scrivibili da un membro anche per i compagni, solo a conferme complete, non contestate e pari esattamente al valore del compito (0 solo con il rosso "niente stelle").
+- Dalla 0.12.x: un figlio segna solo assegnazioni vere, sue o ricevute da uno scambio del titolare, con data vicina a oggi; toglie la spunta solo nei giorni non ancora chiusi; propone lo scambio solo dei propri compiti; annullando una richiesta cambia solo lo stato. Inviti monouso; un fondatore rimosso non rientra da solo. Date e codici dei documenti scritti dai figli controllati; colore, icona e codice dei figli controllati nell'app (`cleanKids`); Content-Security-Policy; App Check (Google Cloud Fraud Defense).
+- Test: `tests/` contiene le prove automatiche delle regole con l'emulatore (`npm test`, vedi `tests/README.md`); vanno lanciate prima di ogni pubblicazione delle regole.
 - Limite Firebase: ~20 verifiche per salvataggio di gruppo → gruppi da 6; stelle di squadra scritte una per figlio, con recupero automatico senza doppioni se qualcosa si interrompe.
-- Limiti accettati: un figlio esperto può guadagnare al massimo +1 stella indebita per compito; gli account dei figli restano in Authentication dopo l'eliminazione.
+- Limiti accettati: un figlio esperto può guadagnare al massimo +1 stella indebita per compito (fino al bonus di scambio); gli account dei figli restano in Authentication dopo l'eliminazione; le regole non possono controllare i singoli campi della lista `kids` della famiglia (lo fa l'app); il PIN di 6 cifre si può provare a indovinare dall'app vera, con i rallentamenti di Firebase.
 
 ## Privacy e dati dei minori
 
@@ -158,11 +163,12 @@ Nessun server da gestire: la pagina arriva da GitHub Pages e parla direttamente 
 | `compiti/sw.js` | service worker |
 | `compiti/icons/` | icone 192, 512, maskable 512, apple-touch 180 |
 | `firestore.rules` | regole di sicurezza |
+| `tests/` | test automatici delle regole (non serve sul sito) |
 | `compiti.html` | rimando al nuovo indirizzo |
 
 1. Firestore in modalità produzione (località europea consigliata).
 2. Authentication › Email/password attivo.
-3. Firestore › Regole: pubblicare `firestore.rules`.
+3. Firestore › Regole: lanciare i test (`cd tests && npm test`), poi pubblicare `firestore.rules`.
 4. `firebaseConfig` del progetto `duty-scheduler-bdd9e` già in `js/firebase.js`.
 
 Pubblicazione: cartella `compiti` su GitHub Pages → `https://<utente>.github.io/<repository>/compiti/`. Aggiornare: caricare tutto il contenuto dello zip, comprese le cartelle `css/` e `js/`. La versione si cambia solo in `js/config.js`; l'assemblaggio la porta nei nomi dei file e nel service worker e blocca il pacchetto se trova errori (pagina incompleta, sintassi, nomi doppi, elementi mancanti, registro versioni, ordine nelle regole). Costi: piano Spark gratuito, ampiamente sotto i limiti.
@@ -201,11 +207,11 @@ Fonti: https://apps.apple.com/app/id1611068600 · https://apps.apple.com/us/app/
 
 ## Limiti noti e roadmap
 
-Limiti: conti di fine giornata legati all'apertura di un genitore; nessuna notifica push; account dei figli non cancellati; regole non verificate con emulatore; compiti di squadra: se un compagno è nel primo rosso e la conferma finale arriva da un figlio, il compagno riceve comunque le stelle; non presente sugli store.
+Limiti: conti di fine giornata legati all'apertura di un genitore; nessuna notifica push; account dei figli non cancellati; non presente sugli store. Risolti: regole verificate con emulatore (`tests/`, dalla 0.13.0); stelle di squadra a un compagno nel primo rosso (dalla 0.12.2, controllate dalle regole dalla 0.12.5).
 
 1. Test con 3–4 famiglie (ora).
 2. Server leggero (Cloud Functions, piano Blaze): chiusura notturna, notifiche push, cancellazione completa, stelle calcolate lato server.
-3. Codice da prodotto: file già divisi (0.9.0); poi moduli ES e build (Vite), test delle regole con emulatore, monitoraggio errori.
+3. Codice da prodotto: file già divisi (0.9.0), test delle regole con emulatore (0.13.0); poi moduli ES e build (Vite), monitoraggio errori.
 4. Privacy e legale: consulenza GDPR, informativa completa, database UE.
 5. Distribuzione: PWA; eventualmente store con Capacitor (Google ~25 $ una tantum, Apple ~99 $/anno, Mac per iOS).
 
@@ -215,10 +221,10 @@ Limiti: conti di fine giornata legati all'apertura di un genitore; nessuna notif
 | --- | --- | --- | --- |
 | Schede nella pagina Genitori | Troppo scorrimento: dividere in schede (es. Oggi · Compiti · Premi · Proposte) | 17/10/2026 | Fatto in 0.8.0 |
 | Compiti collaborativi | Compiti per più figli insieme: le stelle arrivano a tutti solo se ognuno fa la sua parte | 17/10/2026 | Fatto in 0.9.0 |
-| Schede nella pagina Setup | Come per Genitori: dividere il Setup in schede (es. Famiglia e orari · Figli · Genitori · Regole del gioco · Questo dispositivo) | 17/10/2026 | Da valutare |
+| Schede nella pagina Setup | Come per Genitori: dividere il Setup in schede (es. Famiglia e orari · Figli · Genitori · Regole del gioco · Questo dispositivo) | 17/10/2026 | Fatto in 0.13.0 |
 | Fasce chiare in Gestione compiti | Nella pagina Genitori i compiti di ogni figlio sono un elenco unico per orario: distinguere bene Mattina 🌅, Pomeriggio ☀️ e Sera 🌙 (intestazione con orari e numero di compiti, separazione visiva), come nella giornata dei ragazzi | 17/10/2026 | Fatto in 0.10.0 |
 | Guida contestuale | Oggi la guida cambia solo per ruolo: aprirla sulla sezione della schermata in uso (Setup → Attivare il dispositivo, Da verificare → Controlli, squadra → Compiti di squadra) e, prima dell'accesso, mostrare solo registrazione, invito e PIN | 17/10/2026 | Da valutare |
-| Cambio PIN nella guida ragazzi | Spiegare in «Per i ragazzi» come cambiare il PIN (pulsante 🔢 PIN: attuale, nuovo, ripeti) e cosa fare se lo dimenticano (genitori: Setup › Figli › Nuovo PIN) | 17/10/2026 | Da valutare |
+| Cambio PIN nella guida ragazzi | Spiegare in «Per i ragazzi» come cambiare il PIN (pulsante 🔢 PIN: attuale, nuovo, ripeti) e cosa fare se lo dimenticano (genitori: Setup › Figli › Nuovo PIN) | 17/10/2026 | Fatto in 0.13.0 |
 | Fasce richiudibili | Nella giornata dei ragazzi chiudere e riaprire Mattina 🌅, Pomeriggio ☀️ e Sera 🌙 toccando l'intestazione (resta visibile con il conteggio, es. 4/6); proposta: la fascia completata o passata si chiude da sola e il dispositivo ricorda la scelta | 19/10/2026 | Fatto in 0.10.0 |
 | "Da verificare" raggruppato | Nella scheda Da verificare raggruppare i compiti prima per figlio e poi per fascia (Mattina 🌅, Pomeriggio ☀️, Sera 🌙) per una lettura più facile; compiti di squadra e lavoretti extra in un gruppo a parte | 21/10/2026 | Fatto in 0.10.0 |
 | Compito ripetuto nella giornata | Nel modulo, oltre ai giorni, scegliere le fasce Mattina 🌅 · Pomeriggio ☀️ · Sera 🌙 in cui il compito si ripete, ognuna col suo orario (es. Lavare i denti 07:00, 14:15, 20:50); si crea un'assegnazione per fascia, ognuna si spunta e vale stelle a sé. Oggi: ripetere l'inserimento con «Compito» esistente e un altro orario | 22/10/2026 | Fatto in 0.11.0 |

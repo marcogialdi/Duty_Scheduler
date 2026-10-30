@@ -6,6 +6,13 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.13.0 · 30/10/2026
+- **Setup a schede**: ⚙️ Setup è diviso in Famiglia e orari · Figli · Genitori · Regole del gioco · Questo dispositivo (come la pagina Genitori, si ricorda l'ultima scheda). Il pulsante Salva compare in Famiglia e orari e in Regole del gioco; "Elimina famiglia" è in fondo a Famiglia e orari. I "Vai" dei Primi passi aprono la scheda giusta.
+- **Cambio PIN nella guida ragazzi**: come cambiarlo con 🔢 PIN e cosa fare se si dimentica.
+- **Regole Firestore 0.13.0**: annullando una proposta o una richiesta di premio il figlio cambia solo lo stato, nessun altro campo. **Vanno ripubblicate.**
+- **Test delle regole** in `tests/` con l'emulatore di Firebase (`cd tests && npm test`, vedi `tests/README.md`): 39 prove, da lanciare prima di ogni pubblicazione delle regole.
+- Documentazione aggiornata: cronologia 0.12.x, sicurezza, limiti noti, backlog.
+
 ## 0.12.5 · 27/10/2026
 Correzioni di sicurezza dalla scansione del 27/10/2026 sulla 0.12.4 (tutte richiedevano un account della famiglia).
 - **Dati dei figli controllati prima di mostrarli**: colore, icona e codice di ogni figlio, letti dal documento della famiglia o dal dispositivo, passano da `cleanKids` (`js/util.js`): solo codici di lettere e cifre, colori `#rrggbb` e icone della lista; la schermata "Chi sei?" escapa tutto con `esc()`.
