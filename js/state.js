@@ -5,7 +5,10 @@
    DISPOSITIVO (cosa resta salvato su questo telefono/tablet)
    ===================================================================== */
 const DEV_KEY = 'cdc.device';
-let device = (() => { try { return JSON.parse(localStorage.getItem(DEV_KEY)) || null; } catch(e){ return null; } })();
+let device = (() => {
+  try { const d = JSON.parse(localStorage.getItem(DEV_KEY)) || null; return d && {...d, kids: cleanKids(d.kids)}; }
+  catch(e){ return null; }
+})();
 function saveDevice(d){ device = d; d ? store('set', DEV_KEY, JSON.stringify(d)) : store('del', DEV_KEY); }
 
 /* =====================================================================

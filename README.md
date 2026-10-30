@@ -27,6 +27,7 @@ Dati e accessi su Firebase (Firestore e Authentication); pubblicata su GitHub Pa
 | `js/main.js` | avvio (ultimo file) |
 | `sw.js` | funzionamento offline e aggiornamenti (generato) |
 | `firestore.rules` | regole di sicurezza da incollare in Firebase (non serve sul sito) |
+| `tests/` | test automatici delle regole con l'emulatore di Firebase: `cd tests && npm test` prima di pubblicare le regole (vedi `tests/README.md`) |
 
 I file `js/` diversi da `firebase.js` sono script normali caricati in ordine e condividono gli stessi nomi:
 non serve nessuno strumento di compilazione, il browser li legge così come sono.

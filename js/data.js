@@ -87,7 +87,7 @@ $('tabs').onclick = e => { const b = e.target.closest('button'); if (b) goView(b
 function goView(v, anchor){
   view = v; if (v !== 'setup') store('set', `cdc.view.${fid}`, v);
   if (kidById(v)) owner = v;
-  if (v === 'setup') fillSetup();
+  if (v === 'setup'){ fillSetup(); if (STAB_OF[anchor]) showStab(STAB_OF[anchor]); }
   renderTabs(); applyView(); render();
   if (anchor) setTimeout(() => $(anchor)?.scrollIntoView({behavior:'smooth', block:'start'}), 50);
 }

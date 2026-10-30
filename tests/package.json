@@ -1,0 +1,14 @@
+{
+  "name": "compiti-di-casa-test-regole",
+  "private": true,
+  "description": "Test automatici delle regole Firestore (../firestore.rules) con l'emulatore di Firebase",
+  "type": "module",
+  "scripts": {
+    "test": "firebase emulators:exec --only firestore --project demo-compiti \"node rules.test.mjs\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "3.0.4",
+    "firebase": "10.14.1",
+    "firebase-tools": "13.35.1"
+  }
+}

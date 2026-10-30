@@ -6,6 +6,24 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.13.0 · 30/10/2026
+- **Setup a schede**: ⚙️ Setup è diviso in Famiglia e orari · Figli · Genitori · Regole del gioco · Questo dispositivo (come la pagina Genitori, si ricorda l'ultima scheda). Il pulsante Salva compare in Famiglia e orari e in Regole del gioco; "Elimina famiglia" è in fondo a Famiglia e orari. I "Vai" dei Primi passi aprono la scheda giusta.
+- **Cambio PIN nella guida ragazzi**: come cambiarlo con 🔢 PIN e cosa fare se si dimentica.
+- **Regole Firestore 0.13.0**: annullando una proposta o una richiesta di premio il figlio cambia solo lo stato, nessun altro campo. **Vanno ripubblicate.**
+- **Test delle regole** in `tests/` con l'emulatore di Firebase (`cd tests && npm test`, vedi `tests/README.md`): 39 prove, da lanciare prima di ogni pubblicazione delle regole.
+- Documentazione aggiornata: cronologia 0.12.x, sicurezza, limiti noti, backlog.
+
+## 0.12.5 · 27/10/2026
+Correzioni di sicurezza dalla scansione del 27/10/2026 sulla 0.12.4 (tutte richiedevano un account della famiglia).
+- **Dati dei figli controllati prima di mostrarli**: colore, icona e codice di ogni figlio, letti dal documento della famiglia o dal dispositivo, passano da `cleanKids` (`js/util.js`): solo codici di lettere e cifre, colori `#rrggbb` e icone della lista; la schermata "Chi sei?" escapa tutto con `esc()`.
+- **Content-Security-Policy** in `index.html`: gli script si caricano solo dal sito e dai domini di Firebase e reCAPTCHA; niente script scritti dentro la pagina.
+- **Fondatore rimosso**: `founding()` vale solo quando la famiglia nasce nello stesso salvataggio, quindi un fondatore rimosso da un altro genitore non può rientrare da solo.
+- **Scambi**: un figlio può proporre lo scambio solo delle proprie assegnazioni, e un compito ricevuto vale solo se lo scambio viene dal titolare.
+- **Compiti di squadra**: il compito segnato deve essere quello dell'assegnazione di squadra; le stelle di un compagno si scrivono solo per l'importo esatto (0 solo con il rosso "niente stelle").
+- **Giorni chiusi**: un figlio può togliere la spunta solo nei giorni non ancora chiusi dal genitore.
+- **Regole Firestore 0.12.5: vanno ripubblicate.**
+- Da tenere presente: le regole non possono controllare i campi dentro la lista `kids` della famiglia; la protezione è nell'app (`cleanKids`, `esc()`, CSP).
+
 ## 0.12.4 · 26/10/2026
 - **App Check attivo**: chiave Fraud Defense del sito in `APP_CHECK_SITE_KEY` (`js/firebase.js`). L'applicazione obbligatoria (Enforce) si attiva in Console Firebase › App Check solo dopo qualche giorno di metriche "verificate". Regole Firestore invariate (0.12.2).
 
