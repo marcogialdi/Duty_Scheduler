@@ -26,7 +26,7 @@ const leftTxt = t => { const h = Math.floor((t - Date.now()) / 3600e3); return h
 
 function renderVerify(){
   const r = R();
-  $('pVerifyHint').innerHTML = `Compiti segnati nelle ultime ${r.contestHours} ore. Tocca <b>✓</b> su un compito non vero per contestarlo; <b>Tutto ok ✓</b> conferma il gruppo.`;
+  $('pVerifyHint').innerHTML = `Compiti segnati nelle ultime ${r.contestHours} ore. Tocca <b>✓</b> su un compito non vero per contestarlo; <b>Tutto ok ✓</b> conferma il gruppo. <button class="link helpq" data-helpsec="checks" aria-label="Guida: controlli">❓</button>`;
   const comps = data.verify.filter(c => c.collab ? (c.team || []).some(kidById) : kidById(c.doneBy));
   const open = comps.filter(verOpen), soonN = open.filter(verSoon).length;
   if (verSoonOnly && !soonN) verSoonOnly = false;

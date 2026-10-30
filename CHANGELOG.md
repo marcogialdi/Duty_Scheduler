@@ -6,6 +6,13 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.14.0 · 30/10/2026
+- **Guida contestuale**: ❓ Guida si apre sulla sezione della schermata in uso. Genitori: ogni scheda della pagina Genitori e del Setup ha la sua sezione (Da verificare → Controlli, Setup › Questo dispositivo → Attivare il dispositivo, Setup › Figli e Genitori → Figli, genitori e PIN, Regole → Il gioco…); guardando la giornata di un figlio si apre «Per i ragazzi». Figli: «Per i ragazzi», come prima.
+- **Prima dell'accesso** la guida mostra solo Creare la famiglia, Ho un codice d'invito, Accesso dei genitori, Accesso dei figli e Installarla come app, aperta sulla schermata in uso.
+- Nuove sezioni «👧👦 Figli, genitori e PIN» e «🏠 Famiglia, orari e categorie»; «🤝 Compiti di squadra» ha una sezione tutta sua.
+- **❓ accanto ai titoli** (Compiti di squadra in Compiti assegnati, Da verificare, Questo dispositivo, Genitori): apre direttamente la sezione giusta. «Leggi la guida» dei Primi passi apre «Primi passi».
+- Regole Firestore invariate (0.13.0).
+
 ## 0.13.0 · 30/10/2026
 - **Setup a schede**: ⚙️ Setup è diviso in Famiglia e orari · Figli · Genitori · Regole del gioco · Questo dispositivo (come la pagina Genitori, si ricorda l'ultima scheda). Il pulsante Salva compare in Famiglia e orari e in Regole del gioco; "Elimina famiglia" è in fondo a Famiglia e orari. I "Vai" dei Primi passi aprono la scheda giusta.
 - **Cambio PIN nella guida ragazzi**: come cambiarlo con 🔢 PIN e cosa fare se si dimentica.

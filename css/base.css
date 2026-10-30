@@ -37,6 +37,7 @@ header h1{font-size:1.4rem;margin:4px 0}
 .pad button:active{background:var(--line)}
 .form{text-align:left;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
 .link{background:none;border:none;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:.85rem;margin-top:10px}
+.link.helpq{text-decoration:none;margin:0 0 0 4px;padding:0 2px;font-size:.9rem;vertical-align:middle}
 /* punteggio */
 .score{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
 .score div{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:10px;text-align:center}
