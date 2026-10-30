@@ -3,6 +3,8 @@
 App web (PWA) per i compiti quotidiani dei figli, trasformati in un gioco con stelle, serie, cartellini e premi.
 Dati e accessi su Firebase (Firestore e Authentication); pubblicata su GitHub Pages. Versione e novità: `CHANGELOG.md`.
 
+**Filosofia del progetto**: [`docs/filosofia.md`](docs/filosofia.md) — responsabilità, cooperazione e gestione dei guadagni. È il riferimento per le scelte di prodotto: leggerlo prima di proporre o sviluppare nuove funzioni.
+
 ## Come sono organizzati i file
 
 | File | Contenuto |
