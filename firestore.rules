@@ -1,7 +1,11 @@
 rules_version = '2';
-// Regole di sicurezza di "Compiti di casa" · versione 0.13.0 (30/10/2026)
+// Regole di sicurezza di "Compiti di casa" · versione 0.13.1 (02/11/2026)
 // Per sapere quale versione è attiva in Firebase, guarda questa riga nella scheda Regole.
 // Incollale in Console Firebase › Firestore Database › Regole › Pubblica.
+//
+// Novità 0.13.1:
+//   - feedback: commenti e idee dal sito pubblico bebeans.it; chiunque può crearne uno (protetto da App Check),
+//     nessuno lo legge, modifica o cancella dall'app: si leggono in Console Firebase › Firestore › feedback
 //
 // Novità 0.13.0:
 //   - proposals, redemptions: annullando una richiesta il figlio cambia solo lo stato, nessun altro campo
@@ -63,6 +67,23 @@ service cloud.firestore {
       let p = s.split('-');
       let t = timestamp.date(int(p[0]), int(p[1]), int(p[2]));
       return t > request.time - duration.value(3, 'd') && t < request.time + duration.value(2, 'd');
+    }
+
+    // ---------- commenti e idee dal sito bebeans.it (0.13.1) ----------
+    // Solo creazione, con campi e lunghezze controllati; si leggono dalla Console Firebase.
+    match /feedback/{id} {
+      allow create: if d().keys().hasOnly(['type', 'role', 'message', 'name', 'email', 'consent', 'source', 'createdAt'])
+        && d().keys().hasAll(['type', 'role', 'message', 'consent', 'source', 'createdAt'])
+        && d().type in ['commento', 'idea']
+        && d().role in ['genitore', 'commerciante', 'altro']
+        && d().message is string && d().message.size() >= 10 && d().message.size() <= 2000
+        && (!('name' in d()) || (d().name is string && d().name.size() <= 60))
+        && (!('email' in d()) || (d().email is string && d().email.size() <= 120
+              && d().email.matches('[^@ ]+@[^@ ]+[.][^@ ]+')))
+        && d().consent == true
+        && d().source == 'bebeans.it'
+        && d().createdAt == request.time;
+      allow read, update, delete: if false;
     }
 
     // ---------- account ----------
