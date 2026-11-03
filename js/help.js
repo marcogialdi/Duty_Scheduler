@@ -218,7 +218,7 @@ $('newsDlg').addEventListener('close', async () => {
 function openPrivacy(){
   const who = CONTACT.name ? `${esc(CONTACT.name)}${CONTACT.email ? ` (<a href="mailto:${esc(CONTACT.email)}">${esc(CONTACT.email)}</a>)` : ''}` : 'la persona che ti ha invitato a provare l\'app';
   $('privBody').innerHTML = `
-    <p>Questa è una <b>versione di prova</b> di "Compiti di casa", usata da poche famiglie.</p>
+    <p>Questa è una <b>versione di prova</b> di "${APP_NAME}", usata da poche famiglie.</p>
     <p><b>Chi gestisce i dati:</b> ${who}.</p>
     <p><b>Quali dati:</b> nome ed email dei genitori; nome (o soprannome), colore e icona dei figli; compiti, orari, stelle, premi e cartellini.
       I PIN dei figli e le password non sono visibili a nessuno: sono custoditi in forma protetta dal servizio di accesso.</p>

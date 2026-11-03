@@ -1,10 +1,18 @@
-# Compiti di casa – Registro delle versioni
+# BeBeans · Compiti di casa – Registro delle versioni
 
 Numerazione `MAGGIORE.MINORE.CORREZIONE`: si resta su `0.x` durante la prova; `1.0.0` sarà la prima versione da prodotto.
 Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
+
+## 0.15.0 · 03/11/2026
+- **Nuovo look BeBeans**: l'app prende il nome **BeBeans** (titolo, icona installata, inviti, informativa) e il logo A "Fagiolo stella", nell'intestazione e nella schermata di benvenuto.
+- **Colori del marchio**: blu notte `#1F2A44` per testo, contorni e pulsanti principali; giallo fagiolo `#FFD54A` e corallo `#FF7A59` per sfondi, avvisi e barre; fondo crema `#FFF8E7`. Le stelle si scrivono in corallo scuro `#B8401F`, leggibile (contrasto 5,5:1). Tema scuro con fondo blu notte e pulsanti gialli.
+- **Carattere Fredoka** (quello del logo) per titoli, schede e pulsanti; il testo resta nel carattere del telefono. Fredoka è dentro l'app (`fonts/`, licenza SIL OFL): nessun collegamento a Google Fonts, funziona anche offline.
+- **Nuove icone** (Android, iPhone, adattabile) e favicon vettoriale `icons/logo.svg`.
+- Popup delle novità per figli e genitori.
+- Regole Firestore invariate (0.13.1).
 
 ## 0.14.0 · 30/10/2026
 - **Guida contestuale**: ❓ Guida si apre sulla sezione della schermata in uso. Genitori: ogni scheda della pagina Genitori e del Setup ha la sua sezione (Da verificare → Controlli, Setup › Questo dispositivo → Attivare il dispositivo, Setup › Figli e Genitori → Figli, genitori e PIN, Regole → Il gioco…); guardando la giornata di un figlio si apre «Per i ragazzi». Figli: «Per i ragazzi», come prima.
