@@ -15,6 +15,7 @@ Versione app 0.7.2 · aggiornata al 17/10/2026 · Documento vivo: https://claude
 
 | Data | Versione | Cosa è cambiato |
 | --- | --- | --- |
+| 14/11/2026 | 0.16.0 – medaglie, obiettivo, tagli | Medaglie 🏅 (32, assegnate in automatico dal dispositivo di un genitore, anche a ritroso al primo avvio); Il mio obiettivo 🎯 scelto dal Negozio con barra di avanzamento; stelle in pianeti 🪐 e galassie 🌌 (solo visualizzazione). Regole 0.16.0 |
 | 30/10/2026 | 0.14.0 – guida contestuale | La guida si apre sulla sezione della schermata in uso (schede Genitori e Setup, giornata di un figlio); prima dell'accesso solo creare la famiglia, invito, accesso genitori e figli, installazione; ❓ accanto ad alcuni titoli; nuove sezioni Figli, genitori e PIN · Famiglia, orari e categorie · Compiti di squadra. Regole invariate (0.13.0) |
 | 30/10/2026 | 0.13.0 – Setup a schede e test delle regole | ⚙️ Setup diviso in schede (Famiglia e orari · Figli · Genitori · Regole del gioco · Questo dispositivo); nella guida dei ragazzi come cambiare il PIN; annullando una proposta o una richiesta di premio il figlio cambia solo lo stato; test automatici delle regole con l'emulatore in `tests/`. Regole 0.13.0 |
 | 26–27/10/2026 | 0.12.1–0.12.5 – sicurezza | Due revisioni di sicurezza (manuale e scansione Claude Security): stelle solo per compiti veri, propri e di questi giorni; date e codici controllati (niente XSS); inviti monouso; cartellino rosso "niente stelle" applicato dalle regole; App Check con Google Cloud Fraud Defense; dati dei figli controllati prima di mostrarli e Content-Security-Policy; fondatore rimosso, scambi, compiti di squadra e giorni chiusi protetti dalle regole. Regole 0.12.5 |
@@ -130,7 +131,8 @@ Nessun server da gestire: la pagina arriva da GitHub Pages e parla direttamente 
 | `…/swaps/{scheduleId_data}` | scheduleId, date, fromOwner, toOwner, status | figli coinvolti, genitori |
 | `…/completions/{scheduleId_data}` | scheduleId, taskId, date, doneBy, points, doneAt, contested; squadra: collab, team, confirmed, completeAt, parentConfirmed; bacheca: scheduleId = x-<compito>-<n>, slot, board | figlio (oggi, i suoi), genitori |
 | `…/rewards/{id}` | title, cost, active | genitori |
-| `…/kids/{kidId}` | streak, lastClosed | genitori |
+| `…/kids/{kidId}` | streak, lastClosed, noStarsFrom/Until; goal {rewardId, title, cost, setAt}; progressi delle medaglie (bestStreak, mornStreak, mornBest, perfMonth, perfMonthN, perfMonthBest, comeback, punOk, punDone, firstDay, medalInit) | genitori; il figlio solo `goal` |
+| `…/kids/{kidId}/medals/{medalId}` | kid, wonAt, source ('app'), createdAt, seenAt | genitori (l'app, in automatico); il figlio solo `seenAt` |
 | `…/kids/{kidId}/ledger/{id}` | kid, amount, type (task, collab, perfect, streak, missed, cheat, reward, manual, proposal), reason, date, createdAt, completionId | figlio "task" (sue) e "collab" (anche dei compagni, a conferme complete), genitori |
 | `…/kids/{kidId}/cards/{id}` | type, date, from, until, nth, effect | genitori |
 | `…/kids/{kidId}/redemptions/{id}` | rewardId, title, cost, status | figlio (richiesta, annullo), genitori |

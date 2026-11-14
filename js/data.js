@@ -40,6 +40,9 @@ function watchKid(k){
   on(dref('kids', k), s => { data.kidState[k] = s.exists() ? s.data() : {}; });
   on(query(col('kids',k,'ledger'), orderBy('createdAt','desc'), limit(40)), s => { data.ledger[k] = docs(s); refreshBalance(k); });
   on(col('kids',k,'cards'), s => { data.cards[k] = docs(s); loaded['cards_' + k] = true; });
+  // medaglie: se le regole 0.16.0 non sono ancora pubblicate la lettura è negata; l'app va avanti senza
+  u.push(onSnapshot(col('kids',k,'medals'), s => { data.medals[k] = docs(s); loaded['medals_' + k] = true; maybeClose(); render(); },
+    e => { console.warn('Medaglie non disponibili: pubblicare le regole 0.16.0', e); medalsOff = true; data.medals[k] = []; loaded['medals_' + k] = true; maybeClose(); render(); }));
   if (isParent()) on(query(col('kids',k,'redemptions'), where('status','==','pending')), s => { data.pending[k] = docs(s); });
   else on(query(col('kids',k,'redemptions'), orderBy('createdAt','desc'), limit(20)), s => { data.redemptions[k] = docs(s); });
   // C: proposte dei ragazzi
@@ -73,6 +76,8 @@ function render(){
   if (subView === 'day') renderDay();
   if (subView === 'shop') renderShop();
   if (subView === 'log') renderLog();
+  if (subView === 'medals') renderMedals();
+  maybeShowMedals();
 }
 
 /* ---------- tab ---------- */
@@ -101,7 +106,7 @@ $('sub').onclick = e => {
   const b = e.target.closest('button'); if (!b) return;
   subView = b.dataset.sv;
   document.querySelectorAll('#sub button').forEach(x => x.classList.toggle('on', x === b));
-  $('svDay').hidden = subView !== 'day'; $('svShop').hidden = subView !== 'shop'; $('svLog').hidden = subView !== 'log';
+  $('svDay').hidden = subView !== 'day'; $('svShop').hidden = subView !== 'shop'; $('svLog').hidden = subView !== 'log'; $('svMedals').hidden = subView !== 'medals';
   render();
 };
 function changeDay(ds){ day = ds; swapPick = null; watchDay(); render(); }

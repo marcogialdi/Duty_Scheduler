@@ -126,6 +126,13 @@ function helpParent(){
       Come trasformare i premi virtuali in reali lo decidete voi: il catalogo è vostro.</p>
       <p>Nel <b>Catalogo premi</b> tocca ✏️ per cambiare nome e costo, oppure <b>Sospendi</b> per toglierlo dal negozio per un po'. Le richieste già fatte restano al prezzo di allora.
       Il <b>catalogo consigliato</b> ha 21 premi: 10 senza costi (film, amico a casa…) e 11 con un valore in euro (${EUR_STARS} ⭐ = 1 €), fino al contributo di 100 € per la bici.</p>`) +
+    helpSec('medals', '🏅 Medaglie, obiettivo e tagli delle stelle', `
+      <p><b>🏅 Medaglie</b>: 32 traguardi in quattro aree (costanza, onestà e fiducia, cooperazione e iniziativa, gestione dei guadagni), per esempio «Prima giornata perfetta» o «Settimana perfetta».
+      Le assegna <b>solo l'app</b>, da sola: non si possono dare a mano, si vincono una volta sola, non danno stelle e non si perdono.
+      L'app le controlla quando un genitore la apre (come i conti di fine giornata): il figlio le trova con una piccola festa al suo accesso successivo. Le vedi nella Situazione e nella scheda 🏅 Medaglie di ogni figlio.</p>
+      <p><b>🎯 Il mio obiettivo</b>: nel Negozio il figlio può scegliere come obiettivo un premio che non può ancora permettersi; una barra gli mostra i progressi. Se cambi il prezzo, l'obiettivo segue quello nuovo;
+      se sospendi o elimini il premio, l'obiettivo resta e il figlio vede un avviso. Quando approvi la richiesta di quel premio, l'obiettivo si svuota. Nella Situazione vedi l'obiettivo di ogni figlio.</p>
+      <p><b>🪐 Tagli delle stelle</b>: i saldi e i prezzi si leggono in pianeti (100 ⭐) e galassie (1.000 ⭐). Cambia solo come si mostrano i numeri; si spegne in ⚙️ Setup › Regole del gioco.</p>`) +
     helpSec('faq', '❓ Domande frequenti', `
       <ul><li><b>Un figlio ha dimenticato il PIN?</b> Setup › Figli › Nuovo PIN. Se invece lo vuole cambiare lui, dal suo accesso tocca 🔢 PIN.</li>
       <li><b>Quando arrivano bonus e penalità di fine giornata?</b> Vengono calcolati quando un genitore apre l'app il giorno dopo: apritela almeno una volta al giorno.</li>
@@ -142,14 +149,17 @@ const helpKids = () => helpSec('kids', '🧒 Per i ragazzi: come funziona', `
       <li>Sotto i compiti trovi i <b>🧹 lavoretti extra</b>: fai la pattumiera o un altro lavoretto e tocca "L'ho fatto!" per avere stelle in più.</li>
       <li>Hai aiutato in un altro modo? Scrivilo in <b>💡 Hai fatto qualcos'altro?</b>: se mamma e papà sono d'accordo, ti danno delle stelle.</li>
       <li>Un compito con <b>🤝</b> è <b>di squadra</b>: organizzatevi e fatelo insieme. Uno lo segna, gli altri toccano "Confermo, l'abbiamo fatto": le stelle arrivano a tutti solo quando avete confermato tutti.</li>
-      <li>Con le stelle compri i premi nel <b>🎁 Negozio</b>.</li>
+      <li>Con le stelle compri i premi nel <b>🎁 Negozio</b>: se le stelle bastano tocca <b>Lo voglio!</b></li>
+      <li>Un premio costa ancora troppo? Toccalo e sceglilo come <b>🎯 obiettivo</b>: in alto compare una barra che ti dice quanto manca. Puoi cambiarlo o toglierlo quando vuoi; quando lo raggiungi, lo richiedi con un tocco.</li>
+      <li>Tante stelle si leggono meglio a gruppi: <b>🪐 un pianeta</b> vale 100 ⭐, <b>🌌 una galassia</b> vale 1.000 ⭐.</li>
+      <li>Nella scheda <b>🏅 Medaglie</b> trovi 32 traguardi da conquistare: ogni medaglia si vince una volta sola e resta tua per sempre. Arrivano quando mamma o papà aprono l'app.</li>
       <li>Quando mamma o papà controllano un compito compare <b>👍 controllato</b>: da lì non si può più togliere la spunta.</li>
       <li>Attenzione: segnare un compito che non hai fatto costa caro (cartellino giallo 🟨). Dire la verità conviene sempre!</li></ol>
       ${fam ? `<p><b>Le regole complete:</b></p><ul>${gameRules().map(x => `<li>${x}</li>`).join('')}</ul>` : ''}
     `);
 
 // sezione della schermata in uso
-const HELP_PTAB = {sit:'org', ver:'checks', prem:'prizes', prop:'extra', new:'tasks', ass:'tasks', board:'extra', rec:'game'};
+const HELP_PTAB = {sit:'medals', ver:'checks', prem:'prizes', prop:'extra', new:'tasks', ass:'tasks', board:'extra', rec:'game'};
 const HELP_STAB = {fam:'family', kids:'people', par:'people', rules:'game', dev:'device'};
 const HELP_SCREEN = {scrWelcome:'reg', scrRegister:'reg', scrNoFam:'reg', scrJoin:'join', scrParentLogin:'login', scrPick:'kidlogin', scrPin:'kidlogin'};
 function helpContext(){
@@ -214,6 +224,7 @@ $('newsDlg').addEventListener('close', async () => {
   try { await updateDoc(doc(db, 'members', uid), {newsSeen: APP_VERSION}); }
   catch(e){ console.warn('Novità lette: salvate solo su questo dispositivo', e); }
 });
+$('newsDlg').addEventListener('close', () => setTimeout(maybeShowMedals, 300));
 
 function openPrivacy(){
   const who = CONTACT.name ? `${esc(CONTACT.name)}${CONTACT.email ? ` (<a href="mailto:${esc(CONTACT.email)}">${esc(CONTACT.email)}</a>)` : ''}` : 'la persona che ti ha invitato a provare l\'app';

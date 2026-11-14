@@ -9,9 +9,10 @@ const APP_NAME = 'BeBeans';
    Nuove funzioni → si aumenta il secondo numero; solo correzioni → il terzo.
    A ogni rilascio: aggiorna APP_VERSION, APP_DATE, CHANGELOG e NEWS qui,
    l'intestazione di firestore.rules (se cambiate) e il file CHANGELOG.md. */
-const APP_VERSION = '0.15.0';
-const APP_DATE = '2026-11-03';
+const APP_VERSION = '0.16.0';
+const APP_DATE = '2026-11-14';
 const CHANGELOG = [
+  ['0.16.0', '2026-11-14', 'Medaglie 🏅: 32 traguardi assegnati in automatico. Il mio obiettivo 🎯: un premio da raggiungere, scelto nel Negozio, con la barra dei progressi. Stelle in pianeti 🪐 e galassie 🌌.'],
   ['0.15.0', '2026-11-03', 'Nuovo look BeBeans: nome, logo "fagiolo con stella", colori del marchio (blu notte, giallo fagiolo, corallo) e carattere Fredoka; nuove icone dell\'app.'],
   ['0.14.0', '2026-10-30', 'Guida contestuale: si apre sulla parte che riguarda la schermata in uso; prima dell\'accesso mostra solo come creare la famiglia, entrare con un invito e accedere; ❓ accanto ad alcuni titoli.'],
   ['0.13.0', '2026-10-30', 'Setup diviso in schede (Famiglia e orari, Figli, Genitori, Regole del gioco, Questo dispositivo); nella guida dei ragazzi come cambiare il PIN; regole più strette per l\'annullamento di proposte e premi e test automatici delle regole.'],
@@ -42,6 +43,19 @@ const CHANGELOG = [
    [icona, titolo, testo]. Se per un ruolo non ci sono novità, il popup per quel ruolo non si apre.
    Chi ha saltato più versioni vede tutte quelle che non ha ancora letto, dalla più recente. */
 const NEWS = {
+  '0.16.0': {
+    kid: [
+      ['🏅', 'Arrivano le medaglie', 'Nella nuova scheda <b>🏅 Medaglie</b> trovi 32 traguardi da conquistare, come la prima giornata perfetta o la prima settimana perfetta. Ogni medaglia si vince una volta sola e resta tua per sempre.'],
+      ['🎯', 'Il mio obiettivo', 'Nel <b>🎁 Negozio</b>, se un premio costa ancora troppo, sceglilo come <b>obiettivo</b>: una barra in alto ti mostra quanto manca. Se invece le stelle bastano, tocca <b>Lo voglio!</b>'],
+      ['🪐', 'Pianeti e galassie', 'Tante stelle si leggono meglio a gruppi: <b>🪐 un pianeta</b> vale 100 ⭐ e <b>🌌 una galassia</b> vale 1.000 ⭐.'],
+    ],
+    parent: [
+      ['🏅', 'Medaglie', '32 traguardi che l\'app assegna <b>da sola</b> (non si danno a mano): si vincono una volta sola, non danno stelle e non si perdono. Al primo avvio arrivano quelle già meritate con lo storico. L\'app le controlla quando un genitore la apre.'],
+      ['🎯', 'Il mio obiettivo', 'Ogni figlio può scegliere nel Negozio un premio da raggiungere e seguirne i progressi. Lo vedi nella <b>Situazione</b>; quando approvi quel premio, l\'obiettivo si svuota.'],
+      ['🪐', 'Pianeti e galassie', 'Saldi e prezzi si leggono in pianeti (100 ⭐) e galassie (1.000 ⭐). Si spegne in <b>⚙️ Setup › Regole del gioco</b>.'],
+      ['⚠️', 'Regole da pubblicare', 'Medaglie e obiettivo funzionano dopo aver pubblicato le <b>regole Firestore 0.16.0</b> in Console Firebase.'],
+    ],
+  },
   '0.15.0': {
     kid: [
       ['⭐', 'BeBeans ha un nuovo look', 'Nuovi colori e il logo del fagiolo con la stella: è sempre la tua app dei compiti, solo più bella!'],

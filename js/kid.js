@@ -7,7 +7,7 @@
 function renderScore(){
   const bal = balance(owner), res = reserved(owner);
   $('score').innerHTML = `
-    <div><b class="stars">⭐ ${bal - res}</b><small>stelle${res ? ` (+${res} prenotate)` : ''}</small></div>
+    <div><b class="stars">${starsTxt(bal - res)}</b><small>stelle${res ? ` (+${starsTxt(res)} prenotate)` : ''}</small></div>
     <div><b>🔥 ${data.kidState[owner]?.streak || 0}</b><small>giorni perfetti di fila</small></div>
     <div><b>🟨 ${activeYellows(owner).length}/${R().yellowsForRed}</b><small>cartellini gialli</small></div>
     <div><b>🟥 ${redsInQuarter(owner).length}</b><small>rossi nel trimestre</small></div>`;
@@ -15,6 +15,8 @@ function renderScore(){
   const red = cardsOf(owner).filter(c => c.type === 'red' && c.until >= td).sort((a,b) => a.from.localeCompare(b.from))[0];
   $('redBanner').innerHTML = !red ? '' : `<div class="banner">🟥 <b>Cartellino rosso</b> dal ${fmtDate(red.from)} al ${fmtDate(red.until)}:
     ${red.effect === 'nostars' ? 'i compiti vanno fatti lo stesso, ma non danno stelle né bonus.' : 'ci sono compiti di recupero 🔄 da fare ogni giorno, senza stelle.'}</div>`;
+  renderTarget();
+  denomParty(owner);
 }
 
 function renderDay(){
@@ -291,31 +293,32 @@ $('svDay').addEventListener('click', async e => {
 
 /* ---------- negozio ---------- */
 function renderShop(){
-  const avail = balance(owner) - reserved(owner);
+  const avail = balance(owner) - reserved(owner), goalId = goalOf(owner)?.rewardId;
   const rewards = data.rewards.filter(r => r.active !== false).sort((a,b) => a.cost - b.cost);
-  $('shopList').innerHTML = rewards.length ? rewards.map(r => `
-    <div class="row"><div class="body"><b>${esc(r.title)}</b><br><span class="stars">${r.cost} ⭐</span>
-      ${avail < r.cost ? `<small> · ne mancano ${r.cost - avail}</small>` : ''}</div>
-      <button class="btn ok" data-req="${r.id}" ${avail < r.cost ? 'disabled' : ''}>Lo voglio!</button></div>`).join('')
+  // se le stelle bastano si chiede il premio; se non bastano ancora, il figlio può sceglierlo come obiettivo
+  const shopBtn = r => avail >= r.cost ? `<button class="btn ok" data-req="${r.id}">Lo voglio!</button>`
+    : r.id === goalId ? '<span class="chip" style="--c:var(--star)">🎯 il tuo obiettivo</span>'
+    : isParent() ? '' : `<button class="btn" data-goal="${r.id}">🎯 Obiettivo</button>`;
+  $('shopList').innerHTML = rewards.length ? (isParent() ? '' : `<p class="hint">Se le stelle bastano tocca <b>Lo voglio!</b>
+      Se non bastano ancora, scegli il premio come <b>🎯 obiettivo</b>: vedrai quanto ti manca.</p>`) + rewards.map(r => `
+    <div class="row"><div class="body"><b>${esc(r.title)}</b><br><span class="stars">${starsTxt(r.cost)}</span>
+      ${avail < r.cost ? `<small> · ne mancano ${starsTxt(r.cost - avail)}</small>` : ''}</div>
+      ${shopBtn(r)}</div>`).join('')
     : '<div class="empty">Il negozio è ancora vuoto: chiedi a mamma e papà!</div>';
   const mine = (data.redemptions[owner] || []).slice().sort((a,b) => ms(b.createdAt) - ms(a.createdAt));
   const st = {pending:'⏳ in attesa', approved:'✅ approvato', rejected:'❌ rifiutato', cancelled:'annullato'};
   $('myRedeem').innerHTML = isParent() ? '<div class="empty">Le richieste da approvare sono nella scheda Genitori.</div>'
     : mine.length ? mine.map(r => `
-    <div class="row"><div class="body">${esc(r.title)} <span class="stars">${r.cost} ⭐</span><br><small>${st[r.status]}</small></div>
+    <div class="row"><div class="body">${esc(r.title)} <span class="stars">${starsTxt(r.cost)}</span><br><small>${st[r.status]}</small></div>
       ${r.status === 'pending' ? `<button class="btn" data-unreq="${esc(r.id)}">Annulla</button>` : ''}</div>`).join('')
     : '<div class="empty">Nessuna richiesta</div>';
 }
 $('svShop').addEventListener('click', async e => {
   const b = e.target.closest('button'); if (!b) return;
   try {
-    if (b.dataset.req){
-      if (isParent()) return toast('I premi li chiedono i figli dal loro accesso');
-      const r = data.rewards.find(x => x.id === b.dataset.req);
-      if (balance(owner) - reserved(owner) < r.cost) return toast('Stelle insufficienti');
-      await addDoc(col('kids', owner, 'redemptions'), {kid:owner, rewardId:r.id, title:r.title, cost:r.cost, status:'pending', createdAt:serverTimestamp()});
-      toast('Richiesta inviata a mamma e papà 🎁');
-    } else if (b.dataset.unreq){
+    if (b.dataset.req) await requestReward(data.rewards.find(x => x.id === b.dataset.req));
+    else if (b.dataset.goal) await setGoal(data.rewards.find(x => x.id === b.dataset.goal));
+    else if (b.dataset.unreq){
       await updateDoc(dref('kids', owner, 'redemptions', b.dataset.unreq), {status:'cancelled'});
     }
   } catch(err){ fail(err); }

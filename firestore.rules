@@ -1,7 +1,12 @@
 rules_version = '2';
-// Regole di sicurezza di "Compiti di casa" · versione 0.13.1 (02/11/2026)
+// Regole di sicurezza di "Compiti di casa" · versione 0.16.0 (14/11/2026)
 // Per sapere quale versione è attiva in Firebase, guarda questa riga nella scheda Regole.
 // Incollale in Console Firebase › Firestore Database › Regole › Pubblica.
+//
+// Novità 0.16.0:
+//   - kids/{kid}: il figlio può scrivere SOLO il campo goal (il suo obiettivo), con un premio vero al suo prezzo, o toglierlo
+//   - kids/{kid}/medals: le medaglie le assegna solo l'app dal dispositivo di un genitore;
+//     il figlio le legge e segna solo "vista" (seenAt)
 //
 // Novità 0.13.1:
 //   - feedback: commenti e idee dal sito pubblico bebeans.it; chiunque può crearne uno (protetto da App Check),
@@ -242,8 +247,29 @@ service cloud.firestore {
       // ogni figlio vede solo il proprio stato, le proprie stelle, cartellini e richieste
       match /kids/{kid} {
         function mine() { return isKidOf(fid) && kid == myKid(); }
+        // 0.16.0: obiettivo scelto dal figlio: un premio del catalogo al suo prezzo di adesso, oppure nessuno (null)
+        function goalOk() {
+          return d().goal == null || (d().goal is map
+            && d().goal.keys().hasOnly(['rewardId', 'title', 'cost', 'setAt'])
+            && d().goal.keys().hasAll(['rewardId', 'title', 'cost', 'setAt'])
+            && idOk(d().goal.rewardId)
+            && d().goal.title is string && d().goal.title.size() <= 200
+            && d().goal.setAt == request.time
+            && d().goal.cost == get(/databases/$(database)/documents/families/$(fid)/rewards/$(d().goal.rewardId)).data.cost);
+        }
         allow read: if isParentOf(fid) || mine();
-        allow write: if isParentOf(fid);
+        // il resto dello stato (serie, giornate chiuse, rosso) lo scrivono solo i genitori
+        allow create: if isParentOf(fid) || (mine() && d().keys().hasOnly(['goal']) && goalOk());
+        allow update: if isParentOf(fid) || (mine() && d().diff(resource.data).affectedKeys().hasOnly(['goal']) && goalOk());
+        allow delete: if isParentOf(fid);
+
+        // 0.16.0: medaglie
+        match /medals/{id} {
+          allow read: if isParentOf(fid) || mine();
+          allow create, delete: if isParentOf(fid);
+          allow update: if isParentOf(fid) || (mine()
+            && d().diff(resource.data).affectedKeys().hasOnly(['seenAt']) && d().seenAt == request.time);
+        }
 
         match /ledger/{id} {
           // compito di squadra: a conferme complete un membro scrive le stelle di ognuno, pari al valore del compito (0 col rosso)
