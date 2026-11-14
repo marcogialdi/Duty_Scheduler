@@ -7,7 +7,7 @@ import { getAuth, initializeAuth, inMemoryPersistence, onAuthStateChanged, signI
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app-check.js';
 import { initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager,
          collection, doc, onSnapshot, query, where, orderBy, limit, addDoc, setDoc, updateDoc, deleteDoc,
-         getDoc, getDocs, writeBatch, runTransaction, serverTimestamp, getAggregateFromServer, sum, Timestamp }
+         getDoc, getDocs, writeBatch, runTransaction, serverTimestamp, getAggregateFromServer, sum, count, Timestamp }
   from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -44,5 +44,5 @@ Object.assign(window, {
   onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updatePassword,
   reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail, deleteUser,
   collection, doc, onSnapshot, query, where, orderBy, limit, addDoc, setDoc, updateDoc, deleteDoc,
-  getDoc, getDocs, writeBatch, runTransaction, serverTimestamp, getAggregateFromServer, sum, Timestamp,
+  getDoc, getDocs, writeBatch, runTransaction, serverTimestamp, getAggregateFromServer, sum, count, Timestamp,
 });

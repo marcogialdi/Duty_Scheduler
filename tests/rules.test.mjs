@@ -160,6 +160,38 @@ console.log('\n— Commenti e idee dal sito (0.13.1)');
   await prova('un visitatore cancella un commento', false, deleteDoc(doc(anon, 'feedback', 'f1')));
 }
 
+console.log('\n— Il mio obiettivo e medaglie (0.16.0)');
+await env.withSecurityRulesDisabled(async c => {
+  const db = c.firestore();
+  await setDoc(doc(db, 'members', 'kb'), {familyId: F, role: 'kid', kidId: 'kB'});
+  await setDoc(doc(db, 'members', 'par2'), {familyId: F, role: 'parent'});
+  await setDoc(doc(db, 'families', F, 'kids', 'kA', 'medals', 'm1'), {kid: 'kA', wonAt: OGGI, source: 'app'});
+});
+{
+  const kA = doc(kid, 'families', F, 'kids', 'kA'), kidB = as('kb'), par2 = as('par2');
+  const goal = (extra = {}) => ({rewardId: 'r1', title: 'Gelato', cost: 20, setAt: serverTimestamp(), ...extra});
+  await prova('sceglie un premio come obiettivo', true, setDoc(kA, {goal: goal()}, {merge: true}));
+  await prova('obiettivo con un prezzo diverso dal catalogo', false, setDoc(kA, {goal: goal({cost: 5})}, {merge: true}));
+  await prova('obiettivo con un premio che non esiste', false, setDoc(kA, {goal: goal({rewardId: 'finto'})}, {merge: true}));
+  await prova('obiettivo con un campo in più', false, setDoc(kA, {goal: goal({stelle: 999})}, {merge: true}));
+  await prova('con l\'obiettivo cambia anche la serie', false, setDoc(kA, {goal: goal(), streak: 99}, {merge: true}));
+  await prova('toglie il rosso dal proprio stato', false, updateDoc(kA, {noStarsUntil: ''}));
+  await prova('sceglie l\'obiettivo di un fratello', false, setDoc(doc(kid, 'families', F, 'kids', 'kB'), {goal: goal()}, {merge: true}));
+  await prova('toglie il proprio obiettivo', true, setDoc(kA, {goal: null}, {merge: true}));
+  const kB = doc(kidB, 'families', F, 'kids', 'kB');   // il suo stato non esiste ancora
+  await prova('primo salvataggio dello stato con la serie dentro', false, setDoc(kB, {goal: goal(), streak: 5}, {merge: true}));
+  await prova('primo obiettivo senza stato già salvato', true, setDoc(kB, {goal: goal()}, {merge: true}));
+  await prova('scrive lo stato di un figlio che non è lui', false, setDoc(doc(kidB, 'families', F, 'kids', 'kZ'), {goal: goal()}));
+  const m = id => doc(kid, 'families', F, 'kids', 'kA', 'medals', id);
+  await prova('un figlio si assegna una medaglia', false, setDoc(m('m2'), {kid: 'kA', wonAt: OGGI, source: 'app'}));
+  await prova('un figlio cambia la data di una medaglia', false, updateDoc(m('m1'), {wonAt: '2020-01-01'}));
+  await prova('un figlio segna la medaglia come vista', true, updateDoc(m('m1'), {seenAt: serverTimestamp()}));
+  await prova('un figlio cancella una medaglia', false, deleteDoc(m('m1')));
+  await prova('un fratello legge le medaglie di un altro', false, getDoc(doc(kidB, 'families', F, 'kids', 'kA', 'medals', 'm1')));
+  await prova('un genitore assegna una medaglia', true, setDoc(doc(par2, 'families', F, 'kids', 'kA', 'medals', 'm3'), {kid: 'kA', wonAt: OGGI, source: 'app'}, {merge: true}));
+  await prova('un genitore svuota l\'obiettivo', true, setDoc(doc(par2, 'families', F, 'kids', 'kA'), {goal: null}, {merge: true}));
+}
+
 console.log(`\n${ok} ok, ${ko} errori`);
 await env.cleanup();
 process.exit(ko ? 1 : 0);

@@ -192,6 +192,19 @@ button.vc.pend{border:2px dashed var(--minus);background:color-mix(in srgb,var(-
 @keyframes ushrink{from{transform:scaleX(1)}to{transform:scaleX(0)}}
 /* compito confermato dal genitore */
 .chip.vchip{font-size:.75rem;white-space:nowrap}
+/* medaglie (0.16.0): bacheca a griglia, grigie finché non vinte */
+.marea{margin:14px 0 6px;font-size:1rem;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.marea small{color:var(--muted);font-weight:400}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.medal{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;padding:10px 8px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card)}
+.medal .mic{font-size:2rem;line-height:1.2;filter:grayscale(1);opacity:.45}
+.medal b{font-size:.88rem}
+.medal small{color:var(--muted);font-size:.75rem}
+.medal.won{border-color:var(--star);background:color-mix(in srgb,var(--star) 10%,var(--card))}
+.medal.won .mic{filter:none;opacity:1}
+.mrow{letter-spacing:1px}
+.score b{overflow-wrap:anywhere}
+.goal.target .acts{display:flex;gap:8px;flex-wrap:wrap}
 /* popup delle novità */
 .news .hint{color:var(--muted);font-size:.85rem;margin:0 0 6px}
 .nver{font-size:.9rem;margin:14px 0 4px;color:var(--muted)}

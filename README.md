@@ -43,6 +43,7 @@ nessun collegamento a Google Fonts. Il testo normale usa il carattere del telefo
 | `js/verify.js` | scheda Da verificare: griglia per giorno e fascia, Tutto ok, contestazione con Annulla |
 | `js/edit.js` | finestra di modifica di compiti e assegnazioni |
 | `js/collab.js` | compiti di squadra: segna, conferma, stelle a tutti |
+| `js/medals.js` | medaglie (elenco, assegnazione automatica, bacheca, popup) e «Il mio obiettivo» |
 | `js/setup.js` | Setup: famiglia, figli, genitori, dispositivo, eliminazione |
 | `js/help.js` | guida, popup delle novità, informativa privacy, scelta icone |
 | `js/main.js` | avvio (ultimo file) |

@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- BeBeans · Compiti di casa · versione 0.15.0 · la versione si cambia solo in js/config.js (APP_VERSION) -->
+<!-- BeBeans · Compiti di casa · versione 0.16.0 · la versione si cambia solo in js/config.js (APP_VERSION) -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
@@ -16,8 +16,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="BeBeans">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="stylesheet" href="css/base.css?v=0.15.0">
-<link rel="stylesheet" href="css/app.css?v=0.15.0">
+<link rel="stylesheet" href="css/base.css?v=0.16.0">
+<link rel="stylesheet" href="css/app.css?v=0.16.0">
 </head>
 <body>
 <div class="wrap">
@@ -138,10 +138,12 @@
     <div id="kidView" hidden>
       <div class="score" id="score"></div>
       <div id="redBanner"></div>
+      <div id="target"></div>
       <div class="sub" id="sub">
         <button data-sv="day" class="on">📅 Giornata</button>
         <button data-sv="shop">🎁 Negozio</button>
         <button data-sv="log">📜 Le mie stelle</button>
+        <button data-sv="medals">🏅 Medaglie</button>
       </div>
       <div id="svDay">
         <div class="daynav">
@@ -162,6 +164,9 @@
       <div id="svLog" hidden>
         <div class="panel"><h2>📜 Movimenti delle stelle</h2><p class="hint">Gli ultimi 40 movimenti.</p><div id="logList"></div></div>
         <details><summary>📖 Le regole del gioco</summary><ul id="rulesList"></ul></details>
+      </div>
+      <div id="svMedals" hidden>
+        <div class="panel"><h2>🏅 Le mie medaglie</h2><div id="medalList"></div></div>
       </div>
     </div>
 
@@ -361,6 +366,8 @@
       <div class="panel">
         <h2>🎮 Regole del gioco</h2>
         <div class="gridr" id="rulesForm"></div>
+        <label class="opt" style="margin-top:12px"><input type="checkbox" id="sDenoms"><span><b>🪐 Mostra pianeti e galassie</b><br>
+          <small>Le stelle si leggono in tagli: 🪐 pianeta = 100 ⭐, 🌌 galassia = 1.000 ⭐ (es. 2.345 ⭐ diventa 2 🌌 3 🪐 45 ⭐). Cambia solo come si mostrano: i conti restano in stelle. Togli la spunta per i più piccoli.</small></span></label>
       </div>
       </section>
       <button class="btn primary big" id="saveSetup" style="width:100%" hidden>💾 Salva famiglia, orari, categorie e regole</button>
@@ -467,26 +474,36 @@
   </form>
 </dialog>
 
+<!-- ================= MEDAGLIE VINTE ================= -->
+<dialog id="medalDlg" aria-labelledby="medalHead">
+  <form method="dialog" class="help news">
+    <h2 id="medalHead">🏅 Medaglie</h2>
+    <div id="medalBody"></div>
+    <div class="dlgacts"><span class="sp"></span><button class="btn primary" value="close">Evviva! 🎉</button></div>
+  </form>
+</dialog>
+
 <footer class="appver" id="appVer"></footer>
 <div class="undobar" id="undoBar" role="status" aria-live="polite" hidden></div>
 <div class="toast" id="toast"></div>
 
 <!-- Firebase per primo (modulo), poi i file dell'app nell'ordine: tutti partono a pagina pronta, uno dopo l'altro -->
-<script type="module" src="js/firebase.js?v=0.15.0"></script>
-<script defer src="js/config.js?v=0.15.0"></script>
-<script defer src="js/util.js?v=0.15.0"></script>
-<script defer src="js/state.js?v=0.15.0"></script>
-<script defer src="js/game.js?v=0.15.0"></script>
-<script defer src="js/auth.js?v=0.15.0"></script>
-<script defer src="js/register.js?v=0.15.0"></script>
-<script defer src="js/data.js?v=0.15.0"></script>
-<script defer src="js/kid.js?v=0.15.0"></script>
-<script defer src="js/parent.js?v=0.15.0"></script>
-<script defer src="js/verify.js?v=0.15.0"></script>
-<script defer src="js/edit.js?v=0.15.0"></script>
-<script defer src="js/collab.js?v=0.15.0"></script>
-<script defer src="js/setup.js?v=0.15.0"></script>
-<script defer src="js/help.js?v=0.15.0"></script>
-<script defer src="js/main.js?v=0.15.0"></script>
+<script type="module" src="js/firebase.js?v=0.16.0"></script>
+<script defer src="js/config.js?v=0.16.0"></script>
+<script defer src="js/util.js?v=0.16.0"></script>
+<script defer src="js/state.js?v=0.16.0"></script>
+<script defer src="js/game.js?v=0.16.0"></script>
+<script defer src="js/auth.js?v=0.16.0"></script>
+<script defer src="js/register.js?v=0.16.0"></script>
+<script defer src="js/data.js?v=0.16.0"></script>
+<script defer src="js/kid.js?v=0.16.0"></script>
+<script defer src="js/parent.js?v=0.16.0"></script>
+<script defer src="js/verify.js?v=0.16.0"></script>
+<script defer src="js/edit.js?v=0.16.0"></script>
+<script defer src="js/collab.js?v=0.16.0"></script>
+<script defer src="js/medals.js?v=0.16.0"></script>
+<script defer src="js/setup.js?v=0.16.0"></script>
+<script defer src="js/help.js?v=0.16.0"></script>
+<script defer src="js/main.js?v=0.16.0"></script>
 </body>
 </html>

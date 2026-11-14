@@ -87,7 +87,8 @@ function renderParent(){
   } else $('pSummary').innerHTML = kidsList().map(k => {
     const red = cardsOf(k.id).filter(c => c.type === 'red' && c.until >= td).sort((a,b) => a.from.localeCompare(b.from))[0];
     return `<div><h3 style="color:${k.color}">${k.avatar || ''} ${esc(k.name)}</h3>
-      <p class="stars">⭐ ${balance(k.id)} stelle${reserved(k.id) ? ` (${reserved(k.id)} prenotate)` : ''}</p>
+      <p class="stars">${starsTxt(balance(k.id))}${useDenoms() && balance(k.id) >= 100 ? ` <small>(${balance(k.id)} ⭐)</small>` : ' stelle'}${reserved(k.id) ? ` (${starsTxt(reserved(k.id))} prenotate)` : ''}</p>
+      ${goalLine(k.id)}${medalLine(k.id)}
       <p>🔥 serie: ${data.kidState[k.id]?.streak || 0} giorni</p>
       <p>🟨 gialli attivi: ${activeYellows(k.id).length}/${r.yellowsForRed}</p>
       <p>🟥 rossi nel trimestre: ${redsInQuarter(k.id).length}</p>
@@ -99,8 +100,8 @@ function renderParent(){
 
   const reqs = kidsList().flatMap(k => data.pending[k.id] || []);
   $('pRedeem').innerHTML = reqs.length ? reqs.map(x => `
-    <div class="row"><div class="body">${kidAvatar(x.kid)} <b>${esc(kidName(x.kid))}</b> vuole: ${esc(x.title)} <span class="stars">${x.cost} ⭐</span>
-      <br><small>saldo: ${balance(x.kid)} ⭐</small></div>
+    <div class="row"><div class="body">${kidAvatar(x.kid)} <b>${esc(kidName(x.kid))}</b> vuole: ${esc(x.title)} <span class="stars">${starsTxt(x.cost)}</span>${goalOf(x.kid)?.rewardId === x.rewardId ? ' <span class="chip" style="--c:var(--star)">🎯 il suo obiettivo</span>' : ''}
+      <br><small>saldo: ${starsTxt(balance(x.kid))}</small></div>
       <span><button class="btn ok" data-approve="${esc(x.kid)}|${esc(x.id)}">Approva</button> <button class="btn no" data-deny="${esc(x.kid)}|${esc(x.id)}">Rifiuta</button></span></div>`).join('')
     : '<div class="empty">Nessuna richiesta</div>';
 
@@ -320,7 +321,14 @@ $('parentView').addEventListener('click', async e => {
       const batch = writeBatch(db);
       batch.update(dref('kids', kid, 'redemptions', id), {status:'approved', respondedAt:serverTimestamp()});
       batch.set(dref('kids', kid, 'ledger', `redeem_${id}`), {kid, amount:-x.cost, type:'reward', reason:`Premio: ${x.title}`, date:today(), createdAt:serverTimestamp()});
-      await batch.commit(); toast('Premio approvato 🎁');
+      // era il suo obiettivo: raggiunto! L'obiettivo si svuota e arriva la medaglia
+      const wasGoal = goalOf(kid)?.rewardId === x.rewardId;
+      if (wasGoal){
+        batch.set(dref('kids', kid), {goal: null}, {merge:true});
+        batch.set(dref('kids', kid, 'medals', 'goal'), {kid, wonAt:today(), source:'app', createdAt:serverTimestamp()}, {merge:true});
+      }
+      await batch.commit(); toast(wasGoal ? 'Premio approvato: obiettivo raggiunto 🎯' : 'Premio approvato 🎁');
+      medalSoon(kid);
     }
     if (d.deny){ const [kid, id] = d.deny.split('|'); await updateDoc(dref('kids', kid, 'redemptions', id), {status:'rejected', respondedAt:serverTimestamp()}); }
     if (d.delrew && confirm('Eliminare questo premio? Se vuoi solo toglierlo per un po\' usa "Sospendi".')){ await deleteDoc(dref('rewards', d.delrew)); rewEdit = null; }
@@ -332,6 +340,7 @@ $('parentView').addEventListener('click', async e => {
       batch.update(dref('kids', kid, 'proposals', id), {status:'approved', points:pts, respondedAt:serverTimestamp()});
       batch.set(dref('kids', kid, 'ledger', `prop_${id}`), {kid, amount:pts, type:'proposal', reason:`Proposta: ${p.title}`, date:p.date, createdAt:serverTimestamp()});
       await batch.commit(); toast(`+${pts} ⭐ a ${kidName(kid)} 💡`);
+      medalSoon(kid);
     }
     if (d.preject){ const [kid, id] = d.preject.split('|'); await updateDoc(dref('kids', kid, 'proposals', id), {status:'rejected', respondedAt:serverTimestamp()}); }
   } catch(err){ fail(err); }

@@ -27,6 +27,7 @@ function fillSetup(){
   catDraft = fam.categories.map(c => ({...c}));
   drawCats();
   $('rulesForm').innerHTML = RULE_FIELDS.map(([k,l]) => `<div><label>${l}</label><input type="number" data-rule="${k}" value="${R()[k]}"></div>`).join('');
+  $('sDenoms').checked = useDenoms();
   $('kColor').value = KID_COLORS[kidsList().length % KID_COLORS.length];
   $('kAv').textContent = AVATAR_LIST[(kidsList().length * 3) % AVATAR_LIST.length];
   fillDevice();
@@ -81,6 +82,7 @@ $('saveSetup').onclick = async () => {
     rules[inp.dataset.rule] = Math.round(v);
   }
   if (rules.missed > 0) rules.missed = -rules.missed;
+  rules.denoms = $('sDenoms').checked;
   if (rules.yellowsForRed < 1 || rules.redDays < 1 || rules.contestHours < 1) return toast('Gialli, giorni del rosso e ore devono essere almeno 1');
   try {
     await updateDoc(doc(db, 'families', fid), {name:$('sTitle').value.trim() || fam.name, times, rules,
@@ -226,7 +228,7 @@ $('delFam').onclick = async () => {
     for (const c of ['tasks','schedule','swaps','completions','rewards']) (await getDocs(C(c))).docs.forEach(d => refs.push(d.ref));
     const kidIds = new Set([...kidsList().map(k => k.id), ...(await getDocs(C('kids'))).docs.map(d => d.id)]);
     for (const k of kidIds){
-      for (const c of ['ledger','cards','redemptions','proposals']) (await getDocs(C('kids', k, c))).docs.forEach(d => refs.push(d.ref));
+      for (const c of ['ledger','cards','redemptions','proposals','medals']) (await getDocs(C('kids', k, c))).docs.forEach(d => refs.push(d.ref));
       refs.push(doc(db, 'families', myFid, 'kids', k));
     }
     (await getDocs(query(collection(db,'invites'), where('familyId','==',myFid)))).docs.forEach(d => refs.push(d.ref));

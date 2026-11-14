@@ -6,6 +6,14 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.16.0 · 14/11/2026
+- **Medaglie 🏅**: 32 traguardi in quattro aree (costanza, onestà e fiducia, cooperazione e iniziativa, gestione dei guadagni). Le assegna solo l'app, dal dispositivo di un genitore (all'apertura, dopo la chiusura dei giorni e dopo l'approvazione di premi e proposte; al massimo ogni 6 ore): una volta sola, senza livelli, senza stelle, e non si perdono. Al primo avvio assegna quelle già meritate con lo storico. Il figlio le vede in un unico popup e nella nuova scheda «🏅 Medaglie»; i genitori nella Situazione. Codice in `js/medals.js`.
+- **Il mio obiettivo 🎯**: nel Negozio, se le stelle bastano si chiede il premio (ora con una conferma); se non bastano, il figlio lo sceglie come obiettivo e vede una barra di avanzamento in alto. Si può cambiare o togliere. Il prezzo segue il catalogo (con avviso se cambia); se il premio è sospeso o eliminato l'obiettivo resta, con un avviso. A obiettivo raggiunto: festa e «Richiedilo ora»; quando il genitore approva, l'obiettivo si svuota e arriva la medaglia.
+- **Tagli della valuta 🪐**: saldi, prezzi dei premi e barra dell'obiettivo si leggono in pianeti (100 ⭐) e galassie (1.000 ⭐), es. 2.345 ⭐ → 2 🌌 3 🪐 45 ⭐; i compiti restano in stelle. Festa quando si forma un nuovo pianeta o una nuova galassia. Solo visualizzazione; si spegne in Setup › Regole del gioco.
+- Guida: nuova sezione «🏅 Medaglie, obiettivo e tagli delle stelle» e nuove voci per i ragazzi. Popup delle novità per figli e genitori.
+- **Regole Firestore 0.16.0: vanno ripubblicate.** Il figlio può scrivere solo il campo `goal` del proprio stato (un premio vero, al suo prezzo); le medaglie le scrive solo un genitore, il figlio segna solo «vista». Finché non sono pubblicate l'app funziona, ma senza medaglie e senza obiettivo. Test delle regole: 68 prove.
+- Limiti noti delle medaglie: «Mattiniero» e «Rimediato» si contano solo dai giorni chiusi con questa versione; «Salvadanaio» e «Risparmiatore esperto» guardano il saldo al momento del controllo; la data della medaglia è quella in cui l'app la assegna.
+
 ## 0.15.0 · 03/11/2026
 - **Nuovo look BeBeans**: l'app prende il nome **BeBeans** (titolo, icona installata, inviti, informativa) e il logo A "Fagiolo stella", nell'intestazione e nella schermata di benvenuto.
 - **Colori del marchio**: blu notte `#1F2A44` per testo, contorni e pulsanti principali; giallo fagiolo `#FFD54A` e corallo `#FF7A59` per sfondi, avvisi e barre; fondo crema `#FFF8E7`. Le stelle si scrivono in corallo scuro `#B8401F`, leggibile (contrasto 5,5:1). Tema scuro con fondo blu notte e pulsanti gialli.

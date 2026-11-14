@@ -39,6 +39,23 @@ function refreshBalance(k){
     } catch(e){ console.warn('Saldo non aggiornato (offline?)', e); }
   }, 250);
 }
+/* tagli della valuta (0.16.0): 🪐 pianeta = 100 ⭐, 🌌 galassia = 1.000 ⭐. Solo come si mostrano i numeri:
+   nel database tutto resta in stelle. Si spengono in Setup › Regole del gioco (rules.denoms). */
+const useDenoms = () => fam?.rules?.denoms !== false;
+function starsTxt(n){
+  n = Math.round(Number(n) || 0);
+  if (!useDenoms() || n < 100) return `${n} ⭐`;
+  const parts = [[Math.floor(n / 1000), '🌌'], [Math.floor(n % 1000 / 100), '🪐'], [n % 100, '⭐']];
+  return parts.filter(([v]) => v).map(([v, ic]) => `${v} ${ic}`).join(' ');
+}
+// festa quando il saldo forma un nuovo pianeta o una nuova galassia: una volta per soglia, sul dispositivo del figlio
+function denomParty(k){
+  if (isParent() || !useDenoms() || data.balance[k] == null) return;
+  const key = `cdc.denom.${fid}.${k}`, cur = Math.floor(Math.max(0, data.balance[k]) / 100), prev = store('get', key);
+  if (prev === null || cur <= +prev){ if (prev === null) store('set', key, String(cur)); return; }
+  store('set', key, String(cur));
+  toast(Math.floor(cur / 10) > Math.floor(+prev / 10) ? 'Hai formato una galassia! 🌌' : 'Hai formato un pianeta! 🪐');
+}
 function balance(k){
   if (data.balance[k] != null) return data.balance[k];
   const c = Number(store('get', `cdc.bal.${fid}.${k}`)); return Number.isFinite(c) ? c : 0;
@@ -78,16 +95,18 @@ function pointsFor(item, kid, ds){
 /* ---------- chiusura dei giorni passati (fatta dal dispositivo di un genitore) ---------- */
 let closing = false, closedOnce = false;
 const watchedKids = () => isParent() ? kidsList().map(k => k.id) : (me?.kidId ? [me.kidId] : []);
-const cardsReady = () => watchedKids().every(k => loaded['cards_' + k]);
+const cardsReady = () => watchedKids().every(k => loaded['cards_' + k] && loaded['medals_' + k]);
 function maybeClose(){
   if (!isParent() || closedOnce || !loaded.tasks || !loaded.sched || !cardsReady()) return;
   closedOnce = true; closeDays();
 }
 async function closeDays(){
   if (closing) return; closing = true;
-  try { for (const k of kidsList()) await closeKid(k.id); }
+  let closed = false;
+  try { for (const k of kidsList()) closed = await closeKid(k.id) || closed; }
   catch(e){ console.warn('Chiusura giorni rimandata', e); closedOnce = false; }
   finally { closing = false; }
+  checkMedals(closed);                           // medaglie: subito se si è chiuso un giorno, altrimenti ogni 6 ore
 }
 async function closeKid(kid){
   const kref = dref('kids', kid);
@@ -101,7 +120,8 @@ async function closeKid(kid){
   }
   const startLast = snap.data().lastClosed;
   let streak = snap.data().streak || 0;
-  if (startLast >= yesterday) return;
+  if (startLast >= yesterday) return false;
+  const st = medalProgress(snap.data());         // progressi per le medaglie, contati giorno per giorno
   let from = addDays(startLast, 1);
   if (from < addDays(yesterday, -59)) from = addDays(yesterday, -59);
   const [sw, cp] = await Promise.all([
@@ -117,9 +137,10 @@ async function closeKid(kid){
     if (!items.length) continue;
     const noStars = redOn(kid, ds)?.effect === 'nostars';
     let done = 0;
+    const ok = new Set();
     for (const it of items){
       const c = comps.get(`${it.key}_${ds}`);
-      if (c && !c.contested) done++;
+      if (c && !c.contested){ done++; ok.add(it.key); }
       else if (!c) writes.push([`miss_${it.key}_${ds}`, {kid, amount:R().missed, type:'missed', reason:`Non fatto: ${it.task.title}`, date:ds}]);
     }
     if (done === items.length){
@@ -127,16 +148,18 @@ async function closeKid(kid){
       if (!noStars){
         writes.push([`perfect_${kid}_${ds}`, {kid, amount:R().perfectDay, type:'perfect', reason:'Giornata perfetta', date:ds}]);
         const b = streakBonusFor(streak);
-        if (b) writes.push([`streak_${kid}_${ds}`, {kid, amount:b, type:'streak', reason:`Serie di ${streak} giorni 🔥`, date:ds}]);
+        if (b) writes.push([`streak_${kid}_${ds}`, {kid, amount:b, type:'streak', reason:`Serie di ${streak} giorni 🔥`, date:ds, n:streak}]);
       }
     } else streak = 0;
+    medalDay(st, kid, ds, items, ok, streak, done === items.length && !noStars);
   }
   await runTransaction(db, async tx => {
     const cur = await tx.get(kref);
     if (cur.data().lastClosed !== startLast) return;
     writes.forEach(([id, v]) => tx.set(dref('kids', kid, 'ledger', id), {...v, createdAt:serverTimestamp()}));
-    tx.update(kref, {lastClosed:yesterday, streak});
+    tx.update(kref, {lastClosed:yesterday, streak, ...medalFields(st)});
   });
+  return true;
 }
 
 function gameRules(){
@@ -154,6 +177,7 @@ function gameRules(){
     `Hai fatto qualcos'altro di utile? <b>Proponilo 💡</b>: se mamma e papà approvano, decidono loro quante stelle darti.`,
     `I compiti <b>di squadra 🤝</b> si fanno insieme: uno lo segna, gli altri confermano "l'abbiamo fatto". Le stelle arrivano a tutti solo quando hanno confermato tutti; se non era vero, il cartellino giallo va a tutta la squadra.`,
     `Anche facoltativi e lavoretti extra si possono controllare: se non è vero, vale la regola del cartellino giallo.`,
-    `Con le stelle compri i premi del negozio: mamma e papà approvano la richiesta.`,
+    `Con le stelle compri i premi del negozio: mamma e papà approvano la richiesta. Se un premio costa ancora troppo, sceglilo come <b>🎯 obiettivo</b>: una barra ti mostra quanto manca.`,
+    `Le <b>medaglie 🏅</b> premiano i traguardi (la prima giornata perfetta, la prima settimana perfetta…): si vincono una volta sola, non danno stelle e restano tue per sempre.`,
   ];
 }

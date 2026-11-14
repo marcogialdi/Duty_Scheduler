@@ -1,6 +1,6 @@
 # Compiti di casa – Backlog
 
-Idee e sviluppi proposti per l'app, con il loro stato. Aggiornato al 30/10/2026 (versione 0.14.0).
+Idee e sviluppi proposti per l'app, con il loro stato. Aggiornato al 14/11/2026 (versione 0.16.0).
 
 Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima era in fondo alla [documentazione di progetto](../compiti-di-casa-documentazione.md). Ogni nuova idea va confrontata con la [filosofia del progetto](filosofia.md): deve servire almeno uno dei tre obiettivi (responsabilità, cooperazione, gestione dei guadagni). L'ordine in cui sviluppare le voci aperte è nella [roadmap evolutiva](https://claude.ai/artifact/PBUdhmMP3JW7j9n86Ksg7X).
 
@@ -12,9 +12,9 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 | --- | --- | --- | --- |
 | Preparare l'app alle lingue | Spostare tutti i testi (pulsanti, messaggi, guida, regole, inviti) in un dizionario italiano, con date e valute per paese; traduzioni dopo il lancio in Italia: inglese e spagnolo, poi tedesco e francese. Analisi nel documento «Pubblicazione sugli store e modello economico» (https://claude.ai/artifact/8wtnm2ayZrs52diVAW4WbV) | 22/10/2026 | Da valutare |
 | Gruppi richiudibili in Da verificare | Gruppi chiusi di default con un riassunto nell'intestazione (es. «🌅 Mattina lun 26 · Ricky 7 · Tommy 5 ▸»); in cima i gruppi con compiti in scadenza | 26/10/2026 | Rinviato |
-| Il mio obiettivo 🎯 | Il figlio sceglie nel 🎁 Negozio il premio che vuole raggiungere: se le stelle bastano parte la richiesta, se non bastano diventa il suo obiettivo, con una barra di avanzamento nella sua giornata e in «Le mie stelle»; le stelle restano spendibili per qualsiasi premio. Dettaglio in [Il mio obiettivo](#il-mio-obiettivo--proposta-aggiornata-il-30102026). Prerequisito del regalo di compleanno, sviluppabile prima | 27/10/2026 | Da valutare (definita il 30/10/2026) |
-| Tagli della valuta 🪐 | Le stelle si mostrano in tre tagli: ⭐ stella, 🪐 pianeta = 100 ⭐, 🌌 galassia = 1.000 ⭐ (es. 2.345 ⭐ → 2 🌌 3 🪐 45 ⭐). Dettaglio in [Tagli della valuta](#tagli-della-valuta--proposta-27102026) | 27/10/2026 | Da valutare |
 | Regalo di compleanno 🎂 | Il giorno del compleanno il figlio riceve gli auguri con un pop-up e un regalo in stelle che lo fa avanzare verso il premio scelto come obiettivo; le stelle dipendono da un punteggio sul comportamento degli ultimi 12 mesi, entro un minimo e un massimo decisi dai genitori. Dettaglio in [Regalo di compleanno – algoritmo](#regalo-di-compleanno--algoritmo-proposta-del-27102026). Regalo in € da valutare | 27/10/2026 | Da valutare |
+| Sfide tra famiglie 🏁 | Sfide su invito tra famiglie, con classifiche condivise. I genitori approvano la partecipazione di ogni figlio; in classifica il figlio compare con un nickname scelto da lui, mai con il nome vero. Richiede il [server leggero](#server-leggero--scheda-del-30102026) (roadmap, Fase 4). Dettaglio in [Sfide tra famiglie](#sfide-tra-famiglie--proposta-del-30102026) | 30/10/2026 | Da valutare |
+| Server leggero ☁️ | Codice nostro che gira da Google (Cloud Functions, piano Blaze): chiusura notturna delle giornate, notifiche, cancellazione completa, calcoli affidabili, classifiche delle sfide. Prima funzione consigliata: la chiusura notturna. Dettaglio in [Server leggero](#server-leggero--scheda-del-30102026) | 30/10/2026 | Rinviato (dopo il test con le famiglie) |
 
 ## Fatto
 
@@ -41,8 +41,164 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 | Schede nella pagina Setup | Dividere il Setup in schede: Famiglia e orari · Figli · Genitori · Regole del gioco · Questo dispositivo | 17/10/2026 | Fatto in 0.13.0 |
 | Guida contestuale | La guida si apre sulla sezione della schermata in uso (Setup → Attivare il dispositivo, Da verificare → Controlli, squadra → Compiti di squadra) e, prima dell'accesso, mostra solo registrazione, invito e accesso; ❓ accanto ad alcuni titoli | 17/10/2026 | Fatto in 0.14.0 |
 | Cambio PIN nella guida ragazzi | Spiegare in «Per i ragazzi» come cambiare il PIN (pulsante 🔢 PIN: attuale, nuovo, ripeti) e cosa fare se lo dimenticano (genitori: Setup › Figli › Nuovo PIN) | 17/10/2026 | Fatto in 0.13.0 |
+| Il mio obiettivo 🎯 | Il figlio sceglie nel 🎁 Negozio il premio che vuole raggiungere: se le stelle bastano parte la richiesta, se non bastano diventa il suo obiettivo, con una barra di avanzamento nella sua giornata e in «Le mie stelle»; le stelle restano spendibili per qualsiasi premio. Dettaglio in [Il mio obiettivo](#il-mio-obiettivo--proposta-aggiornata-il-30102026). Prerequisito del regalo di compleanno, sviluppabile prima | 27/10/2026 | Fatto in 0.16.0 |
+| Tagli della valuta 🪐 | Le stelle si mostrano in tre tagli: ⭐ stella, 🪐 pianeta = 100 ⭐, 🌌 galassia = 1.000 ⭐ (es. 2.345 ⭐ → 2 🌌 3 🪐 45 ⭐). Dettaglio in [Tagli della valuta](#tagli-della-valuta--proposta-27102026) | 27/10/2026 | Fatto in 0.16.0 |
+| Medaglie 🏅 | 32 medaglie per piccoli traguardi (es. «Prima giornata perfetta», «Settimana perfetta»), 8 per area: costanza, onestà e fiducia, cooperazione e iniziativa, gestione dei guadagni. Assegnate solo in automatico dall'app, una volta sola, senza livelli e senza stelle. Dettaglio in [Medaglie](#medaglie--proposta-del-30102026) | 30/10/2026 | Fatto in 0.16.0 |
 
 ## Schede delle proposte
+
+### Server leggero – scheda (del 30/10/2026)
+
+**Oggi.** L'app non ha un server suo: il sito (GitHub Pages) consegna solo i file, tutti i calcoli (stelle, giornate perfette, serie, cartellini, conti di fine giornata) li fa l'app sul telefono, Firestore conserva i dati e le regole dicono solo sì o no a ogni scrittura, senza calcolare. Limiti che ne derivano:
+1. i conti di fine giornata si fanno solo quando un genitore apre l'app;
+2. nessuno può agire da solo: niente notifiche, niente accrediti a un orario (es. compleanno a mezzanotte);
+3. ci si deve fidare del telefono: i calcoli fatti lì vanno difesi con regole sempre più complicate;
+4. le famiglie sono isolate (giusto così), quindi nessuno può calcolare classifiche tra famiglie.
+
+**Con il server.** Cloud Functions: piccoli programmi nostri che girano nei computer di Google, **fidati** (nessun figlio può modificarli). Partono **a orario** (es. ogni notte alle 00:30: chiudere le giornate, accreditare i compleanni, assegnare le medaglie) o **a evento** (es. un compito segnato: aggiornare una classifica, mandare una notifica).
+
+| Cosa | Senza server | Con il server |
+| --- | --- | --- |
+| Chiusura delle giornate | solo quando un genitore apre l'app | ogni notte, per tutti |
+| Notifiche push | impossibili | sì |
+| Cancellazione completa | gli account dei figli restano | completa (utile per il GDPR) |
+| Stelle e anti-imbroglio | calcolati sul telefono, difesi dalle regole | calcolati in modo affidabile |
+| [Medaglie](#medaglie--proposta-del-30102026) | dal telefono del genitore | più tempestive e affidabili |
+| [Regalo di compleanno](#regalo-di-compleanno--algoritmo-proposta-del-27102026) | con conferma del genitore | accreditato a mezzanotte |
+| [Sfide tra famiglie](#sfide-tra-famiglie--proposta-del-30102026) | non fattibili in sicurezza | fattibili: pubblica solo nickname e punteggi |
+
+Non servono il server: Il mio obiettivo, Tagli della valuta, Medaglie (versione dal telefono), Guida.
+
+**Costi.** Serve il piano **Blaze** (a consumo, con carta di credito collegata al progetto) al posto di Spark. Blaze include le stesse quote gratuite di Spark più una quota gratuita mensile per le funzioni: con poche famiglie la spesa attesa è vicina a zero, da verificare sul listino Firebase prima di decidere. Mettere un **avviso di budget** (es. 5 €/mese): è un avviso via email, non un blocco. Il rischio vero è un errore che fa girare una funzione all'infinito: si previene con test ed emulatore.
+
+**Lavoro.** Nuova cartella `functions/` (JavaScript, come l'app); pubblicazione con lo strumento di Firebase oltre a GitHub Pages (la prima volta serve un accesso del proprietario del progetto); prove con lo stesso emulatore dei test delle regole; server in **Europa** (coerente con la voce privacy della roadmap); alcune cose oggi fatte dall'app (la chiusura delle giornate) si spostano sul server.
+
+**Ordine consigliato.**
+1. Ora no: test con le famiglie, Il mio obiettivo, Tagli della valuta e Medaglie non lo richiedono.
+2. Dopo il test, una sola funzione piccola e utile: la **chiusura notturna delle giornate** (il limite più visibile, costo minimo, banco di prova).
+3. Poi, una alla volta: notifiche, cancellazione completa, calcoli affidabili; per ultime le sfide, che richiedono anche la parte privacy.
+
+### Sfide tra famiglie – proposta (del 30/10/2026)
+
+**Idea.** Più famiglie partecipano a una sfida comune (es. «Novembre perfetto»: chi fa più giornate perfette in un mese) e vedono una classifica. Serve soprattutto la **cooperazione** della [filosofia](filosofia.md) se la sfida è anche a squadre (la famiglia come squadra), e la **responsabilità** perché premia la costanza. Nella roadmap è la Fase 4 («Challenge tra famiglie amiche»), base delle future sfide sponsorizzate (Fase 6).
+
+**Privacy prima di tutto.**
+- **Consenso dei genitori**: un figlio partecipa solo se un genitore della sua famiglia lo approva, **sfida per sfida**, scegliendo quali figli far partecipare. Il genitore può ritirare il figlio in qualsiasi momento: da quel momento sparisce dalla classifica.
+- **Nickname**: in classifica il figlio compare con un **nickname scelto da lui** e la sua icona; mai nome, cognome, foto o nome della famiglia (la famiglia può avere un nome di squadra scelto dai genitori).
+- **Nickname approvato dal genitore** (proposto): il figlio lo propone, un genitore lo approva prima che compaia; lunghezza 3–16 caratteri, solo lettere, numeri e spazi. Evita nomi veri, parole offensive e dati personali scritti per sbaglio.
+- Gli altri vedono solo nickname, icona e punteggio della sfida: niente compiti, stelle, premi o cartellini.
+
+**Classifiche eque.** Ogni famiglia decide da sé quante stelle vale un compito, quindi le **stelle non sono confrontabili** tra famiglie. La classifica usa misure di comportamento uguali per tutti, per esempio:
+- giornate perfette nel periodo della sfida;
+- percentuale di compiti obbligatori fatti;
+- serie più lunga nel periodo.
+I compiti contestati non contano.
+
+**Come funzionerebbe.**
+1. Un genitore crea la sfida (tipo, periodo, misura) e invita altre famiglie con un codice, come per l'invito del secondo genitore.
+2. Un genitore di ogni famiglia accetta e sceglie i figli che partecipano (con il nickname già approvato).
+3. Durante la sfida ogni figlio vede la classifica e la sua posizione; alla fine, festa per i primi e una medaglia per chi ha completato la sfida (si lega alle [medaglie](#medaglie--proposta-del-30102026)).
+
+**Dati e sicurezza.**
+- Oggi le famiglie sono **isolate** per scelta di sicurezza: nessuna famiglia può leggere i dati di un'altra. Le classifiche richiedono quindi il **server leggero** della roadmap (Cloud Functions, piano Blaze): calcola i punteggi dai dati di ogni famiglia e scrive in un documento condiviso solo nickname, icona e punteggio.
+- Un punteggio scritto dall'app del figlio o del genitore sarebbe falsificabile: deve calcolarlo il server.
+- Nuovi dati: `challenges/{id}` (sfida, partecipanti, classifica), consenso per figlio e sfida, `nickname` e il suo stato di approvazione sul documento del figlio. Regole e test: nessun accesso ai dati delle altre famiglie, partecipazione solo con consenso del genitore.
+- Privacy: condividere dati di minori con altre famiglie richiede di aggiornare l'informativa e il consenso dei genitori (voce «Privacy e legale» della roadmap).
+
+**Da decidere.** Se il nickname va approvato dal genitore (consigliato); sfide individuali, per famiglia o entrambe; chi può creare una sfida (ogni genitore o, all'inizio, solo l'app con sfide stagionali); se le famiglie si vedono solo con nome di squadra o restano anonime; durata tipica (una settimana, un mese).
+
+### Medaglie – proposta (del 30/10/2026)
+
+**Idea.** Una medaglia sancisce un piccolo traguardo: «la prima giornata perfetta», «la prima settimana perfetta». Raggiunto l'obiettivo, si prende la medaglia. È un riconoscimento, non un guadagno: rende visibili i progressi su responsabilità, cooperazione e gestione dei guadagni della [filosofia](filosofia.md).
+
+**Decisioni (30/10/2026).**
+- **32 medaglie**, 8 per ciascuna delle quattro aree qui sotto.
+- **Una volta sola, senza livelli** (niente bronzo, argento, oro).
+- **Nessuna stella**: la medaglia non dà stelle, così non diventa una seconda valuta.
+- **Solo in automatico**: le assegna l'app quando il traguardo è raggiunto; i genitori non possono assegnarle a mano.
+- **Non si perdono**: una medaglia vinta resta per sempre, anche dopo un cartellino.
+- **Al primo avvio si assegnano a ritroso** le medaglie già meritate con lo storico esistente (estratto conto, cartellini, scambi, proposte, premi), con un unico popup riassuntivo invece di uno per medaglia.
+- Proposto, da confermare: tutte **visibili** come traguardi in grigio, nessuna segreta.
+
+**Le 32 medaglie.** Difficoltà: 🟢 facile (prime settimane) · 🟡 media (qualche mese) · 🔴 difficile (un anno o più). Si calcolano con dati che l'app registra già (estratto conto, serie, cartellini, scambi, squadre, proposte, premi).
+
+*✅ Costanza*
+
+| | Medaglia | Si vince quando… | |
+| --- | --- | --- | --- |
+| 🌟 | Prima giornata perfetta | completa la prima giornata perfetta | 🟢 |
+| 📅 | Settimana perfetta | 7 giornate perfette di fila | 🟢 |
+| 🔥 | Due settimane di fuoco | serie di 14 giorni | 🟡 |
+| 🏆 | Mese perfetto | serie di 30 giorni | 🔴 |
+| 💯 | Cento compiti | 100 compiti fatti (non contestati) | 🟢 |
+| 🎖️ | Cinquecento compiti | 500 compiti fatti (non contestati) | 🔴 |
+| 🌅 | Mattiniero | 7 giorni di fila con tutti i compiti della mattina fatti | 🟡 |
+| 📆 | Un mese da campione | 20 giornate perfette in un mese di calendario | 🟡 |
+
+*🤝 Onestà e fiducia*
+
+| | Medaglia | Si vince quando… | |
+| --- | --- | --- | --- |
+| 👍 | Primo «controllato» | un genitore conferma con «Tutto ok» un suo compito | 🟢 |
+| 🛡️ | Parola d'oro | 50 compiti confermati da un genitore, nessuno contestato | 🟡 |
+| 🕊️ | Un mese pulito | 30 giorni senza cartellini | 🟡 |
+| 💎 | Fiducia totale | 90 giorni senza cartellini | 🔴 |
+| 🌈 | Ripartenza | dopo un cartellino rosso, 7 giornate perfette di fila | 🟡 |
+| 🔄 | Rimediato | completa tutti i compiti di recupero di un cartellino rosso | 🟡 |
+| 🧭 | Trimestre senza rossi | un trimestre intero senza cartellini rossi | 🟡 |
+| 👑 | Un anno d'oro | un anno senza cartellini rossi | 🔴 |
+
+*🤗 Cooperazione e iniziativa*
+
+| | Medaglia | Si vince quando… | |
+| --- | --- | --- | --- |
+| 🤲 | Primo favore | accetta per la prima volta uno scambio di un fratello | 🟢 |
+| 💪 | Buon fratello | 10 scambi accettati | 🟡 |
+| 👥 | Prima squadra | primo compito di squadra completato | 🟢 |
+| 🧩 | Squadra affiatata | 20 compiti di squadra completati | 🟡 |
+| 💡 | Prima idea | prima proposta approvata da un genitore | 🟢 |
+| 🌱 | Sempre un'idea | 10 proposte approvate | 🟡 |
+| 🧹 | Primo lavoretto extra | primo lavoretto della bacheca | 🟢 |
+| 🦸 | Super aiutante | 50 lavoretti extra | 🔴 |
+
+*💰 Gestione dei guadagni*
+
+| | Medaglia | Si vince quando… | |
+| --- | --- | --- | --- |
+| 🎁 | Primo premio | primo premio approvato | 🟢 |
+| 🐷 | Salvadanaio | arriva a 200 ⭐ di saldo | 🟢 |
+| 🪐 | Primo pianeta | 100 ⭐ guadagnate in totale | 🟢 |
+| 🌌 | Prima galassia | 1.000 ⭐ guadagnate in totale | 🟡 |
+| ⏳ | So aspettare | 30 giorni senza spendere, con il saldo che cresce | 🟡 |
+| 🎯 | Obiettivo raggiunto | raggiunge il premio scelto come obiettivo | 🟡 |
+| 🚲 | Grande traguardo | ottiene un premio da almeno 1.000 ⭐ | 🔴 |
+| 🏦 | Risparmiatore esperto | arriva a 2.000 ⭐ di saldo | 🔴 |
+
+**Dipendenze.** 🎯 Obiettivo raggiunto richiede [Il mio obiettivo](#il-mio-obiettivo--proposta-aggiornata-il-30102026); 🪐 e 🌌 si legano ai [tagli della valuta](#tagli-della-valuta--proposta-27102026), ma funzionano anche senza.
+
+**Come si vedono.**
+- Bacheca «🏅 Le mie medaglie» per ogni figlio: le vinte a colori con la data, le altre in grigio con la condizione per vincerle.
+- Popup di festa alla prima apertura dopo la vincita, una volta sola per medaglia.
+- I genitori vedono le medaglie di ogni figlio nella Situazione.
+
+**Dati e sicurezza.**
+- Un documento per medaglia vinta: `families/{fid}/kids/{kidId}/medals/{medalId}` con `wonAt`, `source: 'app'` (in futuro altre origini, es. un partner) e `seenAt` (popup già mostrato).
+- L'elenco delle 32 medaglie e delle loro condizioni sta nel codice dell'app (come le regole del gioco), non nel database.
+- Assegnazione sul dispositivo del genitore, insieme ai conti di fine giornata (come serie e giornate perfette); le medaglie di oggi (es. Primo premio) anche all'apertura di un genitore. Con il server della roadmap passerà lì.
+- Regole Firestore: scrive solo un genitore; il figlio legge le proprie medaglie e può aggiornare solo `seenAt`. Nessuna assegnazione manuale nell'interfaccia.
+- Test in `tests/rules.test.mjs`: il figlio non può darsi una medaglia né cambiarne la data; può segnarla come vista.
+
+**In futuro.** Il campo `source` permette medaglie di partner (sfide sponsorizzate della roadmap), con le cautele già annotate sul marketing verso i minori.
+
+**Assegnazione a ritroso (primo avvio).** Alla prima apertura di un genitore con la versione che introduce le medaglie, l'app ricalcola tutte le condizioni sullo storico di ogni figlio e salva le medaglie meritate, con `wonAt` uguale alla data in cui il traguardo è stato raggiunto (se ricavabile) e `source: 'app'`. Il figlio vede un solo popup «Hai già conquistato N medaglie!» con l'elenco; le medaglie vinte dopo hanno ognuna il suo popup. Le condizioni che lo storico non permette di ricostruire con certezza (es. «Mattiniero», se mancano gli orari delle spunte più vecchie) si valutano solo da quel momento in avanti.
+
+**Com'è stata fatta (0.16.0).**
+- Nessuna medaglia segreta: tutte visibili, in grigio finché non vinte; bacheca a griglia per area nella scheda «🏅 Medaglie».
+- I numeri si chiedono al server come conteggi (una lettura ciascuno) e solo per le medaglie non ancora vinte; il controllo parte all'apertura di un genitore (al massimo ogni 6 ore), dopo la chiusura di un giorno e dopo l'approvazione di un premio o di una proposta.
+- `wonAt` è il giorno in cui l'app assegna la medaglia, anche per quelle a ritroso (ricavare la data vera costerebbe la lettura di tutto lo storico).
+- Solo in avanti, dai giorni chiusi con la 0.16.0: «Mattiniero» e «Rimediato». «Ripartenza» vale anche a ritroso se la serie in corso è di almeno 7 giorni dopo un rosso. «Salvadanaio» e «Risparmiatore esperto» guardano il saldo al momento del controllo. «Parola d'oro» conta i compiti confermati con «Tutto ok» (un compito confermato non è più contestabile).
+- «Trimestre senza rossi»: conta un trimestre di calendario già finito, cominciato al più tardi nel suo primo mese.
+- Progressi salvati sullo stato del figlio (`bestStreak`, `mornStreak`, `mornBest`, `perfMonth…`, `comeback`, `punOk`, `punDone`, `firstDay`, `medalInit`).
 
 ### Il mio obiettivo – proposta (aggiornata il 30/10/2026)
 
@@ -64,7 +220,7 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 - Regole Firestore: il figlio può cambiare **solo** il campo `goal` del proprio documento (o toglierlo); `rewardId` deve essere un premio esistente e `cost` uguale al suo prezzo. Il resto del documento (serie, rosso, giornate chiuse) resta scrivibile solo dai genitori.
 - Test in `tests/rules.test.mjs`: il figlio imposta il proprio obiettivo (consentito); con un prezzo diverso da quello del catalogo, sull'obiettivo di un fratello o toccando altri campi (negato).
 
-**Da decidere in sviluppo.** Dove mostrare l'avviso (banner nella giornata o popup una volta sola); se i genitori vedono l'obiettivo di ogni figlio nella Situazione (consigliato: aiuta a «celebrare i traguardi»).
+**Com'è stata fatta (0.16.0).** La barra dell'obiettivo sta in alto nella pagina del figlio, sopra tutte le schede, con gli avvisi dentro; i genitori vedono l'obiettivo di ogni figlio nella Situazione e un'etichetta sulla richiesta del premio. La richiesta di un premio ora chiede una conferma.
 
 ### Regalo di compleanno – algoritmo (proposta del 27/10/2026)
 
@@ -119,6 +275,8 @@ Punteggio = 0,40 × Costanza + 0,25 × Onestà + 0,20 × Giornate perfette + 0,1
 **Da decidere.** Pesi e soglie (fissi o configurabili in Setup › Regole); minimo e massimo predefiniti in stelle; se rendere visibile durante l'anno una «pagella in corso» come incentivo; regalo in € come alternativa.
 
 ### Tagli della valuta – proposta (27/10/2026)
+
+**Fatto in 0.16.0** con i nomi pianeta 🪐 e galassia 🌌 e il prezzo misto nel negozio (es. 1 🌌 5 🪐); opzione in Setup › Regole del gioco.
 
 **Idea.** Con premi grandi (contributo bici 5.000 ⭐) e il regalo di compleanno (fino a 2.500 ⭐) i numeri diventano lunghi. Tre tagli, non di più, rendono i saldi leggibili e danno la soddisfazione di «formare» un pianeta o una galassia.
 
