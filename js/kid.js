@@ -7,7 +7,7 @@
 function renderScore(){
   const bal = balance(owner), res = reserved(owner);
   $('score').innerHTML = `
-    <div><b class="stars">${starsTxt(bal - res)}</b><small>stelle${res ? ` (+${starsTxt(res)} prenotate)` : ''}</small></div>
+    <button type="button" class="scorelink" id="scoreStars" aria-label="Stelle: ${starsTxt(bal - res)}. Tocca per vedere le mie stelle"><b class="stars">${starsTxt(bal - res)}</b><small>stelle${res ? ` (+${starsTxt(res)} prenotate)` : ''} ›</small></button>
     <div><b>🔥 ${data.kidState[owner]?.streak || 0}</b><small>giorni perfetti di fila</small></div>
     <div><b>🟨 ${activeYellows(owner).length}/${R().yellowsForRed}</b><small>cartellini gialli</small></div>
     <div><b>🟥 ${redsInQuarter(owner).length}</b><small>rossi nel trimestre</small></div>`;
@@ -18,6 +18,13 @@ function renderScore(){
   renderTarget();
   denomParty(owner);
 }
+
+// il riquadro delle stelle porta a «📜 Le mie stelle»
+$('score').addEventListener('click', e => {
+  if (!e.target.closest('#scoreStars')) return;
+  $('sub').querySelector('[data-sv="log"]').click();
+  $('sub').scrollIntoView({behavior: 'smooth', block: 'start'});
+});
 
 function renderDay(){
   const td = today(), isToday = day === td;

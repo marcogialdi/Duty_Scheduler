@@ -216,6 +216,9 @@ button.medal:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 .mstatus.won{background:color-mix(in srgb,var(--star) 12%,var(--card))}
 .mrow{letter-spacing:1px}
 .score b{overflow-wrap:anywhere}
+.score .scorelink{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+.score .scorelink:active{transform:scale(.96)}
+.score .scorelink:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 .goal.target .acts{display:flex;gap:8px;flex-wrap:wrap}
 /* popup delle novità */
 .news .hint{color:var(--muted);font-size:.85rem;margin:0 0 6px}
