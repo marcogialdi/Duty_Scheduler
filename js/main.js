@@ -13,3 +13,11 @@ onAuthStateChanged(auth, async user => {
 /* registra il service worker (app installabile e apertura rapida) */
 if ('serviceWorker' in navigator && location.protocol === 'https:')
   addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(e => console.warn('SW', e)));
+
+/* avviso di trasloco: chi apre l'app da un indirizzo vecchio viene invitato su HOME_URL
+   (si porta dietro ?invito=… e simili, così i link d'invito continuano a funzionare) */
+if (OLD_HOSTS.includes(location.hostname) && location.origin !== new URL(HOME_URL).origin){
+  $('moveGo').href = HOME_URL + location.search + location.hash;
+  $('moveUrl').textContent = new URL(HOME_URL).host;
+  $('moveDlg').showModal();
+}

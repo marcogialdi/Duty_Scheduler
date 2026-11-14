@@ -6,6 +6,9 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.16.1 · 14/11/2026
+- **Nuovo indirizzo**: l'app vive su `app.bebeans.it`. Chi la apre dal vecchio indirizzo `marcogialdi.github.io/Duty_Scheduler/` vede un avviso con il pulsante «Vai al nuovo indirizzo» (porta con sé l'eventuale codice d'invito), la nota che bisogna rifare l'accesso e come reinstallare l'icona. «Più tardi» lo chiude; ricompare alla prossima apertura. Indirizzi in `HOME_URL` e `OLD_HOSTS` (`js/config.js`).
+
 ## 0.16.0 · 14/11/2026
 - **Medaglie 🏅**: 32 traguardi in quattro aree (costanza, onestà e fiducia, cooperazione e iniziativa, gestione dei guadagni). Le assegna solo l'app, dal dispositivo di un genitore (all'apertura, dopo la chiusura dei giorni e dopo l'approvazione di premi e proposte; al massimo ogni 6 ore): una volta sola, senza livelli, senza stelle, e non si perdono. Al primo avvio assegna quelle già meritate con lo storico. Il figlio le vede in un unico popup e nella nuova scheda «🏅 Medaglie»; i genitori nella Situazione. Codice in `js/medals.js`.
 - **Il mio obiettivo 🎯**: nel Negozio, se le stelle bastano si chiede il premio (ora con una conferma); se non bastano, il figlio lo sceglie come obiettivo e vede una barra di avanzamento in alto. Si può cambiare o togliere. Il prezzo segue il catalogo (con avviso se cambia); se il premio è sospeso o eliminato l'obiettivo resta, con un avviso. A obiettivo raggiunto: festa e «Richiedilo ora»; quando il genitore approva, l'obiettivo si svuota e arriva la medaglia.

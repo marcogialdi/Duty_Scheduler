@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- BeBeans · Compiti di casa · versione 0.16.0 · la versione si cambia solo in js/config.js (APP_VERSION) -->
+<!-- BeBeans · Compiti di casa · versione 0.16.1 · la versione si cambia solo in js/config.js (APP_VERSION) -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
@@ -16,8 +16,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="BeBeans">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="stylesheet" href="css/base.css?v=0.16.0">
-<link rel="stylesheet" href="css/app.css?v=0.16.0">
+<link rel="stylesheet" href="css/base.css?v=0.16.1">
+<link rel="stylesheet" href="css/app.css?v=0.16.1">
 </head>
 <body>
 <div class="wrap">
@@ -474,6 +474,20 @@
   </form>
 </dialog>
 
+<!-- ================= NUOVO INDIRIZZO ================= -->
+<dialog id="moveDlg" aria-labelledby="moveHead">
+  <form method="dialog" class="help news">
+    <h2 id="moveHead">🏠 BeBeans ha un nuovo indirizzo</h2>
+    <p>Da oggi l'app si apre da <b id="moveUrl">app.bebeans.it</b>. Questo indirizzo presto non funzionerà più.</p>
+    <div class="nitem"><span class="nic" aria-hidden="true">🔑</span><div><b>Rifai l'accesso</b>
+      <p>Sul nuovo indirizzo entra di nuovo con codice famiglia e PIN (o con la tua email). Compiti, stelle e premi ci sono tutti.</p></div></div>
+    <div class="nitem"><span class="nic" aria-hidden="true">📲</span><div><b>Hai l'icona sul telefono?</b>
+      <p>Toglila e rimettila dal nuovo indirizzo: su iPhone e iPad con <b>Condividi › Aggiungi alla schermata Home</b>, su Android dal menu <b>⋮ › Installa app</b>.</p></div></div>
+    <div class="dlgacts"><button class="btn" value="close">Più tardi</button><span class="sp"></span>
+      <a class="btn primary" id="moveGo" href="https://app.bebeans.it/">Vai al nuovo indirizzo</a></div>
+  </form>
+</dialog>
+
 <!-- ================= MEDAGLIE VINTE ================= -->
 <dialog id="medalDlg" aria-labelledby="medalHead">
   <form method="dialog" class="help news">
@@ -488,22 +502,22 @@
 <div class="toast" id="toast"></div>
 
 <!-- Firebase per primo (modulo), poi i file dell'app nell'ordine: tutti partono a pagina pronta, uno dopo l'altro -->
-<script type="module" src="js/firebase.js?v=0.16.0"></script>
-<script defer src="js/config.js?v=0.16.0"></script>
-<script defer src="js/util.js?v=0.16.0"></script>
-<script defer src="js/state.js?v=0.16.0"></script>
-<script defer src="js/game.js?v=0.16.0"></script>
-<script defer src="js/auth.js?v=0.16.0"></script>
-<script defer src="js/register.js?v=0.16.0"></script>
-<script defer src="js/data.js?v=0.16.0"></script>
-<script defer src="js/kid.js?v=0.16.0"></script>
-<script defer src="js/parent.js?v=0.16.0"></script>
-<script defer src="js/verify.js?v=0.16.0"></script>
-<script defer src="js/edit.js?v=0.16.0"></script>
-<script defer src="js/collab.js?v=0.16.0"></script>
-<script defer src="js/medals.js?v=0.16.0"></script>
-<script defer src="js/setup.js?v=0.16.0"></script>
-<script defer src="js/help.js?v=0.16.0"></script>
-<script defer src="js/main.js?v=0.16.0"></script>
+<script type="module" src="js/firebase.js?v=0.16.1"></script>
+<script defer src="js/config.js?v=0.16.1"></script>
+<script defer src="js/util.js?v=0.16.1"></script>
+<script defer src="js/state.js?v=0.16.1"></script>
+<script defer src="js/game.js?v=0.16.1"></script>
+<script defer src="js/auth.js?v=0.16.1"></script>
+<script defer src="js/register.js?v=0.16.1"></script>
+<script defer src="js/data.js?v=0.16.1"></script>
+<script defer src="js/kid.js?v=0.16.1"></script>
+<script defer src="js/parent.js?v=0.16.1"></script>
+<script defer src="js/verify.js?v=0.16.1"></script>
+<script defer src="js/edit.js?v=0.16.1"></script>
+<script defer src="js/collab.js?v=0.16.1"></script>
+<script defer src="js/medals.js?v=0.16.1"></script>
+<script defer src="js/setup.js?v=0.16.1"></script>
+<script defer src="js/help.js?v=0.16.1"></script>
+<script defer src="js/main.js?v=0.16.1"></script>
 </body>
 </html>

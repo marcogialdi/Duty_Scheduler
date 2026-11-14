@@ -4,14 +4,18 @@
 // chi organizza il test: compare nell'informativa privacy
 const CONTACT = { name: '', email: '' };
 const APP_NAME = 'BeBeans';
+// indirizzo ufficiale dell'app; chi la apre da un indirizzo vecchio vede l'avviso di trasloco
+const HOME_URL = 'https://app.bebeans.it/';
+const OLD_HOSTS = ['marcogialdi.github.io'];
 /* ---------- VERSIONE ----------
    Numerazione MAGGIORE.MINORE.CORREZIONE: 0.x durante la prova, 1.0.0 = prima versione da prodotto.
    Nuove funzioni → si aumenta il secondo numero; solo correzioni → il terzo.
    A ogni rilascio: aggiorna APP_VERSION, APP_DATE, CHANGELOG e NEWS qui,
    l'intestazione di firestore.rules (se cambiate) e il file CHANGELOG.md. */
-const APP_VERSION = '0.16.0';
+const APP_VERSION = '0.16.1';
 const APP_DATE = '2026-11-14';
 const CHANGELOG = [
+  ['0.16.1', '2026-11-14', 'Nuovo indirizzo app.bebeans.it: chi apre l\'app dal vecchio indirizzo GitHub vede un avviso con il collegamento e le istruzioni per reinstallarla.'],
   ['0.16.0', '2026-11-14', 'Medaglie 🏅: 32 traguardi assegnati in automatico. Il mio obiettivo 🎯: un premio da raggiungere, scelto nel Negozio, con la barra dei progressi. Stelle in pianeti 🪐 e galassie 🌌.'],
   ['0.15.0', '2026-11-03', 'Nuovo look BeBeans: nome, logo "fagiolo con stella", colori del marchio (blu notte, giallo fagiolo, corallo) e carattere Fredoka; nuove icone dell\'app.'],
   ['0.14.0', '2026-10-30', 'Guida contestuale: si apre sulla parte che riguarda la schermata in uso; prima dell\'accesso mostra solo come creare la famiglia, entrare con un invito e accedere; ❓ accanto ad alcuni titoli.'],
