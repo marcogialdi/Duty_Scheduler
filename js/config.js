@@ -4,6 +4,7 @@
 // chi organizza il test: compare nell'informativa privacy
 const CONTACT = { name: '', email: '' };
 const APP_NAME = 'BeBeans';
+const APP_COPYRIGHT = '© 2026 Marco Gialdi';   // titolare dei diritti: vedi il file LICENSE
 // indirizzo ufficiale dell'app; chi la apre da un indirizzo vecchio vede l'avviso di trasloco
 const HOME_URL = 'https://app.bebeans.it/';
 const OLD_HOSTS = ['marcogialdi.github.io'];
@@ -16,7 +17,7 @@ const OLD_HOSTS_UNTIL = '2026-11-21';       // ultimo giorno del vecchio indiriz
 const APP_VERSION = '0.16.2';
 const APP_DATE = '2026-11-14';
 const CHANGELOG = [
-  ['0.16.2', '2026-11-14', 'Medaglie: un tap su una medaglia apre un popup che spiega cosa premia, perché conta, come si vince e, se è già tua, quando l\'hai conquistata. Il riquadro delle stelle in alto porta a «Le mie stelle», che ora mostra il saldo in galassie, pianeti e stelle e in sole stelle.'],
+  ['0.16.2', '2026-11-14', 'Medaglie: un tap su una medaglia apre un popup che spiega cosa premia, perché conta, come si vince e, se è già tua, quando l\'hai conquistata. Il riquadro delle stelle in alto porta a «Le mie stelle», che ora mostra il saldo in galassie, pianeti e stelle e in sole stelle. In fondo alla pagina, la nota di copyright e la licenza.'],
   ['0.16.1', '2026-11-14', 'Nuovo indirizzo app.bebeans.it: chi apre l\'app dal vecchio indirizzo GitHub vede un avviso con il collegamento e le istruzioni per reinstallarla; il vecchio indirizzo resta attivo fino al 21/11/2026.'],
   ['0.16.0', '2026-11-14', 'Medaglie 🏅: 32 traguardi assegnati in automatico. Il mio obiettivo 🎯: un premio da raggiungere, scelto nel Negozio, con la barra dei progressi. Stelle in pianeti 🪐 e galassie 🌌.'],
   ['0.15.0', '2026-11-03', 'Nuovo look BeBeans: nome, logo "fagiolo con stella", colori del marchio (blu notte, giallo fagiolo, corallo) e carattere Fredoka; nuove icone dell\'app.'],

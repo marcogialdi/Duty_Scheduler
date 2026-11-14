@@ -10,6 +10,7 @@ const SHELL = [
     "./icons/icon-512.png",
     "./icons/apple-touch-icon.png",
     "./icons/logo.svg",
+    "./LICENSE",
     "./fonts/fredoka-latin-500-normal.woff2",
     "./fonts/fredoka-latin-600-normal.woff2",
     "./fonts/fredoka-latin-700-normal.woff2",

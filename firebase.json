@@ -3,7 +3,7 @@
     "public": ".",
     "ignore": [
       "firebase.json", ".firebaserc", "**/.*", "**/node_modules/**",
-      ".github/**", "tests/**", "docs/**", "*.md", "LICENSE",
+      ".github/**", "tests/**", "docs/**", "*.md",
       "firestore.rules", "compiti.html"
     ],
     "cleanUrls": false,

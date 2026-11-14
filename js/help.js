@@ -15,6 +15,21 @@ $('iconGrid').onclick = e => { const b = e.target.closest('[data-ic]'); if (!b) 
 
 $('appVer').innerHTML = `<button class="link" id="verBtn">${APP_NAME} · versione ${APP_VERSION} · ${fmtDate(APP_DATE)}</button>`;
 $('verBtn').onclick = () => openHelp('news');
+// copyright e licenza: il testo è il file LICENSE del progetto (anche offline, è nel service worker)
+$('appVer').insertAdjacentHTML('beforeend', `<div class="copy">${APP_COPYRIGHT} · Tutti i diritti riservati · <button class="link" id="licBtn">Licenza</button></div>`);
+$('licBtn').onclick = async () => {
+  $('licDlg').showModal();
+  if ($('licText').dataset.ok) return;
+  try {
+    const r = await fetch('LICENSE', {cache: 'no-cache'});
+    if (!r.ok) throw new Error(r.status);
+    // il file va a capo a 75 caratteri: unisco le righe di ogni paragrafo, così il testo si adatta allo schermo
+    const paras = (await r.text()).trim().split(/\n\s*\n/).map((p, i) => i === 0 ? p
+      : /^\s+\d+\./.test(p) ? p.split(/\n(?=\s+\d+\.)/).map(x => x.replace(/\s*\n\s*/g, ' ').trim()).join('\n')
+      : p.replace(/\s*\n\s*/g, ' '));
+    $('licText').textContent = paras.join('\n\n'); $('licText').dataset.ok = '1';
+  } catch(e){ $('licText').textContent = 'Il testo della licenza non è disponibile ora: riprova quando sei online.'; }
+};
 const newsHtml = open => `
     <details data-sec="news" ${open ? 'open' : ''}><summary>🆕 Novità · versione ${APP_VERSION}</summary>
       <ul>${CHANGELOG.slice(0, 4).map(([v, d, t]) => `<li><b>${v}</b> (${fmtDate(d)}): ${esc(t)}</li>`).join('')}</ul>
