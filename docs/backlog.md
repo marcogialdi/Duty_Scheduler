@@ -20,6 +20,7 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 
 | Idea | Descrizione | Proposta il | Stato |
 | --- | --- | --- | --- |
+| Saldo in valuta in «Le mie stelle» 🌌 | In cima alla scheda «📜 Le mie stelle», il saldo disponibile in valuta (galassie, pianeti, stelle) e in sole stelle, con le stelle prenotate per premi in attesa | 14/11/2026 | Fatto in 0.16.2 |
 | Tile delle stelle cliccabile ⭐ | Nella pagina del figlio, toccando il riquadro in alto con il numero di stelle (saldo) si apre la scheda «📜 Le mie stelle», con lo storico di guadagni e spese. Oggi il riquadro è solo informativo e per vedere i movimenti bisogna trovare la scheda sotto | 14/11/2026 | Fatto in 0.16.2 |
 | Spiegazione delle medaglie 🏅 | Nella pagina Medaglie, un tap su una medaglia apre un popup che ne spiega il significato: nome e icona, area (costanza, onestà e fiducia, cooperazione e iniziativa, gestione dei guadagni), che cosa premia e perché conta, come si vince e, se già conquistata, quando. Oggi la scheda di una medaglia vinta mostra solo la data e non dice più come si è ottenuta. Dettaglio in [Medaglie](#medaglie--proposta-del-30102026) | 14/11/2026 | Fatto in 0.16.2 |
 | Schede nella pagina Genitori | Troppo scorrimento: dividere in schede (es. Oggi · Compiti · Premi · Proposte) | 17/10/2026 | Fatto in 0.8.0 |

@@ -230,3 +230,11 @@ button.medal:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 .nitem p b{color:var(--ink)}
 .nitem p{margin:2px 0 0;font-size:.88rem;color:var(--muted);line-height:1.4}
 .newsread{margin-top:12px}
+
+/* Le mie stelle: saldo in valuta e in stelle (0.16.2) */
+.logbal{text-align:center}
+.logbal h2{justify-content:center}
+.logbal .lbmain{font-family:var(--font-brand);font-size:1.9rem;font-weight:600;color:var(--star);font-variant-numeric:tabular-nums;line-height:1.25;overflow-wrap:anywhere}
+.logbal .lbstars{font-size:1rem;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:2px}
+.logbal .hint{margin:8px 0 0}
+.logbal .lblegend{font-size:.78rem}

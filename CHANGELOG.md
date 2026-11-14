@@ -9,6 +9,7 @@ se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service wor
 ## 0.16.2 · 14/11/2026
 - **Medaglie spiegate**: nella scheda 🏅 Medaglie ogni medaglia è un pulsante; il tap apre un popup con icona, nome, area (con il suo significato), «Perché conta», «Come si vince» e lo stato (data di conquista o «non ancora conquistata»). Testi in `MEDAL_WHY` e `MEDAL_AREA_INFO` (`js/medals.js`). Prima una medaglia vinta mostrava solo la data e non diceva più come era stata ottenuta.
 - **Riquadro delle stelle cliccabile**: nella pagina del figlio il riquadro con il saldo in alto è un pulsante che apre la scheda «📜 Le mie stelle».
+- **Saldo in «Le mie stelle»**: in cima alla scheda un riquadro «⭐ Il mio saldo» mostra le stelle disponibili in valuta (🌌 galassie, 🪐 pianeti, ⭐ stelle) e, sotto, lo stesso saldo in sole stelle; se ci sono premi in attesa, anche le stelle prenotate. Con i tagli della valuta spenti mostra solo le stelle.
 
 ## 0.16.1 · 14/11/2026
 - **Nuovo indirizzo**: l'app vive su `app.bebeans.it`. Chi la apre dal vecchio indirizzo `marcogialdi.github.io/Duty_Scheduler/` vede un avviso con il pulsante «Vai al nuovo indirizzo» (porta con sé l'eventuale codice d'invito), la nota che bisogna rifare l'accesso e come reinstallare l'icona. Il vecchio indirizzo resta attivo fino al 21/11/2026 (`OLD_HOSTS_UNTIL`). «Più tardi» lo chiude; ricompare alla prossima apertura. Indirizzi in `HOME_URL` e `OLD_HOSTS` (`js/config.js`).

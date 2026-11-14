@@ -333,6 +333,14 @@ $('svShop').addEventListener('click', async e => {
 
 /* ---------- estratto conto e regole ---------- */
 function renderLog(){
+  // saldo in valuta (galassie, pianeti, stelle) e in stelle
+  const bal = balance(owner), res = reserved(owner), avail = bal - res, n = x => Math.round(x).toLocaleString('it-IT');
+  const big = useDenoms() && Math.abs(avail) >= 100;
+  $('logBal').innerHTML = `<h2>⭐ Il mio saldo</h2>
+    <div class="lbmain">${big ? starsTxt(avail) : `${n(avail)} ⭐`}</div>
+    ${big ? `<div class="lbstars">= ${n(avail)} ⭐</div>` : ''}
+    ${res ? `<p class="hint">In più ${useDenoms() && res >= 100 ? `${starsTxt(res)} (${n(res)} ⭐)` : `${n(res)} ⭐`} prenotate per premi che aspettano l'ok di mamma o papà.</p>` : ''}
+    ${useDenoms() ? `<p class="hint lblegend">🌌 1 galassia = 1.000 ⭐ · 🪐 1 pianeta = 100 ⭐</p>` : ''}`;
   const rows = (data.ledger[owner] || []).slice().sort((a,b) => ms(b.createdAt) - ms(a.createdAt));
   $('logList').innerHTML = rows.length ? rows.map(l => `
     <div class="row"><div class="body">${esc(l.reason)}<br><small>${fmtDate(l.date)}</small></div>
