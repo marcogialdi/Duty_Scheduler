@@ -1,6 +1,6 @@
 # Compiti di casa – Backlog
 
-Idee e sviluppi proposti per l'app, con il loro stato. Aggiornato al 14/11/2026 (versione 0.16.0).
+Idee e sviluppi proposti per l'app, con il loro stato. Aggiornato al 14/11/2026 (versione 0.16.1).
 
 Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima era in fondo alla [documentazione di progetto](../compiti-di-casa-documentazione.md). Ogni nuova idea va confrontata con la [filosofia del progetto](filosofia.md): deve servire almeno uno dei tre obiettivi (responsabilità, cooperazione, gestione dei guadagni). L'ordine in cui sviluppare le voci aperte è nella [roadmap evolutiva](https://claude.ai/artifact/PBUdhmMP3JW7j9n86Ksg7X).
 
@@ -14,6 +14,7 @@ Questo documento raccoglie la sezione «Possibili sviluppi (backlog)» che prima
 | Gruppi richiudibili in Da verificare | Gruppi chiusi di default con un riassunto nell'intestazione (es. «🌅 Mattina lun 26 · Ricky 7 · Tommy 5 ▸»); in cima i gruppi con compiti in scadenza | 26/10/2026 | Rinviato |
 | Regalo di compleanno 🎂 | Il giorno del compleanno il figlio riceve gli auguri con un pop-up e un regalo in stelle che lo fa avanzare verso il premio scelto come obiettivo; le stelle dipendono da un punteggio sul comportamento degli ultimi 12 mesi, entro un minimo e un massimo decisi dai genitori. Dettaglio in [Regalo di compleanno – algoritmo](#regalo-di-compleanno--algoritmo-proposta-del-27102026). Regalo in € da valutare | 27/10/2026 | Da valutare |
 | Sfide tra famiglie 🏁 | Sfide su invito tra famiglie, con classifiche condivise. I genitori approvano la partecipazione di ogni figlio; in classifica il figlio compare con un nickname scelto da lui, mai con il nome vero. Richiede il [server leggero](#server-leggero--scheda-del-30102026) (roadmap, Fase 4). Dettaglio in [Sfide tra famiglie](#sfide-tra-famiglie--proposta-del-30102026) | 30/10/2026 | Da valutare |
+| Spiegazione delle medaglie 🏅 | Nella pagina Medaglie, un tap su una medaglia apre un popup che ne spiega il significato: nome e icona, area (costanza, onestà e fiducia, cooperazione e iniziativa, gestione dei guadagni), che cosa premia e perché conta, come si vince e, se già conquistata, quando. Oggi la scheda di una medaglia vinta mostra solo la data e non dice più come si è ottenuta. Dettaglio in [Medaglie](#medaglie--proposta-del-30102026) | 14/11/2026 | Da valutare |
 | Server leggero ☁️ | Codice nostro che gira da Google (Cloud Functions, piano Blaze): chiusura notturna delle giornate, notifiche, cancellazione completa, calcoli affidabili, classifiche delle sfide. Prima funzione consigliata: la chiusura notturna. Dettaglio in [Server leggero](#server-leggero--scheda-del-30102026) | 30/10/2026 | Rinviato (dopo il test con le famiglie) |
 
 ## Fatto
