@@ -1,0 +1,60 @@
+BeBeans · Compiti di casa
+Copyright © 2026 Marco Gialdi. Tutti i diritti riservati.
+
+ITALIANO
+
+Questo software, compresi il codice sorgente, la grafica, i testi, il nome
+"BeBeans", il logo e la documentazione (di seguito "il Software"), è opera
+protetta dalla Legge 22 aprile 1941, n. 633 sul diritto d'autore e dalle
+norme sulla proprietà industriale. Il titolare dei diritti è Marco Gialdi.
+
+Il fatto che il codice sia visibile pubblicamente non concede alcuna
+licenza d'uso. Senza un'autorizzazione scritta del titolare è vietato:
+
+  1. copiare, riprodurre o scaricare il Software, in tutto o in parte, per
+     scopi diversi dalla semplice consultazione;
+  2. modificarlo, tradurlo, adattarlo o creare opere derivate;
+  3. distribuirlo, pubblicarlo, concederlo in licenza, venderlo o metterlo
+     a disposizione di terzi, anche gratuitamente;
+  4. usarlo, in tutto o in parte, per realizzare o ospitare un servizio,
+     un'applicazione o un prodotto simile o concorrente;
+  5. usare il nome "BeBeans", il logo o altri segni distintivi del
+     Software.
+
+È consentito soltanto l'uso dell'applicazione pubblicata dal titolare,
+secondo i relativi termini d'uso.
+
+Sono fatti salvi i diritti inderogabili riconosciuti all'utente dagli
+articoli 64-ter e 64-quater della Legge 633/1941.
+
+Il Software è fornito "così com'è", senza garanzie di alcun tipo, nei
+limiti consentiti dalla legge.
+
+Componenti di terze parti: il carattere Fredoka, nella cartella fonts/, è
+distribuito con la propria licenza SIL Open Font License 1.1
+(fonts/OFL.txt) e non è soggetto a questa licenza.
+
+Per richieste di autorizzazione: Marco Gialdi, tramite GitHub
+(https://github.com/marcogialdi).
+
+
+ENGLISH
+
+Copyright © 2026 Marco Gialdi. All rights reserved.
+
+This software, including its source code, graphics, texts, the "BeBeans"
+name, logo and documentation (the "Software"), is protected by Italian
+copyright law (Law no. 633 of 22 April 1941) and industrial property law.
+
+The public visibility of the source code does not grant any licence.
+Without the prior written permission of the copyright holder you may not
+copy, modify, distribute, sublicense, sell, host or otherwise use the
+Software, in whole or in part, nor use it to build a similar or competing
+product, nor use the "BeBeans" name or logo. You may only use the
+application published by the copyright holder, under its terms of use.
+
+The Software is provided "as is", without warranty of any kind, to the
+extent permitted by law. The Fredoka font in fonts/ is licensed separately
+under the SIL Open Font License 1.1 (fonts/OFL.txt).
+
+The Italian text prevails in case of discrepancy.
