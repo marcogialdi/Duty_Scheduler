@@ -82,6 +82,65 @@ const MEDALS = [
 const MEDAL_BY = Object.fromEntries(MEDALS.map(m => [m.id, m]));
 const medalsOf = k => (data.medals[k] || []).filter(m => MEDAL_BY[m.id]);
 
+/* ---------- il significato di ogni medaglia, per il popup che si apre toccandola ---------- */
+const MEDAL_AREA_INFO = {
+  costanza: 'Fare la propria parte ogni giorno, anche quando non se ne ha voglia.',
+  onesta:   'Dire le cose come stanno, così mamma e papà possono fidarsi di te.',
+  insieme:  'Aiutare gli altri e avere idee per rendere la casa un posto migliore.',
+  guadagni: 'Imparare a usare bene le stelle: guadagnare, risparmiare, scegliere.',
+};
+const MEDAL_WHY = {
+  perfect1:  'Una giornata perfetta vuol dire che hai fatto tutti i tuoi compiti, senza dimenticarne nessuno. È il primo passo: hai visto che ce la puoi fare.',
+  streak7:   'Una settimana intera senza saltare niente. Ripetere le cose ogni giorno le trasforma in abitudini, e le abitudini poi diventano facili.',
+  streak14:  'Due settimane di fila: ormai i compiti fanno parte delle tue giornate. Questa è la costanza vera.',
+  streak30:  'Un mese intero senza un giorno storto. Pochi ci riescono: vuol dire che sei affidabile, sempre.',
+  tasks100:  'Cento volte hai dato una mano in casa. Ogni compito è piccolo, ma messi insieme fanno una grande differenza per tutta la famiglia.',
+  tasks500:  'Cinquecento compiti! È il segno di chi la sua parte la fa da tanto tempo, giorno dopo giorno.',
+  morning7:  'Fare subito le cose del mattino rende tutta la giornata più leggera, per te e per gli altri. Per sette giorni di fila hai iniziato col piede giusto.',
+  month20:   'Venti giornate perfette in un mese: anche se qualche giorno è andato storto, hai ripreso subito il ritmo.',
+  checked1:  'Mamma o papà hanno controllato un tuo compito e hanno visto che era fatto davvero bene. Dire «fatto» solo quando è vero è la base della fiducia.',
+  checked50: 'Cinquanta volte la tua parola è stata confermata. Quando dici «fatto», gli altri sanno che possono crederci.',
+  clean30:   'Un mese senza cartellini: niente compiti segnati e non fatti, niente scorciatoie. La fiducia si costruisce così, un giorno alla volta.',
+  clean90:   'Tre mesi senza cartellini. Mamma e papà sanno di potersi fidare di te: è una cosa preziosa, come un diamante.',
+  comeback:  'Sbagliare capita a tutti. Questa medaglia premia chi dopo un cartellino rosso non si arrende e si rimette subito in pista.',
+  recovered: 'Hai fatto tutti i compiti di recupero di un cartellino rosso. Rimediare a un errore è il modo più bello di chiedere scusa.',
+  quarter:   'Tre mesi di calendario senza cartellini rossi: un periodo lungo in cui hai sempre giocato pulito.',
+  year:      'Un anno intero senza cartellini rossi. È la medaglia della fiducia più grande: te la sei guadagnata giorno dopo giorno.',
+  swap1:     'Hai fatto un compito al posto di tuo fratello o tua sorella. In famiglia ci si dà una mano, e la prima volta conta tantissimo.',
+  swap10:    'Dieci volte hai detto di sì quando qualcuno aveva bisogno. Essere disponibili è una cosa che gli altri ricordano.',
+  team1:     'Un compito di squadra si porta a termine solo insieme: bisogna organizzarsi, dividersi il lavoro e fidarsi l\'uno dell\'altro.',
+  team20:    'Venti compiti di squadra: avete imparato a lavorare insieme. E quando si lavora in squadra, nessuno resta indietro.',
+  idea1:     'Hai proposto un compito e mamma o papà l\'hanno approvato. Vedere cosa c\'è da fare, senza che te lo dicano, si chiama iniziativa.',
+  idea10:    'Dieci idee approvate: hai occhio per quello che serve in casa e il coraggio di proporlo.',
+  board1:    'Un lavoretto extra non è obbligatorio: l\'hai scelto tu. È il primo passo per capire che ci si può dare da fare anche di propria iniziativa.',
+  board50:   'Cinquanta lavoretti extra! Quando c\'è bisogno di aiuto, tu ci sei.',
+  prize1:    'Hai trasformato il tuo impegno in qualcosa che volevi. Le stelle servono proprio a questo: guadagnarsi le cose con il proprio lavoro.',
+  bal200:    'Avere 200 stelle insieme vuol dire che non le hai spese subito. Mettere da parte è il primo segreto di chi sa gestire i propri guadagni.',
+  earned100: 'Le tue prime 100 stelle guadagnate: un pianeta intero, fatto con il tuo impegno.',
+  earned1000:'Mille stelle guadagnate in tutto: una galassia! Ogni stella è un compito fatto, una per una.',
+  wait30:    'Per trenta giorni avevi stelle da spendere e hai deciso di aspettare. Saper aspettare permette di arrivare a premi più grandi.',
+  goal:      'Avevi scelto un obiettivo e l\'hai raggiunto. Scegliere una meta e risparmiare fino ad arrivarci è una cosa da grandi.',
+  prize1000: 'Un premio da almeno mille stelle richiede tanto tempo e tanta pazienza. Te lo sei guadagnato tutto.',
+  bal2000:   'Duemila stelle messe da parte: sai risparmiare davvero. Con questa pazienza potrai arrivare dove vuoi.',
+};
+
+function showMedalInfo(id){
+  const m = MEDAL_BY[id]; if (!m) return;
+  const won = medalsOf(owner).find(x => x.id === id);
+  const area = MEDAL_AREAS.find(([a]) => a === m.area)?.[1] || '';
+  $('medalInfoHead').innerHTML = `<span class="mbig ${won ? 'won' : ''}" aria-hidden="true">${m.icon}</span>${esc(m.name)}`;
+  $('medalInfoBody').innerHTML = `
+    <p class="marea-chip">${esc(area)} <small>· ${esc(MEDAL_AREA_INFO[m.area] || '')}</small></p>
+    <h3>Perché conta</h3><p>${esc(MEDAL_WHY[id] || '')}</p>
+    <h3>Come si vince</h3><p>${esc(m.how)}.</p>
+    <p class="mstatus ${won ? 'won' : ''}">${won ? `🏅 Conquistata il ${fmtDate(won.wonAt)}` : '🔒 Non ancora conquistata: si vince una volta sola e poi resta per sempre.'}</p>`;
+  $('medalInfoDlg').showModal();
+}
+$('medalList').addEventListener('click', e => {
+  const b = e.target.closest('[data-medal]'); if (b) showMedalInfo(b.dataset.medal);
+});
+$('medalInfoDlg').addEventListener('close', () => maybeShowMedals());
+
 /* ---------- i numeri: conteggi fatti dal server (una lettura ciascuno), mai tutto lo storico ---------- */
 const cntOf = async q => (await getAggregateFromServer(q, {n: count()})).data().n;
 const ledgerType = (k, t) => query(col('kids', k, 'ledger'), where('type', '==', t));
@@ -188,13 +247,14 @@ function renderMedals(){
   const n = Object.keys(won).length;
   if (medalsOff){ $('medalList').innerHTML = '<div class="empty">Le medaglie arrivano tra poco: mamma o papà devono completare l\'aggiornamento.</div>'; return; }
   $('medalList').innerHTML = `<p class="hint">${n ? `${n} su ${MEDALS.length} conquistate` : `Ancora nessuna medaglia: la prima è vicina!`}.
-      Le medaglie si vincono una volta sola e restano tue per sempre. Arrivano quando mamma o papà aprono l'app.</p>` +
+      Le medaglie si vincono una volta sola e restano tue per sempre. Arrivano quando mamma o papà aprono l'app. Tocca una medaglia per scoprire cosa significa.</p>` +
     MEDAL_AREAS.map(([a, title]) => {
       const list = MEDALS.filter(m => m.area === a);
       return `<h3 class="marea">${title} <small>${list.filter(m => won[m.id]).length}/${list.length}</small></h3>
-        <div class="mgrid">${list.map(m => `<div class="medal ${won[m.id] ? 'won' : ''}">
+        <div class="mgrid">${list.map(m => `<button type="button" class="medal ${won[m.id] ? 'won' : ''}" data-medal="${m.id}"
+          aria-label="${esc(m.name)}: ${won[m.id] ? 'conquistata' : 'da conquistare'}. Tocca per sapere cosa significa">
           <span class="mic" aria-hidden="true">${m.icon}</span><b>${esc(m.name)}</b>
-          <small>${won[m.id] ? `vinta il ${fmtDate(won[m.id].wonAt)}` : esc(m.how)}</small></div>`).join('')}</div>`;
+          <small>${won[m.id] ? `vinta il ${fmtDate(won[m.id].wonAt)}` : esc(m.how)}</small></button>`).join('')}</div>`;
     }).join('');
 }
 // riga per la Situazione dei genitori

@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- BeBeans · Compiti di casa · versione 0.16.1 · la versione si cambia solo in js/config.js (APP_VERSION) -->
+<!-- BeBeans · Compiti di casa · versione 0.16.2 · la versione si cambia solo in js/config.js (APP_VERSION) -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
@@ -16,8 +16,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="BeBeans">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="stylesheet" href="css/base.css?v=0.16.1">
-<link rel="stylesheet" href="css/app.css?v=0.16.1">
+<link rel="stylesheet" href="css/base.css?v=0.16.2">
+<link rel="stylesheet" href="css/app.css?v=0.16.2">
 </head>
 <body>
 <div class="wrap">
@@ -497,27 +497,35 @@
   </form>
 </dialog>
 
+<dialog id="medalInfoDlg" aria-labelledby="medalInfoHead">
+  <form method="dialog" class="help news minfo">
+    <h2 id="medalInfoHead">🏅</h2>
+    <div id="medalInfoBody"></div>
+    <div class="dlgacts"><span class="sp"></span><button class="btn primary" value="close">Ho capito</button></div>
+  </form>
+</dialog>
+
 <footer class="appver" id="appVer"></footer>
 <div class="undobar" id="undoBar" role="status" aria-live="polite" hidden></div>
 <div class="toast" id="toast"></div>
 
 <!-- Firebase per primo (modulo), poi i file dell'app nell'ordine: tutti partono a pagina pronta, uno dopo l'altro -->
-<script type="module" src="js/firebase.js?v=0.16.1"></script>
-<script defer src="js/config.js?v=0.16.1"></script>
-<script defer src="js/util.js?v=0.16.1"></script>
-<script defer src="js/state.js?v=0.16.1"></script>
-<script defer src="js/game.js?v=0.16.1"></script>
-<script defer src="js/auth.js?v=0.16.1"></script>
-<script defer src="js/register.js?v=0.16.1"></script>
-<script defer src="js/data.js?v=0.16.1"></script>
-<script defer src="js/kid.js?v=0.16.1"></script>
-<script defer src="js/parent.js?v=0.16.1"></script>
-<script defer src="js/verify.js?v=0.16.1"></script>
-<script defer src="js/edit.js?v=0.16.1"></script>
-<script defer src="js/collab.js?v=0.16.1"></script>
-<script defer src="js/medals.js?v=0.16.1"></script>
-<script defer src="js/setup.js?v=0.16.1"></script>
-<script defer src="js/help.js?v=0.16.1"></script>
-<script defer src="js/main.js?v=0.16.1"></script>
+<script type="module" src="js/firebase.js?v=0.16.2"></script>
+<script defer src="js/config.js?v=0.16.2"></script>
+<script defer src="js/util.js?v=0.16.2"></script>
+<script defer src="js/state.js?v=0.16.2"></script>
+<script defer src="js/game.js?v=0.16.2"></script>
+<script defer src="js/auth.js?v=0.16.2"></script>
+<script defer src="js/register.js?v=0.16.2"></script>
+<script defer src="js/data.js?v=0.16.2"></script>
+<script defer src="js/kid.js?v=0.16.2"></script>
+<script defer src="js/parent.js?v=0.16.2"></script>
+<script defer src="js/verify.js?v=0.16.2"></script>
+<script defer src="js/edit.js?v=0.16.2"></script>
+<script defer src="js/collab.js?v=0.16.2"></script>
+<script defer src="js/medals.js?v=0.16.2"></script>
+<script defer src="js/setup.js?v=0.16.2"></script>
+<script defer src="js/help.js?v=0.16.2"></script>
+<script defer src="js/main.js?v=0.16.2"></script>
 </body>
 </html>

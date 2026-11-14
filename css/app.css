@@ -202,6 +202,18 @@ button.vc.pend{border:2px dashed var(--minus);background:color-mix(in srgb,var(-
 .medal small{color:var(--muted);font-size:.75rem}
 .medal.won{border-color:var(--star);background:color-mix(in srgb,var(--star) 10%,var(--card))}
 .medal.won .mic{filter:none;opacity:1}
+button.medal{font:inherit;color:inherit;cursor:pointer;width:100%;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+button.medal:active{transform:scale(.96)}
+button.medal:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.minfo h2{display:flex;align-items:center;gap:10px}
+.minfo .mbig{font-size:2.4rem;line-height:1;filter:grayscale(1);opacity:.5}
+.minfo .mbig.won{filter:none;opacity:1}
+.minfo h3{font-size:.95rem;margin:14px 0 4px}
+.minfo p{margin:0}
+.marea-chip{font-weight:600}
+.marea-chip small{font-weight:400;color:var(--muted)}
+.mstatus{margin-top:14px !important;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--muted) 10%,var(--card));font-size:.9rem}
+.mstatus.won{background:color-mix(in srgb,var(--star) 12%,var(--card))}
 .mrow{letter-spacing:1px}
 .score b{overflow-wrap:anywhere}
 .goal.target .acts{display:flex;gap:8px;flex-wrap:wrap}

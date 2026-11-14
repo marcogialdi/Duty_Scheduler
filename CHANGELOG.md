@@ -6,6 +6,9 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.16.2 · 14/11/2026
+- **Medaglie spiegate**: nella scheda 🏅 Medaglie ogni medaglia è un pulsante; il tap apre un popup con icona, nome, area (con il suo significato), «Perché conta», «Come si vince» e lo stato (data di conquista o «non ancora conquistata»). Testi in `MEDAL_WHY` e `MEDAL_AREA_INFO` (`js/medals.js`). Prima una medaglia vinta mostrava solo la data e non diceva più come era stata ottenuta.
+
 ## 0.16.1 · 14/11/2026
 - **Nuovo indirizzo**: l'app vive su `app.bebeans.it`. Chi la apre dal vecchio indirizzo `marcogialdi.github.io/Duty_Scheduler/` vede un avviso con il pulsante «Vai al nuovo indirizzo» (porta con sé l'eventuale codice d'invito), la nota che bisogna rifare l'accesso e come reinstallare l'icona. Il vecchio indirizzo resta attivo fino al 21/11/2026 (`OLD_HOSTS_UNTIL`). «Più tardi» lo chiude; ricompare alla prossima apertura. Indirizzi in `HOME_URL` e `OLD_HOSTS` (`js/config.js`).
 
