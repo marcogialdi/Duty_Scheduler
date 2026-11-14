@@ -1,10 +1,21 @@
+/* ---------- marchio BeBeans (logo A "Fagiolo stella") ----------
+   blu notte #1F2A44 (testo, contorni, pulsanti) · giallo fagiolo #FFD54A · corallo stella #FF7A59 · ardesia #4A5470
+   giallo e corallo solo come sfondi, evidenziazioni e icone: come colore del testo sul chiaro non si leggono. */
+@font-face{font-family:'Fredoka';font-style:normal;font-weight:500;font-display:swap;src:url(../fonts/fredoka-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Fredoka';font-style:normal;font-weight:600;font-display:swap;src:url(../fonts/fredoka-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Fredoka';font-style:normal;font-weight:700;font-display:swap;src:url(../fonts/fredoka-latin-700-normal.woff2) format('woff2')}
 :root{
-  --bg:#f6f7fb; --card:#fff; --ink:#1f2333; --muted:#6b7085; --line:#e4e6ee;
-  --extra:#64748b; --star:#eab308; --plus:#059669; --minus:#dc2626;
+  --navy:#1F2A44; --yellow:#FFD54A; --coral:#FF7A59; --slate:#4A5470;
+  --bg:#FFF8E7; --card:#fff; --ink:#1F2A44; --muted:#5B6480; --line:#EDE3CB;
+  --extra:#64748b; --star:#B8401F; --plus:#047857; --minus:#dc2626;
+  --warn:#FF7A59; --warn-ink:#B8401F; --info:#FFD54A;
+  --primary-bg:#1F2A44; --primary-ink:#fff;
+  --font-brand:'Fredoka',system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --radius:14px;
 }
 @media (prefers-color-scheme: dark){
-  :root{ --bg:#14161f; --card:#1d2030; --ink:#eceef6; --muted:#9aa0b8; --line:#2c3044; --plus:#34d399; --minus:#f87171; }
+  :root{ --bg:#121A2E; --card:#1C2640; --ink:#F6F1E4; --muted:#AEB6CC; --line:#2D3958; --star:#FFA184;
+         --plus:#34d399; --minus:#f87171; --warn-ink:#FFA184; --primary-bg:#FFD54A; --primary-ink:#1F2A44; }
 }
 *{box-sizing:border-box}
 [hidden]{display:none !important}
@@ -12,6 +23,11 @@ body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;b
 .wrap{max-width:760px;margin:0 auto;padding:16px}
 header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 header h1{font-size:1.4rem;margin:4px 0}
+/* titoli, schede e pulsanti nel carattere del marchio */
+h1,h2,h3,legend,summary,.tab,.btn,.hbtn,.ptabs button,.sub button,.tile,.score b,.goal .pct,.slotbtn,.slothead,.vhead,.vday,.vkid,.badge{font-family:var(--font-brand)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand .mark{width:38px;height:38px;flex:0 0 auto}
+.brand h1{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
 #who{font-size:.85rem;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 #who a{color:var(--ink);cursor:pointer;text-decoration:underline}
 .tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
@@ -91,7 +107,7 @@ header h1{font-size:1.4rem;margin:4px 0}
      padding:8px 12px;min-height:38px;font-size:.85rem;cursor:pointer;white-space:nowrap}
 .acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .btn:disabled{opacity:.45;cursor:default}
-.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.primary{background:var(--primary-bg);color:var(--primary-ink);border-color:var(--primary-bg);font-weight:600}
 .btn.big{padding:11px 16px;font-size:.95rem}
 .btn.ok{background:var(--plus);color:#fff;border-color:var(--plus)}
 .btn.no{background:transparent;color:var(--minus);border-color:var(--minus)}
@@ -171,6 +187,7 @@ legend{font-weight:600;font-size:.9rem;padding:0 6px}
 }
 /* smartphone */
 @media (max-width:560px){
+  .brand .mark{width:32px;height:32px}
   .wrap{padding:12px 12px calc(16px + env(safe-area-inset-bottom))}
   header h1{font-size:1.2rem}
   .tab{min-width:calc(33% - 6px);padding:10px 6px;font-size:.95rem}

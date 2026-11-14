@@ -194,9 +194,9 @@ $('inviteBtn').onclick = async () => {
 };
 async function shareInvite(code){
   const url = `${location.origin}${location.pathname}?invito=${code}`;
-  const text = `Entra nella famiglia "${fam.name}" su Compiti di casa. Apri il link oppure usa il codice ${code} in "Ho un codice d'invito".`;
+  const text = `Entra nella famiglia "${fam.name}" su ${APP_NAME}, l'app dei compiti di casa. Apri il link oppure usa il codice ${code} in "Ho un codice d'invito".`;
   try {
-    if (navigator.share) await navigator.share({title:'Invito – Compiti di casa', text, url});
+    if (navigator.share) await navigator.share({title:`Invito – ${APP_NAME}`, text, url});
     else { await navigator.clipboard.writeText(`${text}\n${url}`); toast('Invito copiato: incollalo in un messaggio'); }
   } catch(e){ if (e?.name !== 'AbortError') toast(`Codice: ${code}`); }
 }
@@ -238,6 +238,6 @@ $('delFam').onclick = async () => {
     Object.keys(localStorage).filter(k => k.startsWith('cdc.') && k.includes(myFid)).forEach(k => store('del', k));
     busy = false;
     try { await deleteUser(auth.currentUser); } catch(e){ await signOut(auth); }
-    alert('Famiglia e dati eliminati. Grazie per aver provato Compiti di casa!');
+    alert(`Famiglia e dati eliminati. Grazie per aver provato ${APP_NAME}!`);
   } catch(err){ busy = false; fail(err); }
 };

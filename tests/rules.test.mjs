@@ -3,7 +3,7 @@
    Ogni prova dice cosa deve succedere: "consentito" o "negato". I casi negati sono gli attacchi
    corretti nelle versioni 0.12.x: se uno torna "consentito", una regola si è allentata. */
 import { initializeTestEnvironment, assertSucceeds, assertFails } from '@firebase/rules-unit-testing';
-import { doc, setDoc, updateDoc, deleteDoc, writeBatch, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, deleteDoc, writeBatch, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { readFileSync } from 'node:fs';
 
 const env = await initializeTestEnvironment({
@@ -141,6 +141,24 @@ await prova('il fondatore rimosso si riaggiunge', false, setDoc(doc(as('par'), '
   b.set(doc(db, 'families', 'fam2'), {createdBy: 'nuovo', kids: []});
   b.set(doc(db, 'members', 'nuovo'), {familyId: 'fam2', role: 'parent'});
   await prova('un nuovo genitore crea la sua famiglia', true, b.commit()); }
+
+
+console.log('\n— Commenti e idee dal sito (0.13.1)');
+{ const anon = env.unauthenticatedContext().firestore();
+  const fb = (extra = {}) => ({type: 'idea', role: 'genitore', message: 'Mi piacerebbe una classifica settimanale', consent: true,
+    source: 'bebeans.it', createdAt: serverTimestamp(), ...extra});
+  await prova('un visitatore lascia un\'idea', true, setDoc(doc(anon, 'feedback', 'f1'), fb({name: 'Marco', email: 'marco@esempio.it'})));
+  await prova('un visitatore lascia un commento senza nome ed email', true, setDoc(doc(anon, 'feedback', 'f2'), fb({type: 'commento'})));
+  await prova('commento troppo corto', false, setDoc(doc(anon, 'feedback', 'f3'), fb({message: 'ok'})));
+  await prova('commento senza consenso', false, setDoc(doc(anon, 'feedback', 'f4'), fb({consent: false})));
+  await prova('campo in più', false, setDoc(doc(anon, 'feedback', 'f5'), fb({admin: true})));
+  await prova('email non valida', false, setDoc(doc(anon, 'feedback', 'f6'), fb({email: 'nonvalida'})));
+  await prova('data inventata', false, setDoc(doc(anon, 'feedback', 'f7'), fb({createdAt: Timestamp.fromMillis(0)})));
+  await prova('un visitatore legge i commenti', false, getDoc(doc(anon, 'feedback', 'f1')));
+  await prova('un genitore legge i commenti', false, getDoc(doc(par, 'feedback', 'f1')));
+  await prova('un visitatore modifica un commento', false, updateDoc(doc(anon, 'feedback', 'f1'), {message: 'cambiato da qualcun altro'}));
+  await prova('un visitatore cancella un commento', false, deleteDoc(doc(anon, 'feedback', 'f1')));
+}
 
 console.log(`\n${ok} ok, ${ko} errori`);
 await env.cleanup();

@@ -3,15 +3,16 @@
 
 // chi organizza il test: compare nell'informativa privacy
 const CONTACT = { name: '', email: '' };
-const APP_NAME = 'Compiti di casa';
+const APP_NAME = 'BeBeans';
 /* ---------- VERSIONE ----------
    Numerazione MAGGIORE.MINORE.CORREZIONE: 0.x durante la prova, 1.0.0 = prima versione da prodotto.
    Nuove funzioni → si aumenta il secondo numero; solo correzioni → il terzo.
    A ogni rilascio: aggiorna APP_VERSION, APP_DATE, CHANGELOG e NEWS qui,
    l'intestazione di firestore.rules (se cambiate) e il file CHANGELOG.md. */
-const APP_VERSION = '0.14.0';
-const APP_DATE = '2026-10-30';
+const APP_VERSION = '0.15.0';
+const APP_DATE = '2026-11-03';
 const CHANGELOG = [
+  ['0.15.0', '2026-11-03', 'Nuovo look BeBeans: nome, logo "fagiolo con stella", colori del marchio (blu notte, giallo fagiolo, corallo) e carattere Fredoka; nuove icone dell\'app.'],
   ['0.14.0', '2026-10-30', 'Guida contestuale: si apre sulla parte che riguarda la schermata in uso; prima dell\'accesso mostra solo come creare la famiglia, entrare con un invito e accedere; ❓ accanto ad alcuni titoli.'],
   ['0.13.0', '2026-10-30', 'Setup diviso in schede (Famiglia e orari, Figli, Genitori, Regole del gioco, Questo dispositivo); nella guida dei ragazzi come cambiare il PIN; regole più strette per l\'annullamento di proposte e premi e test automatici delle regole.'],
   ['0.12.5', '2026-10-27', 'Correzioni di sicurezza dalla scansione del 27/10: colori, icone e codici dei figli controllati prima di mostrarli, Content-Security-Policy; regole più strette per fondatore della famiglia, scambi, compiti di squadra e spunte dei giorni già chiusi.'],
@@ -41,6 +42,15 @@ const CHANGELOG = [
    [icona, titolo, testo]. Se per un ruolo non ci sono novità, il popup per quel ruolo non si apre.
    Chi ha saltato più versioni vede tutte quelle che non ha ancora letto, dalla più recente. */
 const NEWS = {
+  '0.15.0': {
+    kid: [
+      ['⭐', 'BeBeans ha un nuovo look', 'Nuovi colori e il logo del fagiolo con la stella: è sempre la tua app dei compiti, solo più bella!'],
+    ],
+    parent: [
+      ['🎨', 'Nuovo look BeBeans', 'L\'app prende il nome, il logo e i colori di <b>BeBeans</b>: blu notte, giallo fagiolo e corallo. Compiti, stelle e impostazioni restano come prima.'],
+      ['📲', 'Nuova icona', 'Se avete installato l\'app, l\'icona si aggiorna da sola su Android; su iPhone e iPad compare al prossimo "Aggiungi alla schermata Home".'],
+    ],
+  },
   '0.14.0': {
     parent: [
       ['❓', 'Una guida che sa dove sei', 'Tocca <b>❓ Guida</b>: si apre sulla parte che riguarda la schermata in uso (per esempio Da verificare, Setup › Questo dispositivo, Setup › Figli). Le altre parti restano chiuse sotto.'],

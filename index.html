@@ -1,32 +1,33 @@
 <!doctype html>
-<!-- Compiti di casa · versione 0.14.0 · la versione si cambia solo in js/config.js (APP_VERSION) -->
+<!-- BeBeans · Compiti di casa · versione 0.15.0 · la versione si cambia solo in js/config.js (APP_VERSION) -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://www.gstatic.com https://www.google.com https://www.recaptcha.net; object-src 'none'; base-uri 'self'">
-<title>Compiti di casa</title>
+<title>BeBeans</title>
 <meta name="description" content="I compiti di casa dei figli diventano un gioco: stelle, serie, scambi tra fratelli e premi.">
-<meta name="theme-color" content="#1f2333">
+<meta name="theme-color" content="#1F2A44">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icons/logo.svg">
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Compiti">
+<meta name="apple-mobile-web-app-title" content="BeBeans">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="stylesheet" href="css/base.css?v=0.14.0">
-<link rel="stylesheet" href="css/app.css?v=0.14.0">
+<link rel="stylesheet" href="css/base.css?v=0.15.0">
+<link rel="stylesheet" href="css/app.css?v=0.15.0">
 </head>
 <body>
 <div class="wrap">
-  <header><h1 id="appTitle">Compiti di casa</h1><div id="who" class="iconbar"></div></header>
+  <header><div class="brand"><svg class="mark" viewBox="0 0 100 100" role="img" aria-label="BeBeans"><path d="M38 12 C62 6 84 22 82 46 C80 62 66 64 60 72 C52 86 30 90 18 76 C8 64 12 44 18 32 C23 21 28 15 38 12 Z" fill="#FFD54A" stroke="#1F2A44" stroke-width="4" stroke-linejoin="round"/><path d="M28 31 C30 25 34 21 40 19" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/><path d="M48 34 L52.11 44.34 L63.22 45.06 L54.66 52.16 L57.4 62.94 L48 57 L38.6 62.94 L41.34 52.16 L32.78 45.06 L43.89 44.34 Z" fill="#FF7A59" stroke="#1F2A44" stroke-width="3" stroke-linejoin="round"/></svg><h1 id="appTitle">BeBeans</h1></div><div id="who" class="iconbar"></div></header>
 
   <div id="loading" class="center empty">Caricamento…</div>
 
   <!-- ================= BENVENUTO ================= -->
   <div id="scrWelcome" class="screen" hidden>
-    <div class="hero"><div class="logo">⭐</div><h2>Compiti di casa</h2>
+    <div class="hero"><svg class="logo-mark" viewBox="0 0 100 100" aria-hidden="true"><path d="M38 12 C62 6 84 22 82 46 C80 62 66 64 60 72 C52 86 30 90 18 76 C8 64 12 44 18 32 C23 21 28 15 38 12 Z" fill="#FFD54A" stroke="#1F2A44" stroke-width="4" stroke-linejoin="round"/><path d="M28 31 C30 25 34 21 40 19" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/><path d="M48 34 L52.11 44.34 L63.22 45.06 L54.66 52.16 L57.4 62.94 L48 57 L38.6 62.94 L41.34 52.16 L32.78 45.06 L43.89 44.34 Z" fill="#FF7A59" stroke="#1F2A44" stroke-width="3" stroke-linejoin="round"/></svg><h2 class="wordmark">BeBeans</h2><div class="tagline">Compiti di casa</div>
       <p>I compiti dei figli diventano un gioco:<br>stelle, serie, sfide tra fratelli e premi.</p></div>
     <div class="bigbtns">
       <button class="btn primary" data-go="register">✨ Crea la tua famiglia</button>
@@ -471,21 +472,21 @@
 <div class="toast" id="toast"></div>
 
 <!-- Firebase per primo (modulo), poi i file dell'app nell'ordine: tutti partono a pagina pronta, uno dopo l'altro -->
-<script type="module" src="js/firebase.js?v=0.14.0"></script>
-<script defer src="js/config.js?v=0.14.0"></script>
-<script defer src="js/util.js?v=0.14.0"></script>
-<script defer src="js/state.js?v=0.14.0"></script>
-<script defer src="js/game.js?v=0.14.0"></script>
-<script defer src="js/auth.js?v=0.14.0"></script>
-<script defer src="js/register.js?v=0.14.0"></script>
-<script defer src="js/data.js?v=0.14.0"></script>
-<script defer src="js/kid.js?v=0.14.0"></script>
-<script defer src="js/parent.js?v=0.14.0"></script>
-<script defer src="js/verify.js?v=0.14.0"></script>
-<script defer src="js/edit.js?v=0.14.0"></script>
-<script defer src="js/collab.js?v=0.14.0"></script>
-<script defer src="js/setup.js?v=0.14.0"></script>
-<script defer src="js/help.js?v=0.14.0"></script>
-<script defer src="js/main.js?v=0.14.0"></script>
+<script type="module" src="js/firebase.js?v=0.15.0"></script>
+<script defer src="js/config.js?v=0.15.0"></script>
+<script defer src="js/util.js?v=0.15.0"></script>
+<script defer src="js/state.js?v=0.15.0"></script>
+<script defer src="js/game.js?v=0.15.0"></script>
+<script defer src="js/auth.js?v=0.15.0"></script>
+<script defer src="js/register.js?v=0.15.0"></script>
+<script defer src="js/data.js?v=0.15.0"></script>
+<script defer src="js/kid.js?v=0.15.0"></script>
+<script defer src="js/parent.js?v=0.15.0"></script>
+<script defer src="js/verify.js?v=0.15.0"></script>
+<script defer src="js/edit.js?v=0.15.0"></script>
+<script defer src="js/collab.js?v=0.15.0"></script>
+<script defer src="js/setup.js?v=0.15.0"></script>
+<script defer src="js/help.js?v=0.15.0"></script>
+<script defer src="js/main.js?v=0.15.0"></script>
 </body>
 </html>
