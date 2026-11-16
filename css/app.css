@@ -77,6 +77,9 @@
 .ptag{font-size:.75rem;color:var(--muted)}
 .appver{text-align:center;padding:8px 16px calc(24px + env(safe-area-inset-bottom))}
 .appver .link{font-size:.75rem;margin:0}
+.appver .copy{font-size:.72rem;color:var(--muted);margin-top:2px}
+.appver .copy .link{font-size:inherit}
+.lictext{white-space:pre-wrap;font-family:inherit;font-size:.8rem;line-height:1.5;max-height:50vh;overflow:auto;background:color-mix(in srgb,var(--muted) 8%,var(--card));border:1px solid var(--line);border-radius:10px;padding:10px;margin:10px 0 0}
 .kdesc{display:block;color:var(--muted);font-size:.8rem;margin-top:4px}
 /* schede della pagina Genitori */
 .ptabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 12px;padding:2px 0 4px;position:sticky;top:0;z-index:5;background:var(--bg)}
@@ -202,8 +205,23 @@ button.vc.pend{border:2px dashed var(--minus);background:color-mix(in srgb,var(-
 .medal small{color:var(--muted);font-size:.75rem}
 .medal.won{border-color:var(--star);background:color-mix(in srgb,var(--star) 10%,var(--card))}
 .medal.won .mic{filter:none;opacity:1}
+button.medal{font:inherit;color:inherit;cursor:pointer;width:100%;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+button.medal:active{transform:scale(.96)}
+button.medal:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+.minfo h2{display:flex;align-items:center;gap:10px}
+.minfo .mbig{font-size:2.4rem;line-height:1;filter:grayscale(1);opacity:.5}
+.minfo .mbig.won{filter:none;opacity:1}
+.minfo h3{font-size:.95rem;margin:14px 0 4px}
+.minfo p{margin:0}
+.marea-chip{font-weight:600}
+.marea-chip small{font-weight:400;color:var(--muted)}
+.mstatus{margin-top:14px !important;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--muted) 10%,var(--card));font-size:.9rem}
+.mstatus.won{background:color-mix(in srgb,var(--star) 12%,var(--card))}
 .mrow{letter-spacing:1px}
 .score b{overflow-wrap:anywhere}
+.score .scorelink{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+.score .scorelink:active{transform:scale(.96)}
+.score .scorelink:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
 .goal.target .acts{display:flex;gap:8px;flex-wrap:wrap}
 /* popup delle novità */
 .news .hint{color:var(--muted);font-size:.85rem;margin:0 0 6px}
@@ -215,3 +233,11 @@ button.vc.pend{border:2px dashed var(--minus);background:color-mix(in srgb,var(-
 .nitem p b{color:var(--ink)}
 .nitem p{margin:2px 0 0;font-size:.88rem;color:var(--muted);line-height:1.4}
 .newsread{margin-top:12px}
+
+/* Le mie stelle: saldo in valuta e in stelle (0.16.2) */
+.logbal{text-align:center}
+.logbal h2{justify-content:center}
+.logbal .lbmain{font-family:var(--font-brand);font-size:1.9rem;font-weight:600;color:var(--star);font-variant-numeric:tabular-nums;line-height:1.25;overflow-wrap:anywhere}
+.logbal .lbstars{font-size:1rem;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:2px}
+.logbal .hint{margin:8px 0 0}
+.logbal .lblegend{font-size:.78rem}

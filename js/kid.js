@@ -7,7 +7,7 @@
 function renderScore(){
   const bal = balance(owner), res = reserved(owner);
   $('score').innerHTML = `
-    <div><b class="stars">${starsTxt(bal - res)}</b><small>stelle${res ? ` (+${starsTxt(res)} prenotate)` : ''}</small></div>
+    <button type="button" class="scorelink" id="scoreStars" aria-label="Stelle: ${starsTxt(bal - res)}. Tocca per vedere le mie stelle"><b class="stars">${starsTxt(bal - res)}</b><small>stelle${res ? ` (+${starsTxt(res)} prenotate)` : ''} ›</small></button>
     <div><b>🔥 ${data.kidState[owner]?.streak || 0}</b><small>giorni perfetti di fila</small></div>
     <div><b>🟨 ${activeYellows(owner).length}/${R().yellowsForRed}</b><small>cartellini gialli</small></div>
     <div><b>🟥 ${redsInQuarter(owner).length}</b><small>rossi nel trimestre</small></div>`;
@@ -18,6 +18,13 @@ function renderScore(){
   renderTarget();
   denomParty(owner);
 }
+
+// il riquadro delle stelle porta a «📜 Le mie stelle»
+$('score').addEventListener('click', e => {
+  if (!e.target.closest('#scoreStars')) return;
+  $('sub').querySelector('[data-sv="log"]').click();
+  $('sub').scrollIntoView({behavior: 'smooth', block: 'start'});
+});
 
 function renderDay(){
   const td = today(), isToday = day === td;
@@ -326,6 +333,14 @@ $('svShop').addEventListener('click', async e => {
 
 /* ---------- estratto conto e regole ---------- */
 function renderLog(){
+  // saldo in valuta (galassie, pianeti, stelle) e in stelle
+  const bal = balance(owner), res = reserved(owner), avail = bal - res, n = x => Math.round(x).toLocaleString('it-IT');
+  const big = useDenoms() && Math.abs(avail) >= 100;
+  $('logBal').innerHTML = `<h2>⭐ Il mio saldo</h2>
+    <div class="lbmain">${big ? starsTxt(avail) : `${n(avail)} ⭐`}</div>
+    ${big ? `<div class="lbstars">= ${n(avail)} ⭐</div>` : ''}
+    ${res ? `<p class="hint">In più ${useDenoms() && res >= 100 ? `${starsTxt(res)} (${n(res)} ⭐)` : `${n(res)} ⭐`} prenotate per premi che aspettano l'ok di mamma o papà.</p>` : ''}
+    ${useDenoms() ? `<p class="hint lblegend">🌌 1 galassia = 1.000 ⭐ · 🪐 1 pianeta = 100 ⭐</p>` : ''}`;
   const rows = (data.ledger[owner] || []).slice().sort((a,b) => ms(b.createdAt) - ms(a.createdAt));
   $('logList').innerHTML = rows.length ? rows.map(l => `
     <div class="row"><div class="body">${esc(l.reason)}<br><small>${fmtDate(l.date)}</small></div>

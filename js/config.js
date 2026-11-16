@@ -4,6 +4,7 @@
 // chi organizza il test: compare nell'informativa privacy
 const CONTACT = { name: '', email: '' };
 const APP_NAME = 'BeBeans';
+const APP_COPYRIGHT = '© 2026 Marco Gialdi';   // titolare dei diritti: vedi il file LICENSE
 // indirizzo ufficiale dell'app; chi la apre da un indirizzo vecchio vede l'avviso di trasloco
 const HOME_URL = 'https://app.bebeans.it/';
 const OLD_HOSTS = ['marcogialdi.github.io'];
@@ -13,9 +14,10 @@ const OLD_HOSTS_UNTIL = '2026-11-21';       // ultimo giorno del vecchio indiriz
    Nuove funzioni → si aumenta il secondo numero; solo correzioni → il terzo.
    A ogni rilascio: aggiorna APP_VERSION, APP_DATE, CHANGELOG e NEWS qui,
    l'intestazione di firestore.rules (se cambiate) e il file CHANGELOG.md. */
-const APP_VERSION = '0.16.1';
+const APP_VERSION = '0.16.2';
 const APP_DATE = '2026-11-14';
 const CHANGELOG = [
+  ['0.16.2', '2026-11-14', 'Medaglie: un tap su una medaglia apre un popup che spiega cosa premia, perché conta, come si vince e, se è già tua, quando l\'hai conquistata. Il riquadro delle stelle in alto porta a «Le mie stelle», che ora mostra il saldo in galassie, pianeti e stelle e in sole stelle. In fondo alla pagina, la nota di copyright e la licenza.'],
   ['0.16.1', '2026-11-14', 'Nuovo indirizzo app.bebeans.it: chi apre l\'app dal vecchio indirizzo GitHub vede un avviso con il collegamento e le istruzioni per reinstallarla; il vecchio indirizzo resta attivo fino al 21/11/2026.'],
   ['0.16.0', '2026-11-14', 'Medaglie 🏅: 32 traguardi assegnati in automatico. Il mio obiettivo 🎯: un premio da raggiungere, scelto nel Negozio, con la barra dei progressi. Stelle in pianeti 🪐 e galassie 🌌.'],
   ['0.15.0', '2026-11-03', 'Nuovo look BeBeans: nome, logo "fagiolo con stella", colori del marchio (blu notte, giallo fagiolo, corallo) e carattere Fredoka; nuove icone dell\'app.'],
@@ -48,6 +50,15 @@ const CHANGELOG = [
    [icona, titolo, testo]. Se per un ruolo non ci sono novità, il popup per quel ruolo non si apre.
    Chi ha saltato più versioni vede tutte quelle che non ha ancora letto, dalla più recente. */
 const NEWS = {
+  '0.16.2': {
+    kid: [
+      ['⭐', 'Le tue stelle a un tocco', 'Tocca il riquadro delle <b>stelle</b> in alto: si apre <b>📜 Le mie stelle</b>, con il tuo saldo in galassie, pianeti e stelle e tutto quello che hai guadagnato e speso.'],
+      ['🏅', 'Cosa vuol dire questa medaglia?', 'Nella scheda <b>🏅 Medaglie</b> tocca una medaglia: si apre una scheda che ti spiega cosa premia, perché conta e come si vince.'],
+    ],
+    parent: [
+      ['🏅', 'Medaglie spiegate', 'Toccando una medaglia nella pagina di un figlio si apre la sua spiegazione: cosa premia, perché conta, come si vince e quando è stata conquistata.'],
+    ],
+  },
   '0.16.0': {
     kid: [
       ['🏅', 'Arrivano le medaglie', 'Nella nuova scheda <b>🏅 Medaglie</b> trovi 32 traguardi da conquistare, come la prima giornata perfetta o la prima settimana perfetta. Ogni medaglia si vince una volta sola e resta tua per sempre.'],
