@@ -180,9 +180,10 @@ Stima mensile in USD con i prezzi Firestore delle regioni USA ([Firestore pricin
 | Regione delle funzioni: `europe-west1` (database `eur3`) | deciso |
 | Linguaggio: JavaScript | deciso |
 | Repository privato | dopo il 21/11/2026 |
-| Ruoli aggiuntivi per `github-deploy` | definiti in [`pubblicazione.md`](pubblicazione.md); da assegnare in Google Cloud Console (Marco) |
-| Fase 0 | codice fatto in 0.16.3 (ramo `migrazione/fase-0`): modulo condiviso `js/shared/gioco.js`, cartella `functions/` con `ping`, test su GitHub a ogni modifica, pubblicazione di regole e funzioni da GitHub Actions. Per chiuderla: prima pubblicazione delle funzioni, ruoli di `github-deploy`, variabile `PUBBLICA_SERVER` e «Prova» da app.bebeans.it (vedi [`pubblicazione.md`](pubblicazione.md)) |
-| Fasi 1–6 | da fare |
+| Ruoli aggiuntivi per `github-deploy` | assegnati il 16/11/2026 (elenco in [`pubblicazione.md`](pubblicazione.md)); quelli della fase 1 si aggiungono quando servono |
+| Fase 0 | **fatta** in 0.16.3 (16/11/2026): modulo condiviso `js/shared/gioco.js`, cartella `functions/` con `ping`, test su GitHub a ogni modifica, pubblicazione di regole, funzioni e sito da GitHub Actions. Verificata da app.bebeans.it: «risponde ✓ (europe-west1, oggi a Roma è il 16/11/2026)» |
+| Fase 1 | da avviare |
+| Fasi 2–6 | da fare |
 
 Note dalla fase 0, per le fasi successive:
 - Le date del modulo condiviso sono calcolate in UTC sulle stringhe `aaaa-mm-gg`, quindi danno lo stesso risultato sul telefono e sul server; il giorno corrente si prende sempre con `oggi('Europe/Rome')`. Le funzioni girano in UTC: mai usare `new Date()` per stabilire il giorno.
