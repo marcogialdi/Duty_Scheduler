@@ -33,7 +33,7 @@ Alla domanda sulla pulizia delle immagini vecchie (*cleanup policy*) rispondere 
 npx firebase-tools@15.34.2 functions:artifacts:setpolicy --location europe-west1 --days 1 --force --project duty-scheduler-bdd9e
 ```
 
- Poi aprire app.bebeans.it come genitore, **⚙️ Setup › 📱 Questo dispositivo › ☁️ Collegamento al server › Prova**: deve comparire «risponde ✓ (europe-west1, oggi a Roma è il …)».
+Poi aprire app.bebeans.it come genitore, **⚙️ Setup › 📱 Questo dispositivo › ☁️ Collegamento al server › Prova**: deve comparire «risponde ✓ (europe-west1, oggi a Roma è il …)».
 
 ### 2. Ruoli dell'account `github-deploy`
 
