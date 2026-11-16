@@ -6,6 +6,15 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.16.3 · 16/11/2026
+Migrazione della logica sul server, **fase 0: preparazione** ([`docs/migrazione.md`](docs/migrazione.md)). Nel gioco non cambia nulla.
+- **Modulo condiviso** `js/shared/gioco.js`: calendario del giorno (`itemsFor`), stelle di un compito (`pointsFor`), bonus delle serie, cartellini rossi attivi, regole e orari predefiniti, date calcolate senza dipendere dal fuso del dispositivo e `oggi()` con l'ora di Roma. L'app lo carica come modulo (`globalThis.BeBeansGioco`) e `game.js`, `collab.js` e `config.js` lo usano al posto del codice di prima; il server ne usa una copia. Controllato che dia gli stessi risultati della 0.16.2 su oltre 60.000 casi generati a caso, con il telefono in tre fusi diversi.
+- **Cloud Functions** nella nuova cartella `functions/` (Node 22, JavaScript ES module, regione `europe-west1`, `maxInstances` 10): per ora solo `ping`, funzione di prova che risponde con regione e giorno di Roma; richiede accesso e App Check.
+- **Prova del collegamento**: in ⚙️ Setup › 📱 Questo dispositivo, «☁️ Collegamento al server › Prova». L'app chiama le funzioni con `callServer()` (`js/firebase.js`).
+- **Test a ogni modifica su GitHub** (`.github/workflows/test.yml`): modulo condiviso e funzioni (`functions/test/`, 12 prove), regole di Firestore (68 prove) e funzioni nell'emulatore (`tests/functions.test.mjs`, 4 prove). Emulatore aggiornato a `firebase-tools` 15.
+- **Pubblicazione da GitHub** (`.github/workflows/firebase-hosting.yml`): su `main` prima i test, poi regole di Firestore e funzioni (quando la variabile `PUBBLICA_SERVER` è accesa), poi il sito. Configurazione una tantum e ruoli dell'account `github-deploy` in [`docs/pubblicazione.md`](docs/pubblicazione.md).
+- `firebase.json`: sezioni `firestore` e `functions`; la cartella `functions/` non viene pubblicata sul sito.
+
 ## 0.16.2 · 14/11/2026
 - **Medaglie spiegate**: nella scheda 🏅 Medaglie ogni medaglia è un pulsante; il tap apre un popup con icona, nome, area (con il suo significato), «Perché conta», «Come si vince» e lo stato (data di conquista o «non ancora conquistata»). Testi in `MEDAL_WHY` e `MEDAL_AREA_INFO` (`js/medals.js`). Prima una medaglia vinta mostrava solo la data e non diceva più come era stata ottenuta.
 - **Riquadro delle stelle cliccabile**: nella pagina del figlio il riquadro con il saldo in alto è un pulsante che apre la scheda «📜 Le mie stelle».

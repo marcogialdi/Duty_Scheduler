@@ -1,14 +1,56 @@
-# Pubblica l'app su Firebase Hosting (app.bebeans.it) a ogni push su main.
-# Serve il segreto FIREBASE_SERVICE_ACCOUNT (chiave JSON di un account di servizio
-# con ruolo "Amministratore Firebase Hosting"), in Settings › Secrets and variables › Actions.
-name: Pubblica su Firebase Hosting
+# Pubblica BeBeans a ogni push su main, solo se i test (test.yml) sono verdi:
+#   1. server: regole di Firestore e Cloud Functions (europe-west1) — solo con la variabile PUBBLICA_SERVER = true
+#   2. sito: Firebase Hosting (app.bebeans.it), dopo il server, così l'app nuova trova già le funzioni nuove
+#
+# Serve il segreto FIREBASE_SERVICE_ACCOUNT (chiave JSON dell'account di servizio github-deploy),
+# in Settings › Secrets and variables › Actions. Ruoli necessari: vedi docs/pubblicazione.md.
+# La variabile PUBBLICA_SERVER (Settings › Secrets and variables › Actions › Variables) si accende
+# solo dopo aver dato all'account i ruoli per regole e funzioni: finché è spenta si pubblica solo il sito.
+name: Pubblica su Firebase
 on:
   push:
     branches: [main]
   workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pubblica
+  cancel-in-progress: false
+env:
+  PROJECT_ID: duty-scheduler-bdd9e
 jobs:
-  deploy:
+  test:
+    uses: ./.github/workflows/test.yml
+
+  server:
+    needs: test
+    if: vars.PUBBLICA_SERVER == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - name: Dipendenze delle funzioni
+        working-directory: functions
+        run: npm ci
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - name: Regole di Firestore e Cloud Functions
+        run: npx --yes firebase-tools@15.34.2 deploy --only firestore:rules,functions --project "$PROJECT_ID" --non-interactive
+
+  sito:
+    needs: [test, server]
+    if: ${{ !cancelled() && needs.test.result == 'success' && (needs.server.result == 'success' || needs.server.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - uses: FirebaseExtended/action-hosting-deploy@v0

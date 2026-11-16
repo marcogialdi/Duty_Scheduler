@@ -4,13 +4,10 @@
 /* =====================================================================
    LOGICA DI GIOCO
    ===================================================================== */
-function streakBonusFor(n){
-  if (n === 3) return R().streak3;
-  if (n === 7) return R().streak7;
-  if (n === 14) return R().streak14;
-  return n > 14 && (n - 14) % 7 === 0 ? R().streakEveryBonus : 0;
-}
-function redOn(kid, ds){ return cardsOf(kid).find(c => c.type === 'red' && c.from <= ds && ds <= c.until); }
+/* calendario del giorno, serie e stelle: le regole vere sono in js/shared/gioco.js (condiviso con il server) */
+const Gioco = globalThis.BeBeansGioco;
+const streakBonusFor = n => Gioco.streakBonusFor(n, R());
+const redOn = (kid, ds) => Gioco.redOn(cardsOf(kid), ds);
 // il rosso "niente stelle" è copiato anche sullo stato del figlio, dove lo leggono le regole di Firestore
 const noStarsOf = red => red?.effect === 'nostars' ? {noStarsFrom:red.from, noStarsUntil:red.until} : {};
 function noStarsNow(kid){
@@ -65,32 +62,8 @@ function reserved(k){
   return list.reduce((a,r) => a + r.cost, 0);
 }
 
-function itemsFor(kid, ds, swaps){
-  const wd = isoWeekday(ds);
-  const todays = data.sched.filter(s => s.active && data.tasks[s.taskId] && !data.tasks[s.taskId].punishment && !data.tasks[s.taskId].board &&
-    (s.weekdays||[]).includes(wd) && s.startDate <= ds && (!s.endDate || s.endDate >= ds));
-  const live = swaps.filter(x => x.date === ds && (x.status === 'pending' || x.status === 'accepted'));
-  const swapBy = Object.fromEntries(live.map(x => [x.scheduleId, x]));
-  const items = [];
-  for (const s of todays){
-    const sw = swapBy[s.id], task = data.tasks[s.taskId];
-    const optional = !!task.optional;
-    // compito di squadra: una sola assegnazione per tutti i membri, mai scambiabile
-    if (isTeamSched(s)){ if ((s.team || []).includes(kid)) items.push({key:s.id, task, time:s.startTime, s, optional:true, collab:true}); continue; }
-    if (s.owner === kid && !(sw && sw.status === 'accepted')) items.push({key:s.id, task, time:s.startTime, s, sw, received:false, optional});
-    else if (s.owner !== kid && sw?.status === 'accepted' && sw.toOwner === kid) items.push({key:s.id, task, time:s.startTime, s, sw, received:true, optional});
-  }
-  if (redOn(kid, ds)?.effect === 'extra'){
-    Object.values(data.tasks).filter(t => t.punishment).forEach(t =>
-      items.push({key:`extra-${t.id}-${kid}`, task:t, time:t.defaultTime || T().evening, pun:true}));
-  }
-  return items.sort((a,b) => a.time.localeCompare(b.time));
-}
-function pointsFor(item, kid, ds){
-  if (item.pun) return 0;
-  if (redOn(kid, ds)?.effect === 'nostars') return 0;
-  return (item.task.points || 1) + (item.received ? R().swapFavor : 0);
-}
+const itemsFor = (kid, ds, swaps) => Gioco.itemsFor({tasks:data.tasks, sched:data.sched, cards:cardsOf(kid), times:T()}, kid, ds, swaps);
+const pointsFor = (item, kid, ds) => Gioco.pointsFor(item, cardsOf(kid), R(), ds);
 
 /* ---------- chiusura dei giorni passati (fatta dal dispositivo di un genitore) ---------- */
 let closing = false, closedOnce = false;

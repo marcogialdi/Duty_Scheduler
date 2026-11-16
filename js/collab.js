@@ -11,7 +11,7 @@
    Non conta per giornata perfetta, serie e penalità (è un facoltativo). */
 
 const isCollabTask = t => !!(t?.optional && t?.collab);
-const isTeamSched = s => s?.owner === 'team';
+const isTeamSched = s => globalThis.BeBeansGioco.isTeamSched(s);
 const teamDone = c => !!c?.collab && (c.team || []).every(k => (c.confirmed || []).includes(k));
 const teamMissing = c => (c?.team || []).filter(k => !(c.confirmed || []).includes(k));
 // un completamento "conta" se non è contestato e, per la squadra, se hanno confermato tutti

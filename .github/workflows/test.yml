@@ -1,0 +1,44 @@
+# Test automatici a ogni modifica, su ogni ramo e a ogni richiesta di unione (docs/migrazione.md, fase 0):
+# - regole di Firestore nell'emulatore (tests/rules.test.mjs)
+# - modulo condiviso e Cloud Functions (functions/test/, poi tests/functions.test.mjs nell'emulatore)
+# La pubblicazione (firebase-hosting.yml) li richiama e non parte se uno fallisce.
+name: Test
+on:
+  push:
+    branches-ignore: [main]      # su main li lancia la pubblicazione (firebase-hosting.yml), prima di pubblicare
+  pull_request:
+  workflow_call:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            tests/package-lock.json
+            functions/package-lock.json
+      - uses: actions/setup-java@v4          # l'emulatore di Firestore è scritto in Java
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Modulo condiviso e funzioni (test unitari)
+        working-directory: functions
+        run: |
+          npm ci
+          npm test
+      - name: Strumenti dei test
+        working-directory: tests
+        run: npm ci
+      - name: Regole di Firestore (emulatore)
+        working-directory: tests
+        run: npm test
+      - name: Cloud Functions (emulatore)
+        working-directory: tests
+        run: npm run test:functions

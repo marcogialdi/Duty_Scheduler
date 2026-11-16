@@ -14,9 +14,10 @@ const OLD_HOSTS_UNTIL = '2026-11-21';       // ultimo giorno del vecchio indiriz
    Nuove funzioni → si aumenta il secondo numero; solo correzioni → il terzo.
    A ogni rilascio: aggiorna APP_VERSION, APP_DATE, CHANGELOG e NEWS qui,
    l'intestazione di firestore.rules (se cambiate) e il file CHANGELOG.md. */
-const APP_VERSION = '0.16.2';
-const APP_DATE = '2026-11-14';
+const APP_VERSION = '0.16.3';
+const APP_DATE = '2026-11-16';
 const CHANGELOG = [
+  ['0.16.3', '2026-11-16', 'Preparazione del server di BeBeans: le regole del calendario e delle stelle sono in un modulo condiviso con il server; in Setup › Questo dispositivo, una prova del collegamento al server. Nulla cambia nel gioco.'],
   ['0.16.2', '2026-11-14', 'Medaglie: un tap su una medaglia apre un popup che spiega cosa premia, perché conta, come si vince e, se è già tua, quando l\'hai conquistata. Il riquadro delle stelle in alto porta a «Le mie stelle», che ora mostra il saldo in galassie, pianeti e stelle e in sole stelle. In fondo alla pagina, la nota di copyright e la licenza.'],
   ['0.16.1', '2026-11-14', 'Nuovo indirizzo app.bebeans.it: chi apre l\'app dal vecchio indirizzo GitHub vede un avviso con il collegamento e le istruzioni per reinstallarla; il vecchio indirizzo resta attivo fino al 21/11/2026.'],
   ['0.16.0', '2026-11-14', 'Medaglie 🏅: 32 traguardi assegnati in automatico. Il mio obiettivo 🎯: un premio da raggiungere, scelto nel Negozio, con la barra dei progressi. Stelle in pianeti 🪐 e galassie 🌌.'],
@@ -120,19 +121,13 @@ const NEWS_FIRST = '0.11.0';
 /* ---------- impostazioni predefinite di una nuova famiglia ---------- */
 const DEFAULTS = {
   name: 'La mia famiglia',
-  times: {wake:'06:50', afternoon:'13:00', evening:'19:00', bed:'21:00'},
+  times: {...globalThis.BeBeansGioco.ORARI_PREDEFINITI},           // orari e regole del gioco: js/shared/gioco.js
   categories: [
     {id:'c1', name:'Personali', color:'#8b5cf6'},
     {id:'c2', name:'Casa',      color:'#10b981'},
     {id:'c3', name:'Scuola',    color:'#f59e0b'},
   ],
-  rules: {
-    perfectDay:3, missed:-1, swapFavor:1,
-    streak3:5, streak7:15, streak14:40, streakEveryBonus:15,
-    cheatMultiplier:2, contestHours:48,
-    yellowWindowDays:14, yellowsForRed:3, redDays:3,
-    autoLogoutMin:10,
-  },
+  rules: {...globalThis.BeBeansGioco.REGOLE_PREDEFINITE, autoLogoutMin:10},
   kids: [],
 };
 const RULE_FIELDS = [

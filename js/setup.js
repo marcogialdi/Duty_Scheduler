@@ -69,6 +69,12 @@ $('catList').addEventListener('click', e => {
   if (used && !confirm(`${used} compiti usano "${c.name}": appariranno come "Altro". Rimuovere?`)) return;
   catDraft.splice(i, 1); drawCats();
 });
+// prova del collegamento al server (migrazione, fase 0): non legge né scrive dati
+$('pingSrv').onclick = async () => {
+  $('pingOut').textContent = '…';
+  try { const r = await serverPing(); $('pingOut').textContent = `risponde ✓ (${r.regione}, oggi a Roma è il ${fmtDate(r.oggi)})`; }
+  catch(e){ console.warn('Server non raggiungibile', e); $('pingOut').textContent = `non risponde (${e?.code || e?.message || e})`; }
+};
 $('addCat').onclick = () => { catDraft.push({id:'c' + rid(), name:'Nuova categoria', color:'#0ea5e9'}); drawCats(); };
 $('saveSetup').onclick = async () => {
   const times = {wake:$('tWake').value, afternoon:$('tAft').value, evening:$('tEve').value, bed:$('tBed').value};

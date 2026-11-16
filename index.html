@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- BeBeans · Compiti di casa · versione 0.16.2 · la versione si cambia solo in js/config.js (APP_VERSION) -->
+<!-- BeBeans · Compiti di casa · versione 0.16.3 · la versione si cambia solo in js/config.js (APP_VERSION) -->
 <html lang="it">
 <head>
 <meta charset="utf-8">
@@ -16,8 +16,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="BeBeans">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="stylesheet" href="css/base.css?v=0.16.2">
-<link rel="stylesheet" href="css/app.css?v=0.16.2">
+<link rel="stylesheet" href="css/base.css?v=0.16.3">
+<link rel="stylesheet" href="css/app.css?v=0.16.3">
 </head>
 <body>
 <div class="wrap">
@@ -312,6 +312,8 @@
         <label class="opt"><input type="radio" name="devMode" value="shared"><span><b>Tablet di famiglia</b><br>
           <small>All'apertura ogni figlio tocca il suo nome e inserisce il suo PIN.</small></span></label>
         <button class="btn primary" id="saveDev">Salva per questo dispositivo</button>
+        <p class="hint" style="margin-top:14px">☁️ Collegamento al server di BeBeans (prova tecnica):
+          <button type="button" class="link" id="pingSrv">Prova</button> <span id="pingOut" aria-live="polite"></span></p>
       </div>
       </section>
 
@@ -520,22 +522,23 @@
 <div class="toast" id="toast"></div>
 
 <!-- Firebase per primo (modulo), poi i file dell'app nell'ordine: tutti partono a pagina pronta, uno dopo l'altro -->
-<script type="module" src="js/firebase.js?v=0.16.2"></script>
-<script defer src="js/config.js?v=0.16.2"></script>
-<script defer src="js/util.js?v=0.16.2"></script>
-<script defer src="js/state.js?v=0.16.2"></script>
-<script defer src="js/game.js?v=0.16.2"></script>
-<script defer src="js/auth.js?v=0.16.2"></script>
-<script defer src="js/register.js?v=0.16.2"></script>
-<script defer src="js/data.js?v=0.16.2"></script>
-<script defer src="js/kid.js?v=0.16.2"></script>
-<script defer src="js/parent.js?v=0.16.2"></script>
-<script defer src="js/verify.js?v=0.16.2"></script>
-<script defer src="js/edit.js?v=0.16.2"></script>
-<script defer src="js/collab.js?v=0.16.2"></script>
-<script defer src="js/medals.js?v=0.16.2"></script>
-<script defer src="js/setup.js?v=0.16.2"></script>
-<script defer src="js/help.js?v=0.16.2"></script>
-<script defer src="js/main.js?v=0.16.2"></script>
+<script type="module" src="js/firebase.js?v=0.16.3"></script>
+<script type="module" src="js/shared/gioco.js?v=0.16.3"></script>
+<script defer src="js/config.js?v=0.16.3"></script>
+<script defer src="js/util.js?v=0.16.3"></script>
+<script defer src="js/state.js?v=0.16.3"></script>
+<script defer src="js/game.js?v=0.16.3"></script>
+<script defer src="js/auth.js?v=0.16.3"></script>
+<script defer src="js/register.js?v=0.16.3"></script>
+<script defer src="js/data.js?v=0.16.3"></script>
+<script defer src="js/kid.js?v=0.16.3"></script>
+<script defer src="js/parent.js?v=0.16.3"></script>
+<script defer src="js/verify.js?v=0.16.3"></script>
+<script defer src="js/edit.js?v=0.16.3"></script>
+<script defer src="js/collab.js?v=0.16.3"></script>
+<script defer src="js/medals.js?v=0.16.3"></script>
+<script defer src="js/setup.js?v=0.16.3"></script>
+<script defer src="js/help.js?v=0.16.3"></script>
+<script defer src="js/main.js?v=0.16.3"></script>
 </body>
 </html>
