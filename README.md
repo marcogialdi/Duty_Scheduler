@@ -7,6 +7,8 @@ Dati e accessi su Firebase (Firestore e Authentication); pubblicata su GitHub Pa
 
 **Backlog**: [`docs/backlog.md`](docs/backlog.md) — idee e sviluppi proposti, con il loro stato.
 
+**Migrazione al server**: [`docs/migrazione.md`](docs/migrazione.md) — piano per spostare la logica del gioco su Cloud Functions, a fasi.
+
 **Licenza**: © 2026 Marco Gialdi, tutti i diritti riservati. Il codice è visibile ma non è open source: copiarlo, modificarlo, ridistribuirlo o usarlo per altri prodotti richiede un'autorizzazione scritta. Dettagli in [`LICENSE`](LICENSE).
 
 ## Marchio e colori (dalla 0.15.0)
