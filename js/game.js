@@ -65,8 +65,12 @@ function reserved(k){
 const itemsFor = (kid, ds, swaps) => Gioco.itemsFor({tasks:data.tasks, sched:data.sched, cards:cardsOf(kid), times:T()}, kid, ds, swaps);
 const pointsFor = (item, kid, ds) => Gioco.pointsFor(item, cardsOf(kid), R(), ds);
 
-/* ---------- chiusura dei giorni passati (fatta dal dispositivo di un genitore) ---------- */
+/* ---------- chiusura dei giorni passati (fatta dal dispositivo di un genitore) ----------
+   Migrazione, fase 1: se l'interruttore della famiglia è acceso (families/{fid}.server.chiusura) i giorni li chiude
+   il server a mezzanotte (functions/src/notturna.js) e l'app non lo fa più. Se un telefono con una versione vecchia
+   arriva prima, il controllo di lastClosed in transazione fa fermare il secondo: niente doppioni. */
 let closing = false, closedOnce = false;
+const serverCloses = () => fam?.server?.chiusura === true;
 const watchedKids = () => isParent() ? kidsList().map(k => k.id) : (me?.kidId ? [me.kidId] : []);
 const cardsReady = () => watchedKids().every(k => loaded['cards_' + k] && loaded['medals_' + k]);
 function maybeClose(){
@@ -76,7 +80,7 @@ function maybeClose(){
 async function closeDays(){
   if (closing) return; closing = true;
   let closed = false;
-  try { for (const k of kidsList()) closed = await closeKid(k.id) || closed; }
+  try { if (!serverCloses()) for (const k of kidsList()) closed = await closeKid(k.id) || closed; }
   catch(e){ console.warn('Chiusura giorni rimandata', e); closedOnce = false; }
   finally { closing = false; }
   checkMedals(closed);                           // medaglie: subito se si è chiuso un giorno, altrimenti ogni 6 ore

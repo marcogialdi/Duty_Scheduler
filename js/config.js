@@ -14,9 +14,10 @@ const OLD_HOSTS_UNTIL = '2026-11-21';       // ultimo giorno del vecchio indiriz
    Nuove funzioni → si aumenta il secondo numero; solo correzioni → il terzo.
    A ogni rilascio: aggiorna APP_VERSION, APP_DATE, CHANGELOG e NEWS qui,
    l'intestazione di firestore.rules (se cambiate) e il file CHANGELOG.md. */
-const APP_VERSION = '0.16.3';
+const APP_VERSION = '0.17.0';
 const APP_DATE = '2026-11-16';
 const CHANGELOG = [
+  ['0.17.0', '2026-11-16', 'Il server di BeBeans comincia a chiudere le giornate a mezzanotte: per ora in prova, accanto all\'app, per controllare che i conti tornino. L\'app salva la propria versione nel profilo. Nulla cambia nel gioco.'],
   ['0.16.3', '2026-11-16', 'Preparazione del server di BeBeans: le regole del calendario e delle stelle sono in un modulo condiviso con il server; in Setup › Questo dispositivo, una prova del collegamento al server. Nulla cambia nel gioco.'],
   ['0.16.2', '2026-11-14', 'Medaglie: un tap su una medaglia apre un popup che spiega cosa premia, perché conta, come si vince e, se è già tua, quando l\'hai conquistata. Il riquadro delle stelle in alto porta a «Le mie stelle», che ora mostra il saldo in galassie, pianeti e stelle e in sole stelle. In fondo alla pagina, la nota di copyright e la licenza.'],
   ['0.16.1', '2026-11-14', 'Nuovo indirizzo app.bebeans.it: chi apre l\'app dal vecchio indirizzo GitHub vede un avviso con il collegamento e le istruzioni per reinstallarla; il vecchio indirizzo resta attivo fino al 21/11/2026.'],

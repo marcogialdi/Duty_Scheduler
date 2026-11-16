@@ -8,6 +8,7 @@ Come BeBeans arriva da GitHub a Firebase, e cosa va configurato a mano una volta
 | --- | --- | --- |
 | Push su un ramo diverso da `main`, richiesta di unione | Test: modulo condiviso e funzioni, regole di Firestore nell'emulatore, funzioni nell'emulatore | `.github/workflows/test.yml` |
 | Push su `main` | Gli stessi test; se sono verdi, prima il **server** (regole di Firestore e Cloud Functions, solo con `PUBBLICA_SERVER = true`), poi il **sito** (Firebase Hosting, app.bebeans.it) | `.github/workflows/firebase-hosting.yml` |
+| Ogni mattina alle 7 (8 con l'ora legale) | Lettura del rapporto della chiusura di mezzanotte; se ci sono differenze, errori o manca, apre una segnalazione (issue) su GitHub | `.github/workflows/rapporto.yml` |
 
 Se un test fallisce non si pubblica nulla. Il sito parte dopo il server, così una versione nuova dell'app trova già le funzioni di cui ha bisogno.
 
@@ -27,7 +28,13 @@ cd functions && npm ci && cd ..
 npx firebase-tools@15.34.2 deploy --only functions --project duty-scheduler-bdd9e
 ```
 
-Alla domanda sulla pulizia delle immagini vecchie (*cleanup policy*) rispondere con il valore proposto (1 giorno). Poi aprire app.bebeans.it come genitore, **⚙️ Setup › 📱 Questo dispositivo › ☁️ Collegamento al server › Prova**: deve comparire «risponde ✓ (europe-west1, oggi a Roma è il …)».
+Alla domanda sulla pulizia delle immagini vecchie (*cleanup policy*) rispondere con il valore proposto (1 giorno). Se la domanda si blocca con «An unexpected error» (succede con Node 26, per esempio in Cloud Shell), la funzione è già pubblicata: la pulizia si imposta con
+
+```bash
+npx firebase-tools@15.34.2 functions:artifacts:setpolicy --location europe-west1 --days 1 --force --project duty-scheduler-bdd9e
+```
+
+Poi aprire app.bebeans.it come genitore, **⚙️ Setup › 📱 Questo dispositivo › ☁️ Collegamento al server › Prova**: deve comparire «risponde ✓ (europe-west1, oggi a Roma è il …)».
 
 ### 2. Ruoli dell'account `github-deploy`
 
@@ -37,11 +44,35 @@ In Google Cloud Console › IAM, all'account di servizio `github-deploy` (la cui
 | --- | --- | --- |
 | Amministratore Cloud Functions (`roles/cloudfunctions.admin`) | pubblicare le funzioni | fase 0 |
 | Utente account di servizio (`roles/iam.serviceAccountUser`) | far girare le funzioni con l'account di servizio predefinito di Compute (`106420224624-compute@developer.gserviceaccount.com`) | fase 0 |
+| Utente account di servizio (`roles/iam.serviceAccountUser`) anche sull'account App Engine (`duty-scheduler-bdd9e@appspot.gserviceaccount.com`) | `firebase-tools` lo controlla prima di pubblicare le funzioni: senza, la pubblicazione si ferma con «Missing permissions… iam.serviceAccounts.ActAs» | fase 0 |
 | Amministratore regole Firebase (`roles/firebaserules.admin`) | pubblicare `firestore.rules` | fase 0 |
 | Amministratore Artifact Registry (`roles/artifactregistry.admin`) | mantenere la pulizia automatica delle immagini delle funzioni | fase 0 |
 | Consumatore Service Usage (`roles/serviceusage.serviceUsageConsumer`) | controllare che le API siano attive | fase 0 |
 | Amministratore Cloud Scheduler (`roles/cloudscheduler.admin`) | lavori a orario (chiusura di mezzanotte) | fase 1 |
 | Visualizzatore Cloud Datastore (`roles/datastore.viewer`) | lettura del rapporto giornaliero `admin/reports/{giorno}` dalla procedura delle 7 | fase 1 |
+
+### 2b. Prima della fase 1 (lavori a orario e rapporto del mattino)
+
+La chiusura di mezzanotte è una funzione a orario: usa **Cloud Scheduler**, un servizio di Google che va acceso una volta dal proprietario. Poi servono i due ruoli della fase 1. In Cloud Shell:
+
+```bash
+gcloud services enable cloudscheduler.googleapis.com --project duty-scheduler-bdd9e
+```
+
+```bash
+SA=github-deploy@duty-scheduler-bdd9e.iam.gserviceaccount.com
+for R in roles/cloudscheduler.admin roles/datastore.viewer; do gcloud projects add-iam-policy-binding duty-scheduler-bdd9e --member="serviceAccount:$SA" --role="$R" --condition=None --quiet > /dev/null && echo "ok $R"; done
+```
+
+Va fatto **prima** di unire la fase 1 su `main`: senza, la pubblicazione delle funzioni si ferma (e con lei il sito).
+
+I ruoli della fase 0 si danno anche da Cloud Shell (fatto così il 16/11/2026):
+
+```bash
+SA=github-deploy@duty-scheduler-bdd9e.iam.gserviceaccount.com
+for R in roles/cloudfunctions.admin roles/firebaserules.admin roles/artifactregistry.admin roles/serviceusage.serviceUsageConsumer; do gcloud projects add-iam-policy-binding duty-scheduler-bdd9e --member="serviceAccount:$SA" --role="$R" --condition=None --quiet > /dev/null && echo "ok $R"; done
+for A in 106420224624-compute@developer.gserviceaccount.com duty-scheduler-bdd9e@appspot.gserviceaccount.com; do gcloud iam service-accounts add-iam-policy-binding $A --member="serviceAccount:$SA" --role=roles/iam.serviceAccountUser --quiet > /dev/null && echo "ok $A"; done
+```
 
 ### 3. Accendere la pubblicazione del server
 

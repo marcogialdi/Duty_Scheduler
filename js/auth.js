@@ -32,7 +32,15 @@ async function loadMe(user){
   me = {uid:user.uid, ...(m || {})};
   if (!m?.familyId){ renderWho(); show('scrNoFam'); return; }
   fid = m.familyId;
+  noteAppVersion(user.uid, m);
   watchFam();
+}
+// 0.17.0: la versione dell'app che ognuno usa, nel suo profilo: serve a sapere quando tutti hanno aggiornato
+// (prima di chiudere le regole durante la migrazione al server). Se le regole 0.17.0 non sono ancora pubblicate, pazienza.
+function noteAppVersion(uid, m){
+  if (m.appVersion === APP_VERSION) return;
+  updateDoc(doc(db, 'members', uid), {appVersion: APP_VERSION, appSeenAt: serverTimestamp()})
+    .catch(e => console.warn('Versione dell\'app non salvata', e));
 }
 
 let unsubFam = null;

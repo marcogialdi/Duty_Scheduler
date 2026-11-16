@@ -6,6 +6,17 @@ Nuove funzioni → aumenta il secondo numero; solo correzioni → il terzo.
 A ogni rilascio (dalla 0.9.0): aggiornare `APP_VERSION`, `APP_DATE` e `CHANGELOG` in `js/config.js`, questo file e,
 se le regole cambiano, l'intestazione di `firestore.rules`. Pagina e service worker prendono la versione da soli (`build.py`).
 
+## 0.17.0 · 16/11/2026
+Migrazione della logica sul server, **fase 1: chiusura notturna** ([`docs/migrazione.md`](docs/migrazione.md)). Per chi usa l'app non cambia nulla.
+- **Chiusura di mezzanotte sul server** (`chiusuraNotturna`, ogni giorno alle 00:05 ora di Roma): per ogni famiglia chiude il giorno appena finito (giornata perfetta, serie e bonus, penalità dei compiti non fatti, progressi delle medaglie), recuperando fino a 60 giorni come l'app. Calcolo in `functions/src/chiusura.js`, lavoro notturno in `functions/src/notturna.js`.
+- **In ombra per tutte le famiglie**: finché l'interruttore della famiglia è spento il server scrive i suoi conti in `kids/{figlio}/shadow/{giorno}`, che l'app ignora, e la notte dopo li confronta con quelli scritti dai telefoni. Le differenze dovute a contestazioni, compiti segnati offline o cartellini arrivati dopo il calcolo sono riconosciute come «spiegate».
+- **Interruttore per famiglia** `families/{fid}.server.chiusura`: se è acceso chiude il server, davvero, con le stesse voci e gli stessi id dell'app, e l'app non chiude più i giorni (`serverCloses()` in `js/game.js`). Un telefono con una versione vecchia che arriva prima non fa doppioni: chi arriva secondo trova `lastClosed` cambiato e si ferma.
+- **Rapporto giornaliero** in `admin/reports/days/{giorno}` (famiglie, giorni confrontati, differenze con il dettaglio, errori, versioni dell'app in uso). Ogni mattina alle 7 `.github/workflows/rapporto.yml` lo legge e, se ci sono differenze, errori o il rapporto manca, apre una segnalazione su GitHub.
+- **Versione dell'app nel profilo**: all'accesso l'app salva `appVersion` e `appSeenAt` in `members/{uid}`; il rapporto conta quante persone usano ogni versione.
+- **Regole Firestore 0.17.0**: ognuno aggiorna nel proprio profilo anche la versione dell'app; ombra e rapporti non sono accessibili a nessun dispositivo (prove nuove: 80 in tutto).
+- **Test**: equivalenza tra la chiusura dell'app e quella del server su 2.000 famiglie generate a caso (`functions/test/equivalenza.test.mjs`, circa 10.000 giorni chiusi); tre notti simulate nell'emulatore, compresi confronto, differenze spiegate, interruttore acceso, notte rilanciata e lettura del mattino (`functions/test-emulatore/notturna.mjs`, 17 prove).
+- La scadenza delle 48 ore per contestare resta com'è (oggi non scrive nulla nel database): passa al server con le contestazioni, nella fase 3.
+
 ## 0.16.3 · 16/11/2026
 Migrazione della logica sul server, **fase 0: preparazione** ([`docs/migrazione.md`](docs/migrazione.md)). Nel gioco non cambia nulla.
 - **Modulo condiviso** `js/shared/gioco.js`: calendario del giorno (`itemsFor`), stelle di un compito (`pointsFor`), bonus delle serie, cartellini rossi attivi, regole e orari predefiniti, date calcolate senza dipendere dal fuso del dispositivo e `oggi()` con l'ora di Roma. L'app lo carica come modulo (`globalThis.BeBeansGioco`) e `game.js`, `collab.js` e `config.js` lo usano al posto del codice di prima; il server ne usa una copia. Controllato che dia gli stessi risultati della 0.16.2 su oltre 60.000 casi generati a caso, con il telefono in tre fusi diversi.

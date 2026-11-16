@@ -1,7 +1,12 @@
 rules_version = '2';
-// Regole di sicurezza di "Compiti di casa" · versione 0.16.0 (14/11/2026)
+// Regole di sicurezza di "Compiti di casa" · versione 0.17.0 (16/11/2026)
 // Per sapere quale versione è attiva in Firebase, guarda questa riga nella scheda Regole.
-// Incollale in Console Firebase › Firestore Database › Regole › Pubblica.
+// Dalla 0.16.3 le pubblica GitHub Actions a ogni modifica di main (docs/pubblicazione.md): non incollarle a mano.
+//
+// Novità 0.17.0 (migrazione al server, fase 1):
+//   - members: ognuno aggiorna, oltre a newsSeen, la versione dell'app che usa (appVersion, appSeenAt)
+//   - kids/{kid}/shadow (calcoli in ombra del server) e admin/ (rapporti): nessuna regola, quindi nessun
+//     dispositivo li legge né li scrive; li usa solo il server (Cloud Functions, che non passa dalle regole)
 //
 // Novità 0.16.0:
 //   - kids/{kid}: il figlio può scrivere SOLO il campo goal (il suo obiettivo), con un premio vero al suo prezzo, o toglierlo
@@ -108,10 +113,14 @@ service cloud.firestore {
           && !existsAfter(invPath(d().invite));      // 0.12.1: l'invito si usa una volta sola
       }
       // 0.12.0: chiunque (genitore o figlio) segna come lette le novità, senza toccare altro
-      function newsOnly() {
+      // 0.17.0: e salva la versione dell'app che sta usando (serve a sapere quando tutti hanno aggiornato)
+      function selfOnly() {
+        let k = d().diff(resource.data).affectedKeys();
         return request.auth.uid == uid && ('familyId' in resource.data)
-          && d().diff(resource.data).affectedKeys().hasOnly(['newsSeen'])
-          && d().newsSeen is string && d().newsSeen.size() <= 12;
+          && k.hasOnly(['newsSeen', 'appVersion', 'appSeenAt'])
+          && (!('newsSeen' in k) || (d().newsSeen is string && d().newsSeen.size() <= 12))
+          && (!('appVersion' in k) || (d().appVersion is string && d().appVersion.matches('[0-9]{1,3}[.][0-9]{1,3}[.][0-9]{1,3}')))
+          && (!('appSeenAt' in k) || d().appSeenAt == request.time);
       }
       allow get: if signed() && (request.auth.uid == uid || isParentOf(resource.data.familyId));
       allow list: if isParentOf(resource.data.familyId);
@@ -119,7 +128,7 @@ service cloud.firestore {
         || (isParentOf(d().familyId) && d().role == 'kid');
       allow update: if (request.auth.uid == uid && !('familyId' in resource.data) && (founding() || invited()))
         || (isParentOf(resource.data.familyId) && d().familyId == resource.data.familyId)
-        || newsOnly();
+        || selfOnly();
       // 0.12.1: un figlio non cancella da sé il proprio account in famiglia
       allow delete: if isParentOf(resource.data.familyId)
         || (signed() && request.auth.uid == uid && !('familyId' in resource.data));
