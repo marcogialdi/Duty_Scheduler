@@ -1,3 +1,10 @@
 {
-  "emulators": { "firestore": { "port": 8085 }, "ui": { "enabled": false } }
+  "functions": [
+    { "source": "../functions", "codebase": "default", "runtime": "nodejs22" }
+  ],
+  "emulators": {
+    "firestore": { "port": 8085 },
+    "functions": { "port": 5011 },
+    "ui": { "enabled": false }
+  }
 }

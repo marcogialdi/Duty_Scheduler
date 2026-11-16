@@ -180,6 +180,12 @@ Stima mensile in USD con i prezzi Firestore delle regioni USA ([Firestore pricin
 | Regione delle funzioni: `europe-west1` (database `eur3`) | deciso |
 | Linguaggio: JavaScript | deciso |
 | Repository privato | dopo il 21/11/2026 |
-| Ruoli aggiuntivi per `github-deploy` | da definire nella fase 0 |
-| Fase 0 | da avviare |
+| Ruoli aggiuntivi per `github-deploy` | definiti in [`pubblicazione.md`](pubblicazione.md); da assegnare in Google Cloud Console (Marco) |
+| Fase 0 | codice fatto in 0.16.3 (ramo `migrazione/fase-0`): modulo condiviso `js/shared/gioco.js`, cartella `functions/` con `ping`, test su GitHub a ogni modifica, pubblicazione di regole e funzioni da GitHub Actions. Per chiuderla: prima pubblicazione delle funzioni, ruoli di `github-deploy`, variabile `PUBBLICA_SERVER` e «Prova» da app.bebeans.it (vedi [`pubblicazione.md`](pubblicazione.md)) |
 | Fasi 1–6 | da fare |
+
+Note dalla fase 0, per le fasi successive:
+- Le date del modulo condiviso sono calcolate in UTC sulle stringhe `aaaa-mm-gg`, quindi danno lo stesso risultato sul telefono e sul server; il giorno corrente si prende sempre con `oggi('Europe/Rome')`. Le funzioni girano in UTC: mai usare `new Date()` per stabilire il giorno.
+- Nell'emulatore le funzioni girano con `TZ=UTC`, come in produzione.
+- La «versione minima» dell'app e la versione salvata nel profilo (vedi «Convivenza durante la migrazione») non sono ancora fatte: servono prima di chiudere le regole, conviene farle nella fase 1.
+- `firebase-tools` 13 non funziona con `firebase-functions` 7: i test e la pubblicazione usano la 15.

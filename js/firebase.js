@@ -5,6 +5,7 @@ import { getAuth, initializeAuth, inMemoryPersistence, onAuthStateChanged, signI
          EmailAuthProvider, sendPasswordResetEmail, deleteUser }
   from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app-check.js';
+import { getFunctions, httpsCallable } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-functions.js';
 import { initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager,
          collection, doc, onSnapshot, query, where, orderBy, limit, addDoc, setDoc, updateDoc, deleteDoc,
          getDoc, getDocs, writeBatch, runTransaction, serverTimestamp, getAggregateFromServer, sum, count, Timestamp }
@@ -38,9 +39,15 @@ let db;
 try { db = initializeFirestore(fbApp, {localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()})}); }
 catch(e){ db = getFirestore(fbApp); }
 
+// Cloud Functions di BeBeans: sempre in europe-west1, vicino al database (docs/migrazione.md)
+const functions = getFunctions(fbApp, 'europe-west1');
+const callServer = (name, data = {}) => httpsCallable(functions, name)(data).then(r => r.data);
+// prova del collegamento (fase 0): risponde con regione e giorno di Roma
+const serverPing = () => callServer('ping');
+
 // gli altri file dell'app sono script normali che condividono questi nomi
 Object.assign(window, {
-  firebaseConfig, fbApp, auth, secAuth, db,
+  firebaseConfig, fbApp, auth, secAuth, db, callServer, serverPing,
   onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, updatePassword,
   reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail, deleteUser,
   collection, doc, onSnapshot, query, where, orderBy, limit, addDoc, setDoc, updateDoc, deleteDoc,
