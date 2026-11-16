@@ -192,6 +192,24 @@ await env.withSecurityRulesDisabled(async c => {
   await prova('un genitore svuota l\'obiettivo', true, setDoc(doc(par2, 'families', F, 'kids', 'kA'), {goal: null}, {merge: true}));
 }
 
+console.log('\n— Versione dell\'app nel profilo e dati del server (0.17.0)');
+{
+  const mio = u => doc(as(u), 'members', u);
+  await prova('un figlio salva la versione dell\'app', true, updateDoc(mio('ka'), {appVersion: '0.17.0', appSeenAt: serverTimestamp()}));
+  await prova('un genitore salva versione e novità lette', true, updateDoc(mio('par2'), {appVersion: '0.17.0', appSeenAt: serverTimestamp(), newsSeen: '0.17.0'}));
+  await prova('versione che non è un numero di versione', false, updateDoc(mio('ka'), {appVersion: '<b>x</b>'}));
+  await prova('ora inventata', false, updateDoc(mio('ka'), {appSeenAt: Timestamp.fromMillis(0)}));
+  await prova('con la versione cambia anche il ruolo', false, updateDoc(mio('ka'), {appVersion: '0.17.0', role: 'parent'}));
+  await prova('la versione nel profilo di un altro', false, updateDoc(doc(kid, 'members', 'kb'), {appVersion: '0.17.0'}));
+  const ombra = c => doc(c, 'families', F, 'kids', 'kA', 'shadow', '2026-11-16'), par = as('par2');
+  await prova('un genitore legge l\'ombra del server', false, getDoc(ombra(par)));
+  await prova('un genitore scrive nell\'ombra del server', false, setDoc(ombra(par), {voci: {}}));
+  await prova('un figlio legge la propria ombra', false, getDoc(ombra(kid)));
+  await prova('un genitore legge i rapporti', false, getDoc(doc(par, 'admin', 'reports', 'days', '2026-11-16')));
+  await prova('un genitore scrive un rapporto', false, setDoc(doc(par, 'admin', 'reports', 'days', '2026-11-16'), {differenze: 0}));
+  await prova('un genitore accende l\'interruttore del server per la sua famiglia', true, updateDoc(doc(as('par2'), 'families', F), {'server.chiusura': true}));
+}
+
 console.log(`\n${ok} ok, ${ko} errori`);
 await env.cleanup();
 process.exit(ko ? 1 : 0);

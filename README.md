@@ -7,7 +7,7 @@ Dati e accessi su Firebase (Firestore e Authentication); pubblicata su Firebase 
 
 **Backlog**: [`docs/backlog.md`](docs/backlog.md) — idee e sviluppi proposti, con il loro stato.
 
-**Migrazione al server**: [`docs/migrazione.md`](docs/migrazione.md) — piano per spostare la logica del gioco su Cloud Functions, a fasi (fase 0 fatta in 0.16.3).
+**Migrazione al server**: [`docs/migrazione.md`](docs/migrazione.md) — piano per spostare la logica del gioco su Cloud Functions, a fasi (fase 0 fatta in 0.16.3; fase 1, chiusura notturna, in 0.17.0).
 
 **Pubblicazione**: [`docs/pubblicazione.md`](docs/pubblicazione.md) — test e pubblicazione da GitHub Actions, ruoli dell'account `github-deploy`.
 
@@ -58,7 +58,7 @@ nessun collegamento a Google Fonts. Il testo normale usa il carattere del telefo
 | `icons/` | logo `logo.svg` e icone dell'app (Android, iPhone, adattabile) |
 | `sw.js` | funzionamento offline e aggiornamenti (generato) |
 | `firestore.rules` | regole di sicurezza (non serve sul sito); pubblicate da GitHub Actions (vedi `docs/pubblicazione.md`) |
-| `functions/` | Cloud Functions (Node 22, `europe-west1`): `index.js` le dichiara, `src/` le contiene, `test/` le prova; `shared/` è una copia generata di `js/shared/gioco.js` (`npm run condiviso`) |
+| `functions/` | Cloud Functions (Node 22, `europe-west1`): `index.js` le dichiara, `src/` le contiene (`chiusura.js` calcolo della chiusura dei giorni, `notturna.js` lavoro di mezzanotte e rapporto, `ping.js` prova del collegamento); `test/` e `test-emulatore/` le provano; `scripts/rapporto.mjs` legge il rapporto della notte; `shared/` è una copia generata di `js/shared/gioco.js` (`npm run condiviso`) |
 | `tests/` | test automatici con l'emulatore di Firebase: regole (`npm test`) e funzioni (`npm run test:functions`); girano su GitHub a ogni modifica (vedi `tests/README.md`) |
 
 I file `js/` diversi da `firebase.js` e `shared/gioco.js` sono script normali caricati in ordine e condividono gli stessi nomi:

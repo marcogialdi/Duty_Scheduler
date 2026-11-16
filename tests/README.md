@@ -22,7 +22,7 @@ npm test               # regole di Firestore
 npm run test:functions # Cloud Functions nell'emulatore (installa anche le dipendenze di ../functions)
 ```
 
-Alla fine compare `68 ok, 0 errori` per le regole e `4 ok, 0 errori` per le funzioni (i numeri crescono quando si aggiungono prove).
+Alla fine compare `80 ok, 0 errori` per le regole e, per le funzioni, `4 ok, 0 errori` (ping) e `17 ok, 0 errori` (lavoro di mezzanotte, `../functions/test-emulatore/notturna.mjs`) (i numeri crescono quando si aggiungono prove).
 I test unitari del modulo condiviso e delle funzioni sono in `../functions/test/` (`cd ../functions && npm test`).
 
 ## Quando lanciarli

@@ -1,0 +1,49 @@
+# Ogni mattina legge il rapporto della chiusura di mezzanotte (admin/reports/days/{oggi}, scritto da chiusuraNotturna).
+# Se ci sono differenze tra server e telefoni, errori, o il rapporto manca, apre una segnalazione (issue):
+# GitHub manda l'email a chi segue il repository. Se è tutto in ordine non succede nulla.
+# Serve il ruolo «Visualizzatore Cloud Datastore» per github-deploy (docs/pubblicazione.md).
+name: Rapporto della notte
+on:
+  schedule:
+    - cron: '0 6 * * *'          # 7:00 in inverno, 8:00 in estate (GitHub ragiona in UTC)
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  rapporto:
+    if: vars.PUBBLICA_SERVER == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: functions/package-lock.json
+      - name: Dipendenze
+        working-directory: functions
+        run: |
+          npm ci
+          npm run condiviso
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+      - name: Lettura del rapporto
+        id: leggi
+        working-directory: functions
+        env:
+          RAPPORTO_FILE: ${{ runner.temp }}/rapporto.md
+        run: node scripts/rapporto.mjs
+      - name: Segnalazione
+        if: steps.leggi.outputs.problema == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITOLO: ${{ steps.leggi.outputs.titolo }}
+        run: |
+          if gh issue list --state open --search "\"$TITOLO\" in:title" --json number --jq '.[].number' | grep -q .; then
+            echo "Segnalazione già aperta: $TITOLO"
+          else
+            gh issue create --title "$TITOLO" --body-file "$RUNNER_TEMP/rapporto.md"
+          fi

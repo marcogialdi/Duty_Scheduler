@@ -7,7 +7,7 @@
       "source": "functions",
       "codebase": "default",
       "runtime": "nodejs22",
-      "ignore": ["node_modules", ".git", "*.log", "test", "scripts"],
+      "ignore": ["node_modules", ".git", "*.log", "test", "test-emulatore", "scripts"],
       "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run condiviso"]
     }
   ],

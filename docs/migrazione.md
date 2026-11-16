@@ -182,8 +182,21 @@ Stima mensile in USD con i prezzi Firestore delle regioni USA ([Firestore pricin
 | Repository privato | dopo il 21/11/2026 |
 | Ruoli aggiuntivi per `github-deploy` | assegnati il 16/11/2026 (elenco in [`pubblicazione.md`](pubblicazione.md)); quelli della fase 1 si aggiungono quando servono |
 | Fase 0 | **fatta** in 0.16.3 (16/11/2026): modulo condiviso `js/shared/gioco.js`, cartella `functions/` con `ping`, test su GitHub a ogni modifica, pubblicazione di regole, funzioni e sito da GitHub Actions. Verificata da app.bebeans.it: «risponde ✓ (europe-west1, oggi a Roma è il 16/11/2026)» |
-| Fase 1 | da avviare |
+| Fase 1 | codice fatto in 0.17.0 (ramo `migrazione/fase-1`): `chiusuraNotturna` alle 00:05, in ombra per tutte le famiglie, confronto con i telefoni, rapporto in `admin/reports/days/{giorno}` e lettura del mattino con segnalazione su GitHub; interruttore `families/{fid}.server.chiusura`; versione dell'app nel profilo. Prossimi passi: una settimana di rapporti puliti, poi interruttore acceso famiglia per famiglia, poi `closeDays` esce dall'app (vedi «Fase 1: come si accende») |
 | Fasi 2–6 | da fare |
+
+### Fase 1: come si accende
+
+1. **Una settimana in ombra.** Dopo la pubblicazione la chiusura di mezzanotte gira per tutte le famiglie senza toccare i loro dati. Ogni mattina il rapporto confronta i giorni che i telefoni hanno chiuso nel frattempo; se c'è una differenza non spiegata arriva una segnalazione su GitHub. Un giorno compare nel confronto solo dopo che un genitore ha aperto l'app (è il telefono a chiuderlo).
+2. **Interruttore, una famiglia alla volta** (famiglia di prova, famiglia BeBeans, Iorizzo, tutte). In Console Firebase › Firestore › `families` › documento della famiglia › «Aggiungi campo»: nome `server`, tipo *map*; dentro, `chiusura` di tipo *boolean* con valore `true`. Dalla notte dopo chiude il server; l'app 0.17.0 smette di farlo. Per tornare indietro basta mettere `false`.
+3. **Fine della fase 1.** Con tutte le famiglie accese e una settimana di notti senza errori: `closeDays` e `closeKid` escono da `js/game.js`, i progressi delle medaglie da `js/medals.js` (resta `checkMedals`, fase 5), e si toglie `functions/test/equivalenza.test.mjs`.
+
+Scelte della fase 1:
+- **Scadenza delle 48 ore rinviata alla fase 3.** Oggi passate 48 ore il compito sparisce solo dalla scheda «Da verificare»: nel database non cambia nulla, quindi un lavoro orario non avrebbe niente da fare. Diventa utile quando la contestazione passa al server (fase 3), che rifiuterà quelle fuori tempo.
+- **Rapporti in `admin/reports/days/{giorno}`** (in Firestore un documento non può stare direttamente in `admin/reports`). Contengono solo codici di famiglie e figli, mai nomi.
+- **Da dove riparte l'ombra.** Ogni notte l'ombra riparte dallo stato del telefono, se il telefono l'ha raggiunta, altrimenti dal proprio. Così una contestazione, che sul telefono azzera la serie, non la fa divergere per sempre.
+- **Differenze spiegate.** Una differenza è «spiegata» se, dopo il calcolo dell'ombra, un compito di quel giorno è stato contestato, segnato o confermato (anche offline), oppure, per serie e medaglie, se è arrivato un cartellino. Le altre aprono una segnalazione.
+- **Versione dell'app nel profilo** (`members/{uid}.appVersion`): il rapporto conta le persone per versione. La «versione minima» che chiede di aggiornare arriva quando servirà chiudere le regole (fase 2).
 
 Note dalla fase 0, per le fasi successive:
 - Le date del modulo condiviso sono calcolate in UTC sulle stringhe `aaaa-mm-gg`, quindi danno lo stesso risultato sul telefono e sul server; il giorno corrente si prende sempre con `oggi('Europe/Rome')`. Le funzioni girano in UTC: mai usare `new Date()` per stabilire il giorno.

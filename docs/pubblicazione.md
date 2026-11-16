@@ -8,6 +8,7 @@ Come BeBeans arriva da GitHub a Firebase, e cosa va configurato a mano una volta
 | --- | --- | --- |
 | Push su un ramo diverso da `main`, richiesta di unione | Test: modulo condiviso e funzioni, regole di Firestore nell'emulatore, funzioni nell'emulatore | `.github/workflows/test.yml` |
 | Push su `main` | Gli stessi test; se sono verdi, prima il **server** (regole di Firestore e Cloud Functions, solo con `PUBBLICA_SERVER = true`), poi il **sito** (Firebase Hosting, app.bebeans.it) | `.github/workflows/firebase-hosting.yml` |
+| Ogni mattina alle 7 (8 con l'ora legale) | Lettura del rapporto della chiusura di mezzanotte; se ci sono differenze, errori o manca, apre una segnalazione (issue) su GitHub | `.github/workflows/rapporto.yml` |
 
 Se un test fallisce non si pubblica nulla. Il sito parte dopo il server, così una versione nuova dell'app trova già le funzioni di cui ha bisogno.
 
@@ -50,7 +51,22 @@ In Google Cloud Console › IAM, all'account di servizio `github-deploy` (la cui
 | Amministratore Cloud Scheduler (`roles/cloudscheduler.admin`) | lavori a orario (chiusura di mezzanotte) | fase 1 |
 | Visualizzatore Cloud Datastore (`roles/datastore.viewer`) | lettura del rapporto giornaliero `admin/reports/{giorno}` dalla procedura delle 7 | fase 1 |
 
-I ruoli si danno anche da Cloud Shell (fatto così il 16/11/2026):
+### 2b. Prima della fase 1 (lavori a orario e rapporto del mattino)
+
+La chiusura di mezzanotte è una funzione a orario: usa **Cloud Scheduler**, un servizio di Google che va acceso una volta dal proprietario. Poi servono i due ruoli della fase 1. In Cloud Shell:
+
+```bash
+gcloud services enable cloudscheduler.googleapis.com --project duty-scheduler-bdd9e
+```
+
+```bash
+SA=github-deploy@duty-scheduler-bdd9e.iam.gserviceaccount.com
+for R in roles/cloudscheduler.admin roles/datastore.viewer; do gcloud projects add-iam-policy-binding duty-scheduler-bdd9e --member="serviceAccount:$SA" --role="$R" --condition=None --quiet > /dev/null && echo "ok $R"; done
+```
+
+Va fatto **prima** di unire la fase 1 su `main`: senza, la pubblicazione delle funzioni si ferma (e con lei il sito).
+
+I ruoli della fase 0 si danno anche da Cloud Shell (fatto così il 16/11/2026):
 
 ```bash
 SA=github-deploy@duty-scheduler-bdd9e.iam.gserviceaccount.com
