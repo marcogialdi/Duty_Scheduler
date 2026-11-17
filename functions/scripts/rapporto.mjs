@@ -51,4 +51,8 @@ writeFileSync(process.env.RAPPORTO_FILE || 'rapporto.md', testo);
 if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `problema=${problema}\ntitolo=${titolo}\n`);
 if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, `## ${titolo}\n\n${testo}\n`);
 console.log(titolo);
+// nei log solo i totali, mai codici di famiglie o figli (i log di un repository pubblico li vede chiunque)
+if (r) console.log(JSON.stringify({famiglie: r.famiglie, figli: r.figli, ombra: r.ombra, chiusure: r.chiusure,
+  confronto: r.confronto, errori: r.errori.length, durataMs: r.durataMs,
+  versioni: Object.fromEntries(Object.entries(r.versioni || {}).map(([k, n]) => [k.replace(/_/g, '.'), n]))}));
 console.log(problema ? 'C\'è qualcosa da guardare.' : 'Tutto in ordine.');
